@@ -13,16 +13,16 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/', function () {
-    return view('welcome');
-});
 
 
-Route::get('/test', 'AuthController@index')->name('test');
+
+Route::get('/', 'AuthController@index')->name('login');
+Route::post('/login', 'AuthController@login')->name('isLogin');
+Route::get('/logout', 'AuthController@logout')->name('logout');
+Route::get('/lupa-password', 'AuthController@lupaPassword')->name('lupaPassword');
+
 
 // route group for staff
-Route::group(['prefix' => 'staff', 'as' => 'staff.'], function () {
-    Route::get('/dashboard', 'Staff\DashboardController@index')->name('dashboard');
-    // simpanan
-    Route::get('/deposit', 'Staff\DepositController@index')->name('deposit');
+Route::group(['prefix' => 'petugas', 'as' => 'petugas.'], function () {
+    Route::get('/dashboard', 'DashboardController@index')->name('dashboard');
 });
