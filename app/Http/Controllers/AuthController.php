@@ -9,21 +9,31 @@ class AuthController extends Controller
     public function index()
     {
         $title = 'Masuk';
+        
         return view('login', compact('title'));
     }
 
-    public function login(Request $request)
+    public function isLogin(Request $request)
     {
-        $credentials = $request->only('username', 'password');
-        if (auth()->attempt($credentials)) {
-            return redirect()->route('staff.dashboard');
+        $this->validate($request, [
+            'email' => 'required|email',
+            'password' => 'required',
+        ]);
+
+        $credentials = $request->only('email', 'password');
+        if(auth()->guard('petugas')->attempt($credentials)){
+            $user = auth()->guard('petugas')->user();
+            if($user->level == "petugas"){
+                return response()->json(['status' => 'success', 'message' => 'Login berhasil, anda akan dialihkan ke halaman dashboard.']);
+            }
+        }else {
+            return response()->json(['status' => 'error', 'message' => 'Login gagal, silahkan cek email dan password anda.']);
         }
-        return redirect()->back()->with('error', 'Username atau password salah');
     }
 
     public function logout()
     {
-        auth()->logout();
+        auth()->guard('petugas')->logout();
         return redirect()->route('login');
     }
 

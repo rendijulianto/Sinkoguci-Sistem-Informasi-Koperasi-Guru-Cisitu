@@ -13,8 +13,8 @@ return new class extends Migration
     {
         Schema::create('simpanan', function (Blueprint $table) {
             $table->increments('id_simpanan', 11);
-            $table->unsignedInteger('id_anggota', 4);
-            $table->unsignedInteger('id_petugas', 2);
+            $table->unsignedInteger('id_anggota');
+            $table->unsignedInteger('id_petugas');
             $table->date('tgl_bayar');
             $table->timestamps();
             $table->foreign('id_anggota')->references('id_anggota')->on('anggota')->onDelete('cascade')->onUpdate('cascade');

@@ -13,11 +13,11 @@ return new class extends Migration
     {
         Schema::create('peminjaman', function (Blueprint $table) {
             $table->increments('id_peminjaman',11);
-            $table->unsignedInteger('id_anggota', 4);
-            $table->unsignedInteger('id_petugas', 2);
+            $table->unsignedInteger('id_anggota');
+            $table->unsignedInteger('id_petugas');
             $table->date('tgl_pinjam');
             $table->double('pokok');
-            $table->integer('lama_angsuran', 2);
+            $table->integer('lama_angsuran');
             $table->timestamps();
             $table->foreign('id_anggota')->references('id_anggota')->on('anggota')->onDelete('cascade')->onUpdate('cascade');
             $table->foreign('id_petugas')->references('id_petugas')->on('petugas')->onDelete('cascade')->onUpdate('cascade');

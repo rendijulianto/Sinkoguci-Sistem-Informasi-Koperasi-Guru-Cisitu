@@ -12,8 +12,8 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('simpanan_detail', function (Blueprint $table) {
-            $table->unsignedInteger('id_simpanan', 11);
-            $table->unsignedInteger('id_kategori', 3);
+            $table->unsignedInteger('id_simpanan');
+            $table->unsignedInteger('id_kategori');
             $table->double('jumlah');
             $table->foreign('id_simpanan')->references('id_simpanan')->on('simpanan')->onDelete('cascade')->onUpdate('cascade');    
             $table->foreign('id_kategori')->references('id_kategori')->on('kategori_simpanan')->onDelete('cascade')->onUpdate('cascade');

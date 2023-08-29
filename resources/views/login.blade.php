@@ -75,7 +75,11 @@
                Slick Menu
     *===========================-->
     <link rel="stylesheet" href="{{asset('assets/css/slicknav.min.css')}}">
-    
+    <!--=========================*
+               Toastr Css
+    *===========================-->
+    <link rel="stylesheet" href="{{asset('assets/vendors/toastr/css/toastr.min.css')}}">
+
     <!--=========================*
               Flag Icons
     *===========================-->
@@ -120,12 +124,12 @@
                             </div><!--login-logo-->
                             <div class="form-gp">
                                 <label for="exampleInputEmail1">Email address</label>
-                                <input type="email" id="exampleInputEmail1">
+                                <input type="email" name="email" id="exampleInputEmail1">
                                 <i class="fa fa-envelope"></i>
                             </div>
                             <div class="form-gp">
                                 <label for="exampleInputPassword1">Password</label>
-                                <input type="password" id="exampleInputPassword1">
+                                <input type="password" name="password" id="exampleInputPassword1">
                                 <i class="fa fa-lock"></i>
                             </div>
                             <div class="row mb-4 rmber-area">
@@ -165,7 +169,57 @@
 <script src="{{asset('assets/js/jquery.slicknav.min.js')}}"></script>
 <!-- Fancy Box Js -->
 <script src="{{asset('assets/js/jquery.fancybox.pack.js')}}"></script>
+<!-- Toastr Js -->
+<script src="{{asset('assets/vendors/toastr/js/toastr.min.js')}}"></script>
+<!-- ========== This Page js ========== -->
+
 <!-- Main Js -->
 <script src="{{asset('assets/js/main.js')}}"></script>
+<script>
+      $('#form_submit').on('click', function(e) {
+        e.preventDefault();
+        var email = $('#exampleInputEmail1').val();
+        var password = $('#exampleInputPassword1').val();
+
+        $.ajax({
+            url: "{{route('isLogin')}}",
+            type: "POST",
+            data: {
+                email: email,
+                password: password,
+                _token: "{{ csrf_token() }}",
+            },
+            beforeSend: function() {
+                $('#form_submit').html('<i class="fa fa-spinner fa-spin"></i> Tunggu Sebentar');
+            },
+            success: function(data) {
+                if(data.status === "success") {
+                    toastr.success(data.message, 'Sukses!')
+                    setTimeout(function() {
+                        window.location.href = "{{route('petugas.dashboard')}}";
+                    }, 1000);
+                } else {
+                    toastr.error(data.message, 'Kesalahan!')
+                }
+            },
+            error: function(data) {
+                // jika statusnya 422
+                if(data.status === 422) {
+                
+                    let errors = '';
+                    $.each(data.responseJSON.errors, function (i, error) {
+                        errors += '<li>'+error[0]+'</li>';
+                    });
+                    toastr.error(errors, 'Kesalahan Input!')
+                } else {
+                    toastr.error('Terjadi Kesalahan', 'Error!')
+                }
+            },
+            complete: function() {
+                $('#form_submit').html('Masuk <i class="fa fa-arrow-right"></i>');
+            }
+        });
+      });
+</script>
 </body>
 </html>
