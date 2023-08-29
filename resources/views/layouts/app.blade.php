@@ -41,7 +41,10 @@
                Ionicons
     *===========================-->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/ionicons/2.0.1/css/ionicons.min.css" rel="stylesheet">
-
+    <!--=========================*
+               Toastr Css
+    *===========================-->
+    <link rel="stylesheet" href="{{asset('assets/vendors/toastr/css/toastr.min.css')}}">
 
 
     <!--=========================*
@@ -390,7 +393,10 @@
 <script src="{{asset('assets/js/jquery.slimscroll.min.js')}}"></script>
 <!-- Slick Nav -->
 <script src="{{asset('assets/js/jquery.slicknav.min.js')}}"></script>
+<!-- Toastr Js -->
+<script src="{{asset('assets/vendors/toastr/js/toastr.min.js')}}"></script>
 <!-- ========== This Page js ========== -->
+
 
 @yield('js')
 

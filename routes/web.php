@@ -17,12 +17,11 @@ use Illuminate\Support\Facades\Route;
 
 
 Route::get('/', 'AuthController@index')->name('login');
-Route::post('/login', 'AuthController@login')->name('isLogin');
+Route::post('/login', 'AuthController@isLogin')->name('isLogin');
 Route::get('/logout', 'AuthController@logout')->name('logout');
 Route::get('/lupa-password', 'AuthController@lupaPassword')->name('lupaPassword');
 
-
 // route group for staff
-Route::group(['prefix' => 'petugas', 'as' => 'petugas.'], function () {
+Route::group(['prefix' => 'petugas', 'as' => 'petugas.', 'middleware' => 'petugasauth'], function () {
     Route::get('/dashboard', 'DashboardController@index')->name('dashboard');
 });

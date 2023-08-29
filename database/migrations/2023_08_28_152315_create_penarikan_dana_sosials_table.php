@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('penarikan_dana_sosial', function (Blueprint $table) {
             $table->increments('id_penarikan',11);
-            $table->unsignedInteger('id_petugas', 2);
+            $table->unsignedInteger('id_petugas');
             $table->double('jumlah');
             $table->string('keterangan', 60);
             $table->date('tgl_penarikan');
