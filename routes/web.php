@@ -22,6 +22,7 @@ Route::get('/logout', 'AuthController@logout')->name('logout');
 Route::get('/lupa-password', 'AuthController@lupaPassword')->name('lupaPassword');
 
 // route group for staff
-Route::group(['prefix' => 'petugas', 'as' => 'petugas.', 'middleware' => 'petugasauth'], function () {
+Route::group(['prefix' => 'petugas', 'as' => 'petugas.', 'middleware' => 'petugasauth:petugas'], function () {
     Route::get('/dashboard', 'DashboardController@index')->name('dashboard');
+    Route::resource('/anggota', 'AnggotaController')->names('anggota');
 });

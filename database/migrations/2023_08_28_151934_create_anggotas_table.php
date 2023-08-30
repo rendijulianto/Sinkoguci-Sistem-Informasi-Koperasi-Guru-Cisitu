@@ -14,11 +14,13 @@ return new class extends Migration
         Schema::create('anggota', function (Blueprint $table) {
             $table->increments('id_anggota',4);
             $table->unsignedInteger('id_petugas');
+            $table->unsignedInteger('id_sekolah');
             $table->string('nama', 60);
             $table->string('alamat', 60);
             $table->date('tgl_lahir');
             $table->timestamps();
             $table->foreign('id_petugas')->references('id_petugas')->on('petugas')->onDelete('cascade')->onUpdate('cascade');
+            $table->foreign('id_sekolah')->references('id_sekolah')->on('sekolah')->onDelete('cascade')->onUpdate('cascade');
         });
     }
 
