@@ -23,9 +23,8 @@ class AuthController extends Controller
         $credentials = $request->only('email', 'password');
         if(auth()->guard('petugas')->attempt($credentials)){
             $user = auth()->guard('petugas')->user();
-            if($user->level == "petugas"){
-                return response()->json(['status' => 'success', 'message' => 'Login berhasil, anda akan dialihkan ke halaman dashboard.']);
-            }
+            return response()->json(['status' => 'success', 'message' => 'Login berhasil, anda akan dialihkan ke halaman dashboard.', 'redirect' => route($user->level.'.dashboard')]);
+           
         }else {
             return response()->json(['status' => 'error', 'message' => 'Login gagal, silahkan cek email dan password anda.']);
         }
@@ -33,8 +32,10 @@ class AuthController extends Controller
 
     public function logout()
     {
-        auth()->guard('petugas')->logout();
-        return redirect()->route('login');
+       if(auth()->guard('petugas')->check()){
+           auth()->guard('petugas')->logout();
+       }
+       return redirect(route('login'))->with('success', 'Anda berhasil keluar.');
     }
 
     public function lupaPassword()

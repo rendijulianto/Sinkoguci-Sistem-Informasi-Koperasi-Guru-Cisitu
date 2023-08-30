@@ -196,7 +196,7 @@
                 if(data.status === "success") {
                     toastr.success(data.message, 'Sukses!')
                     setTimeout(function() {
-                        window.location.href = "{{route('petugas.dashboard')}}";
+                        window.location.href = data.redirect;
                     }, 1000);
                 } else {
                     toastr.error(data.message, 'Kesalahan!')
