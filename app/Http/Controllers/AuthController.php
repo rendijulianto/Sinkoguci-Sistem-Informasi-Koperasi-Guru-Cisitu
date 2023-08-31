@@ -3,6 +3,12 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Models\{Petugas, Anggota, Sekolah};
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Mail;
 
 class AuthController extends Controller
 {
@@ -43,4 +49,23 @@ class AuthController extends Controller
         $title = 'Lupa Password';
         return view('lupa-password', compact('title'));
     }
+
+    public function resetPassword(Request $request)
+    {
+        $this->validate($request, [
+            'email' => 'required|email|exists:petugas,email',
+        ]);
+
+        $petugas = Petugas::where('email', $request->email)->first();
+        $password = Str::random(8);
+        $petugas->update([
+            'password' => Hash::make($password),
+        ]);
+
+        Mail::to($petugas->email)->send(new ResetPassword($petugas, $password));
+
+        return redirect()->back()->with('success', 'Password berhasil direset, silahkan cek email anda.');
+    }
+
+
 }
