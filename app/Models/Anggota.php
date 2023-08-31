@@ -25,6 +25,13 @@ class Anggota extends Model
     {
         return $this->belongsTo(Petugas::class, 'id_petugas', 'id_petugas');
     }
+  
+
+    public function sekolah()
+    {
+        return $this->belongsTo(Sekolah::class, 'id_sekolah', 'id_sekolah');
+    }
+
 
     public function simpanan()
     {
