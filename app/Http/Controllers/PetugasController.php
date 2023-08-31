@@ -10,10 +10,11 @@ class PetugasController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
+        $cari = $request->cari;
         $title  = 'Kelola Petugas';
-        $petugas = Petugas::orderBy('id_petugas', 'desc')->paginate(10);
+        $petugas = Petugas::where('nama','like',"%".$cari."%")->orderBy('id_petugas', 'desc')->paginate(10);
         return view('admin.petugas.index', compact('title', 'petugas'));
     }
 

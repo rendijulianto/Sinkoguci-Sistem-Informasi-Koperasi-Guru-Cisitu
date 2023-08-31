@@ -20,8 +20,15 @@
         <div class="card">
             <div class="card-body">
                 <h4 class="card_title">
-                    {{$title}}
+                    Data Petugas
                 </h4>
+                <form action="{{route('admin.petugas.index')}}" method="get">
+                    <div class="input-group mb-3">
+                        <input type="text" name="cari" id="nama" class="form-control" placeholder="Cari Petugas ..">
+                            <div class="input-group-append">
+                                <button class="btn btn-primary" type="submit"><i class="fa fa-search"></i></button>
+                            </div>
+                    </div>
                 <div class="single-table">
                     <div class="table-responsive">
                         <table class="table table-hover progress-table text-center">
