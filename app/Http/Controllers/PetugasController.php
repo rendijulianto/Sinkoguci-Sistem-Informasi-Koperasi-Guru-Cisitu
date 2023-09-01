@@ -42,7 +42,6 @@ class PetugasController extends Controller
             'password.min'      => 'Password minimal 6 karakter',
             'level.required'    => 'Level tidak boleh kosong',
             'level.in'          => 'Level harus admin atau petugas',
-            
           ]);
 
         try {

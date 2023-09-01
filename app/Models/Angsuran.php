@@ -9,6 +9,8 @@ class Angsuran extends Model
 {
     use HasFactory;
 
+    use HasFactory;
+
     protected $table = 'angsuran';
 
     protected $fillable = [
@@ -18,6 +20,8 @@ class Angsuran extends Model
         'tgl_bayar',
         'pokok',
         'jasa',
+        'sisa_pokok',
+        'sisa_jasa',
     ];
 
     public function petugas()
@@ -25,8 +29,8 @@ class Angsuran extends Model
         return $this->belongsTo(Petugas::class, 'id_petugas', 'id_petugas');
     }
 
-    public function peminjaman()
+    public function pinjaman()
     {
-        return $this->belongsTo(Peminjaman::class, 'id_pinjaman', 'id_pinjaman');
+        return $this->belongsTo(Pinjaman::class, 'id_pinjaman', 'id_pinjaman');
     }
 }
