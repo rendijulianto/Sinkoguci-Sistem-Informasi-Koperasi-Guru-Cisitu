@@ -4,175 +4,105 @@
     <div class="col-md-12 grid-margin">
         <div class="d-flex justify-content-between flex-wrap">
             <div class="d-flex align-items-center dashboard-header flex-wrap mb-3 mb-sm-0">
-                <h5 class="mr-4 mb-0 font-weight-bold">Dashboard</h5>
+                <h5 class="mr-4 mb-0 font-weight-bold">{{$title}} </h5>
             </div>
         </div>
     </div>
 </div>
 <div class="row">
-    <!-- Progress Table start -->
-    <div class="col-12">
-        <button type="button" class="btn btn-primary" style="float: right;" data-toggle="modal" data-target="#modalTambahAnggota">
-            <i class="fa fa-plus"></i> Tambah Anggota
-        </button>
-        <div class="modal fade" id="modalTambahAnggota">
-            <div class="modal-dialog modal-dialog-centered" role="document">
-                <form class="modal-content tambah" action="{{route('petugas.anggota.store')}}" method="post">
-                    @csrf
-                    <div class="modal-header">
-                        <h5 class="modal-title">Tambah Anggota</h5>
-                        <button type="button" class="close" data-dismiss="modal"><span>&times;</span></button>
-                    </div>
-                    <div class="modal-body">
-                        <div class="row">
-                            <div class="col-6">
-                                <label for="nama">Nama Lengkap</label>
-                                <input type="text" class="form-control" id="nama" name="nama" placeholder="Nama Lengkap">
-                            </div>
-                            <div class="col-6">
-                                <label for="tgl_lahir">Tanggal Lahir</label>
-                                <input type="date" class="form-control" id="tgl_lahir" name="tgl_lahir" placeholder="Tanggal Lahir">
-                            </div>
-                            <div class="col-6">
-                                <label for="sekolah">Sekolah</label>
-                                <select class="form-control" id="id_sekolah" name="id_sekolah">
-                                    <option value="" selected disabled>-- Pilih Sekolah --</option>
-                                    @foreach($sekolah as $item)
-                                        <option value="{{$item->id_sekolah}}">{{$item->nama}}</option>
-                                    @endforeach
-                                </select>
-                            </div>
-                            <div class="col-6">
-                                <label for="alamat">Alamat</label>
-                                <textarea class="form-control" id="alamat" name="alamat" placeholder="Alamat"></textarea>
-                            </div>
-                            <div class="col-6">
-                                <label for="simpanan_pokok">Simpanan Pokok</label>
-                                <input type="number" class="form-control" id="simpanan_pokok" name="simpanan_pokok" placeholder="Simpanan Pokok">
-                            </div>
-                            <div class="col-6">
-                                <label for="simpanan_karyawisata">Simpanan Karyawisata</label>
-                                <input type="number" class="form-control" id="simpanan_karyawisata" name="simpanan_karyawisata" placeholder="Simpanan Karyawisata">
-                            </div>
-                            <div class="col-6">
-                                <label for="simpanan_hari_raya">Simpanan Hari Raya</label>
-                                <input type="number" class="form-control" id="simpanan_hari_raya" name="simpanan_hari_raya" placeholder="Simpanan Hari Raya">
-                            </div>
-                        </div>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="reset" class="btn btn-light">Bersihkan</button>
-                        <button type="submit" class="btn btn-primary">Simpan</button>
-                    </div>
-                </form>
+    <!-- Filter Sekolah dan Tambah Anggota -->
+    <div class="col-12 mt-4">
+        <div class="row">
+            
+            <div class="col-md-12">
+                <!-- Tombol Tambah Anggota -->
+                <button type="button" class="btn btn-primary float-right" data-toggle="modal" data-target="#modalTambahAnggota" style="float: right">
+                    <i class="fa fa-plus"></i> Tambah Anggota
+                </button>
             </div>
         </div>
     </div>
+
+    <!-- Daftar Anggota Table -->
     <div class="col-12 mt-4">
         <div class="card">
             <div class="card-body">
                 <h4 class="card_title">
-                    Products Table
+                    {{$title}}
                 </h4>
+                <div class="row">
+                    <div class="col-5">
+                        <form action="{{ route('petugas.anggota.index') }}" method="get">
+                            <div class="input-group mb-3">
+                                <input type="text" name="cari" id="nama" class="form-control" placeholder="Cari Anggota ..">
+                                    <div class="input-group-append">
+                                        <button class="btn btn-primary" type="submit"><i class="fa fa-search"></i></button>
+                                    </div>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="col-7">
+                    <!-- Filter Sekolah -->
+                        <form action="{{ route('petugas.anggota.index') }}" method="get">
+                        <div class="form-group d-flex align-items-start">
+    <select class="form-control" id="filterSekolah" name="filterSekolah">
+        <option value="">-- Semua Sekolah --</option>
+        @foreach ($sekolahs as $item)
+        <option value="{{$item->id_sekolah}}" {{ old('filterSekolah') == $item->id_sekolah ? 'selected' : '' }}>
+            {{$item->nama}}
+        </option>
+        @endforeach
+    </select>
+    <button type="submit" class="btn btn-primary ml-3">Filter</button>
+</div>
+
+                        </form>
+                    </div>
+                </div>
+                
+                
                 <div class="single-table">
                     <div class="table-responsive">
                         <table class="table table-hover progress-table text-center">
                             <thead class="text-uppercase">
-                            <tr>
-                                <th scope="col">Order ID</th>
-                                <th scope="col">Customer</th>
-                                <th scope="col">Product</th>
-                                <th scope="col">Date</th>
-                                <th scope="col">Price</th>
-                                <th scope="col">status</th>
-                                <th scope="col">action</th>
-                            </tr>
+                                <tr>
+                                    <th scope="col">ID</th>
+                                    <th scope="col">Nama</th>
+                                    <th scope="col">Tanggal Lahir</th>
+                                    <th scope="col">Alamat</th>
+                                    <th scope="col">Sekolah</th>
+                                    <th scope="col">Aksi</th>
+                                </tr>
                             </thead>
                             <tbody>
-                            <tr>
-                                <th scope="row">6583</th>
-                                <td>Mark Spence</td>
-                                <td>Macbook Pro</td>
-                                <td>09 / 07 / 2018</td>
-                                <td>672.56$</td>
-                                <td><span class="badge badge-primary">Progress</span></td>
-                                <td>
-                                    <ul class="d-flex justify-content-center">
-                                        <li class="mr-3"><button type="button" class="btn btn-inverse-primary"><i class="fa fa-edit"></i></button></li>
-                                        <li><button type="button" class="btn btn-inverse-danger"><i class="ti-trash"></i></button></li>
-                                    </ul>
-                                </td>
-                            </tr>
-                            <tr>
-                                <th scope="row">4652</th>
-                                <td>David Rebon</td>
-                                <td>iPhone X</td>
-                                <td>09 / 07 / 2018</td>
-                                <td>672.56$</td>
-                                <td><span class="badge badge-warning">Pending</span></td>
-                                <td>
-                                    <ul class="d-flex justify-content-center">
-                                        <li class="mr-3"><button type="button" class="btn btn-inverse-primary"><i class="fa fa-edit"></i></button></li>
-                                        <li><button type="button" class="btn btn-inverse-danger"><i class="ti-trash"></i></button></li>
-                                    </ul>
-                                </td>
-                            </tr>
-                            <tr>
-                                <th scope="row">7292</th>
-                                <td>Jhon Doe</td>
-                                <td>Samsung</td>
-                                <td>09 / 07 / 2018</td>
-                                <td>672.56$</td>
-                                <td><span class="badge badge-success">Completed</span></td>
-                                <td>
-                                    <ul class="d-flex justify-content-center">
-                                        <li class="mr-3"><button type="button" class="btn btn-inverse-primary"><i class="fa fa-edit"></i></button></li>
-                                        <li><button type="button" class="btn btn-inverse-danger"><i class="ti-trash"></i></button></li>
-                                    </ul>
-                                </td>
-                            </tr>
-                            <tr>
-                                <th scope="row">7826</th>
-                                <td>Jessica Roy</td>
-                                <td>Exercise Machine</td>
-                                <td>09 / 07 / 2018</td>
-                                <td>672.56$</td>
-                                <td><span class="badge badge-danger">Stopped</span></td>
-                                <td>
-                                    <ul class="d-flex justify-content-center">
-                                        <li class="mr-3"><button type="button" class="btn btn-inverse-primary"><i class="fa fa-edit"></i></button></li>
-                                        <li><button type="button" class="btn btn-inverse-danger"><i class="ti-trash"></i></button></li>
-                                    </ul>
-                                </td>
-                            </tr>
-                            <tr>
-                                <th scope="row">2638</th>
-                                <td>Malika Jhon</td>
-                                <td>Machine</td>
-                                <td>09 / 07 / 2018</td>
-                                <td>483.56$</td>
-                                <td><span class="badge badge-primary">Progress</span></td>
-                                <td>
-                                    <ul class="d-flex justify-content-center">
-                                        <li class="mr-3"><button type="button" class="btn btn-inverse-primary"><i class="fa fa-edit"></i></button></li>
-                                        <li><button type="button" class="btn btn-inverse-danger"><i class="ti-trash"></i></button></li>
-                                    </ul>
-                                </td>
-                            </tr>
-                            <tr>
-                                <th scope="row">9374</th>
-                                <td>David Jess</td>
-                                <td>Laptop</td>
-                                <td>09 / 07 / 2018</td>
-                                <td>473.56$</td>
-                                <td><span class="badge badge-success">Completed</span></td>
-                                <td>
-                                    <ul class="d-flex justify-content-center">
-                                        <li class="mr-3"><button type="button" class="btn btn-inverse-primary"><i class="fa fa-edit"></i></button></li>
-                                        <li><button type="button" class="btn btn-inverse-danger"><i class="ti-trash"></i></button></li>
-                                    </ul>
-                                </td>
-                            </tr>
+                            @foreach ($anggota as $item)
+                                <tr>
+                                    <th scope="row">{{$item->id_anggota}}</th>
+                                    <td>{{$item->nama}}</td>
+                                    <td>{{$item->tgl_lahir}}</td>
+                                    <td>{{$item->alamat}}</td>
+                                    <td>{{$item->sekolah->nama}}</td>
+                                    <td>
+                                        <ul class="d-flex justify-content-center">
+                                            <li class="mr-3">
+                                            <button type="button" class="btn btn-inverse-primary edit-button" data-toggle="modal" data-target="#modalEditAnggota{{$item->id_anggota}}">
+                                                <i class="fa fa-edit"></i>
+                                            </button>
+                                            </li>
+                                            <li>
+                                                <form  action="{{ route('petugas.anggota.destroy', $item->id_anggota) }}" method="post" class="hapus">
+                                                    @method('DELETE')
+                                                    @csrf
+                                                    <button type="submit" class="btn btn-inverse-danger">
+                                                        <i class="fa fa-trash"></i>
+                                                    </button>
+                                                </form>
+                                            </li>
+                                        </ul>
+                                    </td>
+                                </tr>
+                            @endforeach
+
                             </tbody>
                         </table>
                     </div>
@@ -180,6 +110,95 @@
             </div>
         </div>
     </div>
-    <!-- Progress Table end -->
 </div>
+@endsection
+
+@section('js')
+<!-- Modal Tambah Anggota -->
+<div class="modal fade" id="modalTambahAnggota">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <form class="modal-content tambah" action="{{route('petugas.anggota.store')}}" method="post" autocomplete="off">
+            @csrf
+            <div class="modal-header">
+                <h5 class="modal-title">Tambah Anggota</h5>
+                <button type="button" class="close" data-dismiss="modal"><span>&times;</span></button>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-6">
+                        <label for="nama">Nama</label>
+                        <input type="text" class="form-control" autocomplete="off" id="nama" name="nama" placeholder="Nama" value="{{old('nama')}}">
+                    </div>
+                    <div class="col-6">
+                        <label for="tgl_lahir">Tanggal Lahir</label>
+                        <input type="date" class="form-control" autocomplete="off" id="tgl_lahir" name="tgl_lahir" value="{{old('tgl_lahir')}}">
+                    </div>
+                    <div class="col-12">
+                        <label for="alamat">Alamat</label>
+                        <input type="text" class="form-control" autocomplete="off" id="alamat" name="alamat" placeholder="Alamat" value="{{old('alamat')}}">
+                    </div>
+                    <div class="col-6">
+                        <label for="id_sekolah">Sekolah</label>
+                        <select class="form-control" autocomplete="off" id="id_sekolah" name="id_sekolah">
+                            <option value="" selected disabled>-- Pilih Sekolah --</option>
+                            @foreach ($sekolahs as $item)
+                            <option value="{{$item->id_sekolah}}" {{ old('id_sekolah') == $item->id_sekolah ? 'selected' : '' }}>
+                                {{$item->nama}}
+                            </option>
+                            @endforeach
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="reset" class="btn btn-light">Bersihkan</button>
+                <button type="submit" class="btn btn-primary">Simpan</button>
+            </div>
+        </form>
+    </div>
+</div>
+@foreach($anggota as $item)
+<div class="modal fade" id="modalEditAnggota{{$item->id_anggota}}">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <form class="modal-content edit" action="{{route('petugas.anggota.update', $item->id_anggota)}}" method="post" autocomplete="off">
+            @method('PUT')
+            @csrf
+            <div class="modal-header">
+                <h5 class="modal-title">Edit Anggota</h5>
+                <button type="button" class="close" data-dismiss="modal"><span>&times;</span></button>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-6">
+                        <label for="edit_nama">Nama</label>
+                        <input type="text" class="form-control" autocomplete="off" id="edit_nama" name="nama" placeholder="Nama" value="{{$item->nama}}">
+                    </div>
+                    <div class="col-6">
+                        <label for="edit_tgl_lahir">Tanggal Lahir</label>
+                        <input type="date" class="form-control" autocomplete="off" id="edit_tgl_lahir" name="tgl_lahir" value="{{$item->tgl_lahir}}">
+                    </div>
+                    <div class="col-12">
+                        <label for="edit_alamat">Alamat</label>
+                        <input type="text" class="form-control" autocomplete="off" id="edit_alamat" name="alamat" placeholder="Alamat" value="{{$item->alamat}}">
+                    </div>
+                    <div class="col-6">
+                        <label for="edit_id_sekolah">Sekolah</label>
+                        <select class="form-control" autocomplete="off" id="edit_id_sekolah" name="id_sekolah">
+                            <option value="" selected disabled>-- Pilih Sekolah --</option>
+                            @foreach ($sekolahs as $item)
+                            <option value="{{$item->id_sekolah}}">{{$item->nama}}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-light" data-dismiss="modal">Tutup</button>
+                <button type="submit" class="btn btn-primary">Simpan Perubahan</button>
+            </div>
+        </form>
+    </div>
+</div>
+@endforeach
+
 @endsection

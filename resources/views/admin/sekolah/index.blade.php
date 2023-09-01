@@ -49,7 +49,7 @@
                 </h4>
                 <form action="{{route('admin.sekolah.index')}}" method="get">
                     <div class="input-group mb-3">
-                        <input type="text" name="cari" id="nama" class="form-control" placeholder="Cari Sekolah ..">
+                        <input type="text" name="cari" id="nama" class="form-control" placeholder="Cari Sekolah">
                             <div class="input-group-append">
                                 <button class="btn btn-primary" type="submit"><i class="fa fa-search"></i></button>
                             </div>
