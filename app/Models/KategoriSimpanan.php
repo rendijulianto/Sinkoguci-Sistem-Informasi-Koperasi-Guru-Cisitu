@@ -28,5 +28,6 @@ class KategoriSimpanan extends Model
     {
         return $this->hasMany(Simpanan::class, 'id_kategori', 'id_kategori');
     }
+    
 
 }

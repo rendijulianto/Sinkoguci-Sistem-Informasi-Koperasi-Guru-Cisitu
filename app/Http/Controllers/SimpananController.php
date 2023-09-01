@@ -20,14 +20,6 @@ class SimpananController extends Controller
     }
 
     /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
      * Store a newly created resource in storage.
      */
     public function store(Request $request)
@@ -144,29 +136,5 @@ class SimpananController extends Controller
         $simpanan = json_decode(json_encode($simpanan));
         $kategoriSimpanan = KategoriSimpanan::where('nama', 'like', '%simpanan%')->orderby('id_kategori', 'asc')->get();
         return view('petugas.simpanan.show', compact('title', 'anggota', 'simpanan', 'kategoriSimpanan', 'sisaSimpanan', 'simpananDefault'));
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(string $id)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, string $id)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(string $id)
-    {
-        //
     }
 }

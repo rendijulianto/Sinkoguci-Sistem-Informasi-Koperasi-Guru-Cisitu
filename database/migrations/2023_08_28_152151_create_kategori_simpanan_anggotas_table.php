@@ -15,6 +15,8 @@ return new class extends Migration
             $table->unsignedInteger('id_anggota');
             $table->unsignedInteger('id_kategori');
             $table->double('nominal', 15, 2);
+            $table->double('saldo', 15, 2);
+            $table->timestamps();
             $table->foreign('id_anggota')->references('id_anggota')->on('anggota')->onDelete('cascade')->onUpdate('cascade');
             $table->foreign('id_kategori')->references('id_kategori')->on('kategori_simpanan')->onDelete('cascade')->onUpdate('cascade');
         });
