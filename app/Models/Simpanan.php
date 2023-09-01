@@ -16,7 +16,10 @@ class Simpanan extends Model
         'id_simpanan',
         'id_anggota',
         'id_petugas',
-        'tanggal',
+        'id_kategori',
+        'jumlah',
+        'tgl_bayar',
+        'keterangan',
     ];
 
     public function anggota()
@@ -28,5 +31,11 @@ class Simpanan extends Model
     {
         return $this->belongsTo(Petugas::class, 'id_petugas', 'id_petugas');
     }
+
+    public function kategori()
+    {
+        return $this->belongsTo(KategoriSimpanan::class, 'id_kategori', 'id_kategori');
+    }
+
     
 }

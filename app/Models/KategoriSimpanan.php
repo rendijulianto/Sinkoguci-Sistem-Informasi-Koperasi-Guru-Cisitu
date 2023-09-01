@@ -18,4 +18,15 @@ class KategoriSimpanan extends Model
         'jumlah',
     ];
 
+
+    public function anggota()
+    {
+        return $this->belongsToMany(Anggota::class, 'kategori_simpanan_anggota', 'id_kategori', 'id_anggota');
+    }
+
+    public function simpanan()
+    {
+        return $this->hasMany(Simpanan::class, 'id_kategori', 'id_kategori');
+    }
+
 }
