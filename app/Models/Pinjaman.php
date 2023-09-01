@@ -5,11 +5,11 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Peminjaman extends Model
+class Pinjaman extends Model
 {
     use HasFactory;
 
-    protected $table = 'peminjaman';
+    protected $table = 'pinjaman';
     protected $primaryKey = 'id_pinjaman';
 
     protected $fillable = [
@@ -34,5 +34,18 @@ class Peminjaman extends Model
     public function angsuran()
     {
         return $this->hasMany(Angsuran::class, 'id_pinjaman', 'id_pinjaman');
+    }
+    
+    // apppend status
+    public function getStatusAttribute()
+    {
+        $total_pokok = $this->pokok;
+        $total_angsuran_pokok = $this->angsuran->sum('pokok');
+        $sisa_pinjaman = $total_pokok - $total_angsuran_pokok;
+        if ($sisa_pinjaman == 0) {
+            return 'Lunas';
+        } else {
+            return 'Belum Lunas (Rp. ' . number_format($sisa_pinjaman, 0, ',', '.') . ')';
+        }
     }
 }

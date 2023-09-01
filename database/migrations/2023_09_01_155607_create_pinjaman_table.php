@@ -11,13 +11,14 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('peminjaman', function (Blueprint $table) {
-            $table->increments('id_peminjaman',11);
+        Schema::create('pinjaman', function (Blueprint $table) {
+            $table->increments('id_pinjaman',11);
             $table->unsignedInteger('id_anggota');
             $table->unsignedInteger('id_petugas');
             $table->date('tgl_pinjam');
             $table->double('pokok');
             $table->integer('lama_angsuran');
+            $table->boolean('status')->default(false);
             $table->timestamps();
             $table->foreign('id_anggota')->references('id_anggota')->on('anggota')->onDelete('cascade')->onUpdate('cascade');
             $table->foreign('id_petugas')->references('id_petugas')->on('petugas')->onDelete('cascade')->onUpdate('cascade');
@@ -29,6 +30,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('peminjaman');
+        Schema::dropIfExists('pinjaman');
     }
 };

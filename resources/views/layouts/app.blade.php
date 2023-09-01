@@ -24,9 +24,9 @@ if (Auth::guard('petugas')->user()->level == "petugas") {
             'icon' => 'fa fa-dollar-sign'
         ],
         [
-            'text' => 'Kelola Peminjaman',
+            'text' => 'Kelola Pinjaman',
             'type'=> 'link',
-            'url' => route('petugas.peminjaman.index'),
+            'url' => route('petugas.pinjaman.index'),
             'icon' => 'fa fa-credit-card'
         ],
         [
