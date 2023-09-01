@@ -10,10 +10,19 @@ class KategoriSimpananController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
+        $cari = $request->cari;
         $title = 'Kelola Kategori Simpanan';
-        $kategoriSimpanan = KategoriSimpanan::orderBy('id_kategori', 'desc')->paginate(10);
+    
+        $kategoriSimpanan = KategoriSimpanan::query()
+            ->when($cari, function ($query, $cari) {
+                $query->where('nama', 'like', '%' . $cari . '%')
+                    ->orWhere('jumlah', 'like', '%' . $cari . '%')
+                    ->orWhere('id_kategori', $cari);
+            })
+                ->orderBy('id_kategori', 'desc')
+                ->paginate(10);  
         return view('admin.kategori_simpanan.index', compact('title', 'kategoriSimpanan'));
     }
 
