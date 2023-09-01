@@ -15,10 +15,14 @@ return new class extends Migration
             $table->increments('id_simpanan', 11);
             $table->unsignedInteger('id_anggota');
             $table->unsignedInteger('id_petugas');
+            $table->unsignedInteger('id_kategori');
+            $table->double('jumlah');
             $table->date('tgl_bayar');
+            $table->string('keterangan')->nullable();
             $table->timestamps();
             $table->foreign('id_anggota')->references('id_anggota')->on('anggota')->onDelete('cascade')->onUpdate('cascade');
             $table->foreign('id_petugas')->references('id_petugas')->on('petugas')->onDelete('cascade')->onUpdate('cascade');
+            $table->foreign('id_kategori')->references('id_kategori')->on('kategori_simpanan')->onDelete('cascade')->onUpdate('cascade');
         });
     }
 

@@ -1,7 +1,7 @@
-<?php 
+<?php
 $menu = [];
 if (Auth::guard('petugas')->user()->level == "petugas") {
-    // 
+    //
     $menu = [
         [
             'text' => 'Main',
@@ -186,7 +186,7 @@ if (Auth::guard('petugas')->user()->level == "petugas") {
                Sweet Alert Css
     *===========================-->
     <link rel="stylesheet" href="{{asset('assets/vendors/sweetalert2/css/sweetalert2.min.css')}}">
-    
+
     <!--=========================*
               Flag Icons
     *===========================-->
@@ -199,6 +199,8 @@ if (Auth::guard('petugas')->user()->level == "petugas") {
     <!-- Font USE: 'Roboto', sans-serif;-->
     <link rel="preconnect" href="https://fonts.gstatic.com">
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@100;300;400;500;700;900&display=swap" rel="stylesheet">
+    <!-- Jquery Js -->
+    <script src="{{asset('assets/js/jquery.min.js')}}"></script>
    @yield('css')
 
 </head>
@@ -268,7 +270,7 @@ if (Auth::guard('petugas')->user()->level == "petugas") {
                             </button>
                         </span>
                     </li>
-                    
+
                     <li class="user-dropdown">
                         <div class="dropdown">
                             <button class="btn dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -312,7 +314,7 @@ if (Auth::guard('petugas')->user()->level == "petugas") {
                            Main Menu
                 *===========================-->
                 <ul class="metismenu" id="sidebar_menu">
-                
+
                     @foreach ($menu as $item)
                         @if($item['type'] =="label")
                             <li class="menu-title">{{$item['text']}}</li>
@@ -393,8 +395,7 @@ if (Auth::guard('petugas')->user()->level == "petugas") {
             Scripts
 *===========================-->
 
-<!-- Jquery Js -->
-<script src="{{asset('assets/js/jquery.min.js')}}"></script>
+
 <!-- bootstrap 4 js -->
 <script src="{{asset('assets/js/popper.min.js')}}"></script>
 <script src="{{asset('assets/js/bootstrap.min.js')}}"></script>
