@@ -19,7 +19,11 @@
             @foreach($sisaSimpanan as $key => $sisa)
                     <p> <b>{{ ucwords(str_replace('_', ' ', $key)) }}</b>: Rp {{number_format($sisa, 0, ',', '.')}}</p>
             @endforeach
-        <button class="btn btn-primary btn-block btn-xs"><i class="fa fa-print"></i> Tarik Simpanan</button>
+        <a class="btn btn-primary btn-block btn-xs text-white"
+        {{-- direct with sesssion --}}
+        href="{{route('petugas.penarikan.simpanan')}}?id_anggota={{$anggota->id_anggota}}" target="_blank"
+      
+        ><i class="fa fa-print"></i> Tarik Simpanan</a>
         </div>
     </div>
 </div>

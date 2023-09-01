@@ -59,6 +59,11 @@ class Anggota extends Model
         return $this->belongsToMany(KategoriSimpanan::class, 'kategori_simpanan_anggota', 'id_anggota', 'id_kategori');
     }
 
+    public function kategori_simpanan_anggota()
+    {
+        return $this->hasMany(KategoriSimpananAnggota::class, 'id_anggota', 'id_anggota');
+    }
+
     public function kategori_simpanan_default()
     {
         $default = [];
