@@ -14,7 +14,11 @@ class PetugasController extends Controller
     {
         $cari = $request->cari;
         $title  = 'Kelola Petugas';
-        $petugas = Petugas::where('nama','like',"%".$cari."%")->orderBy('id_petugas', 'desc')->paginate(10);
+        $petugas = Petugas::where('nama','like',"%".$cari."%")
+        ->orWhere('email','like',"%".$cari."%")
+        ->orWhere('level','like',"%".$cari."%")
+        ->orderBy('created_at', 'desc')
+        ->paginate(10);
         return view('admin.petugas.index', compact('title', 'petugas'));
     }
 
