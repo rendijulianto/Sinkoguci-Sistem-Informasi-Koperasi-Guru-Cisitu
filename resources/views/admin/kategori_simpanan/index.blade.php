@@ -84,18 +84,18 @@
         <form class="modal-content tambah" action="{{route('admin.kategori-simpanan.store')}}" method="post" autocomplete="off">
             @csrf
             <div class="modal-header">
-                <h5 class="modal-title">Ubah Kategori Simpanan</h5>
+                <h5 class="modal-title">Tambah Kategori Simpanan</h5>
                 <button type="button" class="close" data-dismiss="modal"><span>&times;</span></button>
             </div>
             <div class="modal-body">
                 <div class="row">
                     <div class="col-6">
                         <label for="nama">Nama Kategori</label>
-                        <input type="text" class="form-control" autocomplete="off" id="nama" name="nama" placeholder="Nama Kategori" value="{{ $item->nama }}">
+                        <input type="text" class="form-control" autocomplete="off" id="nama" name="nama" placeholder="Nama Kategori" value="">
                     </div>
                     <div class="col-6">
                         <label for="jumlah">Jumlah</label>
-                        <input type="number" class="form-control" autocomplete="off" id="jumlah" name="jumlah" placeholder="Jumlah" value="{{ $item->jumlah }}">
+                        <input type="number" class="form-control" autocomplete="off" id="jumlah" name="jumlah" placeholder="Jumlah" value="">
                     </div>
                 </div>
             </div>
