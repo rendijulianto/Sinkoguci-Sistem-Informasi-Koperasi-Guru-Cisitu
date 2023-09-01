@@ -9,10 +9,11 @@ class SekolahController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
+        $cari = $request->cari;
         $title = 'Kelola Sekolah';
-        $sekolah = Sekolah::orderBy('id_sekolah', 'DESC')->paginate(10);
+        $sekolah = Sekolah::where('nama','like',"%".$cari."%")->orderBy('id_sekolah', 'DESC')->paginate(10);
         return view('admin.sekolah.index', compact('title', 'sekolah'));
     }
 

@@ -11,10 +11,12 @@
 </div>
 <div class="row">
     <!-- Progress Table start -->
+
     <div class="col-12">
         <button type="button" class="btn btn-primary" style="float: right;" data-toggle="modal" data-target="#modalTambahSekolah">
             <i class="fa fa-plus"></i> Tambah Sekolah
         </button>
+        
         <div class="modal fade" id="modalTambahSekolah">
             <div class="modal-dialog modal-dialog-centered" role="document">
                 <form class="modal-content tambah" action="{{route('admin.sekolah.store')}}" method="post">
@@ -45,6 +47,15 @@
                 <h4 class="card_title">
                     Data Sekolah
                 </h4>
+                <form action="{{route('admin.sekolah.index')}}" method="get">
+                    <div class="input-group mb-3">
+                        <input type="text" name="cari" id="nama" class="form-control" placeholder="Cari Sekolah ..">
+                            <div class="input-group-append">
+                                <button class="btn btn-primary" type="submit"><i class="fa fa-search"></i></button>
+                            </div>
+                    </div>
+                </form>
+                
                 <div class="single-table">
                     <div class="table-responsive">
                         <table class="table table-hover progress-table text-center">
