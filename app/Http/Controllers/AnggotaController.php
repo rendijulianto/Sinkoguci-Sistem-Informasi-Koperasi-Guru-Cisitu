@@ -13,13 +13,32 @@ class AnggotaController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
         $title = 'Data Anggota';
-        $anggota = Anggota::with('sekolah')->orderBy('id_anggota', 'desc')->paginate(10);
+        $anggota = Anggota::with('sekolah')->orderBy('id_anggota', 'desc');
+
+        // Logika pencarian
+        if ($request->has('cari')) {
+            $cari = $request->input('cari');
+            $anggota->where(function ($query) use ($cari) {
+                $query->where('nama', 'like', '%' . $cari . '%')
+                    ->orWhere('alamat', 'like', '%' . $cari . '%');
+            });
+        }
+
+        // Logika filter sekolah
+        if ($request->has('filterSekolah')) {
+            $filterSekolah = $request->input('filterSekolah');
+            $anggota->where('id_sekolah', $filterSekolah);
+        }
+
+        $anggota = $anggota->paginate(10);
         $sekolahs = Sekolah::orderBy('nama', 'asc')->get();
-        return view('petugas.anggota.index', compact('title', 'anggota','sekolahs'));
+        return view('petugas.anggota.index', compact('title', 'anggota', 'sekolahs'));
     }
+
+
     
 
     /**

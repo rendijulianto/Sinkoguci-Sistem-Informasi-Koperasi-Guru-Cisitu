@@ -10,12 +10,35 @@
     </div>
 </div>
 <div class="row">
-    <!-- Tambah Anggota Button -->
-    <div class="col-12">
-        <button type="button" class="btn btn-primary" style="float: right;" data-toggle="modal" data-target="#modalTambahAnggota">
-            <i class="fa fa-plus"></i> Tambah Anggota
-        </button>
+    <!-- Filter Sekolah dan Tambah Anggota -->
+    <div class="col-12 mt-4">
+        <div class="row">
+            <div class="col-md-6">
+                <!-- Filter Sekolah -->
+                <form action="{{ route('petugas.anggota.index') }}" method="get">
+                    <div class="form-group">
+                        <label for="filterSekolah">Filter Sekolah:</label>
+                        <select class="form-control" name="filterSekolah" id="filterSekolah">
+                            <option value="" selected>-- Semua Sekolah --</option>
+                            @foreach ($sekolahs as $sekolah)
+                                <option value="{{ $sekolah->id_sekolah }}" {{ request('filterSekolah') == $sekolah->id_sekolah ? 'selected' : '' }}>
+                                    {{ $sekolah->nama }}
+                                </option>
+                            @endforeach
+                        </select>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Filter</button>
+                </form>
+            </div>
+            <div class="col-md-6">
+                <!-- Tombol Tambah Anggota -->
+                <button type="button" class="btn btn-primary float-right" data-toggle="modal" data-target="#modalTambahAnggota">
+                    <i class="fa fa-plus"></i> Tambah Anggota
+                </button>
+            </div>
+        </div>
     </div>
+
     <!-- Daftar Anggota Table -->
     <div class="col-12 mt-4">
         <div class="card">
@@ -23,6 +46,16 @@
                 <h4 class="card_title">
                     {{$title}}
                 </h4>
+                <div class="col-12 mt-4">
+                    <form action="{{ route('petugas.anggota.index') }}" method="get">
+                        <div class="input-group mb-3">
+                            <input type="text" name="cari" id="nama" class="form-control" placeholder="Cari Anggota ..">
+                            <div class="input-group-append">
+                                <button class="btn btn-primary" type="submit"><i class="fa fa-search"></i></button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
                 <div class="single-table">
                     <div class="table-responsive">
                         <table class="table table-hover progress-table text-center">
