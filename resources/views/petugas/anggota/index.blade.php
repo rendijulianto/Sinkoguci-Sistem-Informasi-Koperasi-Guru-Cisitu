@@ -84,7 +84,7 @@
                                                 <i class="fa fa-edit"></i>
                                             </button>
                                             </li>
-                                            <li>
+                                            <li class="mr-3">
                                                 <form  action="{{ route('petugas.anggota.destroy', $item->id_anggota) }}" method="post" class="hapus">
                                                     @method('DELETE')
                                                     @csrf
@@ -92,6 +92,11 @@
                                                         <i class="fa fa-trash"></i>
                                                     </button>
                                                 </form>
+                                            </li>
+                                            <li>
+                                                <a class="btn btn-inverseinfo" href="{{ route('petugas.anggota.cetak', $item->id_anggota) }}" target="_blank">
+                                                    <i class="fa fa-print"></i> Cetak Kartu
+                                                </a>
                                             </li>
                                         </ul>
                                     </td>

@@ -138,4 +138,29 @@ public function destroy(string $id)
     }
 }
 
+public function cetak(string $id)
+{
+    $anggota = Anggota::findOrFail($id);
+
+    // Menggunakan PDF generator seperti Laravel DomPDF atau TCPDF
+    $pdf = new \PDF(); // Ganti dengan library PDF yang Anda gunakan
+    $pdf->AddPage();
+    $pdf->SetFont('Arial', '', 12);
+
+    // Isi kartu anggota sesuai dengan format yang Anda inginkan
+    $pdf->Cell(0, 10, 'Kartu Anggota', 0, 1, 'C');
+    $pdf->Cell(0, 10, 'Nama: ' . $anggota->nama, 0, 1, 'L');
+    $pdf->Cell(0, 10, 'Tanggal Lahir: ' . $anggota->tgl_lahir, 0, 1, 'L');
+    $pdf->Cell(0, 10, 'Alamat: ' . $anggota->alamat, 0, 1, 'L');
+    $pdf->Cell(0, 10, 'Sekolah: ' . $anggota->sekolah->nama, 0, 1, 'L');
+
+    // Menyimpan atau menampilkan PDF, tergantung kebutuhan Anda
+    
+    $pdf->Output('Kartu_Anggota.pdf'); 
+    $pdf->Output('I'); 
+    $pdf = PDF::loadView('kartu_anggota', compact('anggota'));
+    return $pdf->stream('Kartu_Anggota.pdf');
+}
+
+
 }

@@ -42,6 +42,8 @@ Route::group(['prefix' => 'petugas', 'as' => 'petugas.', 'middleware' => 'petuga
     Route::get('/penarikan/simpanan', 'PenarikanController@simpanan')->name('penarikan.simpanan');
     Route::get('/penarikan/dana-sosial', 'PenarikanController@danaSosial')->name('penarikan.dana-sosial');
     Route::get('/laporan/tagihan', 'LaporanController@tagihan')->name('laporan.tagihan');
+    Route::get('/petugas/anggota/cetak/{id}', 'AnggotaController@cetak')->name('anggota.cetak');
+
     
 });
 

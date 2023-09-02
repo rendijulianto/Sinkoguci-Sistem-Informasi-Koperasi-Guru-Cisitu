@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Kartu Anggota</title>
+    <style>
+        .member-card {
+  width: 32rem;
+  height: 16rem;
+  background: white;
+  
+  .profile-img {
+    display: inline;
+    padding: 0;
+    img {
+      height: 16rem;
+      display: inline-block;
+    }
+  }
+  
+  .profile-info {
+    padding: 0;
+    .profile-title {
+      background: maroon;
+      width: 100%;
+
+    > * {
+        color: white;
+        margin: 0;
+      }
+      
+      .name {
+        padding: 1rem 2rem 0;        
+      }
+      
+      .title {
+        font-size: 1rem;
+        padding: 0 2rem 1rem;
+      }
+    }
+    
+    .contact {
+      font-size: .85rem;
+      padding: .5rem 2rem;
+      list-style: none;
+      margin: 0;
+      color: gray;
+    }
+  }
+}
+    </style>
+</head>
+<body>
+  <div class="member-card row">
+    <div class="profile-img medium-5 columns">
+      <img src="data:image/jpeg;base64,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">
+    </div>
+    <div class="profile-info medium-7 columns">
+      <div class="profile-title">
+        <h3 class="name">Wayne Lane</h3>
+        <h4 class="title">Account Supervisor at Barkley</h4>
+      </div>
+      <ul class="contact">
+        <li><a href="mailto:josh@codekoalas.com">email@email.com</a></li>
+        <li>816.555.5555</li>
+        <li>816.555.5555</li>
+        <li><a href="www.twitter.com">@twitterhandle</a></li>
+        <li><a href="website.com">company.com</a></li>
+        <li><a href="website.com">person.com</a></li>
+      </ul>
+    </div>
+  </div>
+</body>
+</html>
