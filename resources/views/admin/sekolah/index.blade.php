@@ -90,6 +90,7 @@
                         </table>
                     </div>
                 </div>
+                {{ $sekolah->appends(Request::all())->links('vendor.pagination.bootstrap-4') }}
             </div>
         </div>
     </div>
