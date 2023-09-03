@@ -13,12 +13,26 @@ class PetugasController extends Controller
     public function index(Request $request)
     {
         $cari = $request->cari;
+        $level = $request->level;
         $title  = 'Kelola Petugas';
-        $petugas = Petugas::where('nama','like',"%".$cari."%")
-        ->orWhere('email','like',"%".$cari."%")
-        ->orWhere('level','like',"%".$cari."%")
-        ->orderBy('created_at', 'desc')
-        ->paginate(10);
+        $petugas = Petugas::query();
+        
+        if (!empty($level)) {
+            $petugas->where('level', $level);
+        }
+    
+        // Sisipkan filter pencarian nama atau email jika ada
+        if (!empty($cari)) {
+            $petugas->where(function ($query) use ($cari) {
+                $query->where('nama', 'like', "%$cari%")
+                      ->orWhere('email', 'like', "%$cari%")
+                      ->orWhere('level','like',"%".$cari."%")
+                      ->orWhere('id_petugas','like',"%".$cari."%");
+            });
+        
+        }
+        $petugas = $petugas->paginate(10);
+        $petugas->appends(['cari' => $cari, 'level' => $level]);
         return view('admin.petugas.index', compact('title', 'petugas'));
     }
 
