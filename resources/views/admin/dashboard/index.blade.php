@@ -30,55 +30,46 @@
          <div class="card-body">
             <div class="row">
                <div class="col-lg-4 mb-3" style="cursor: pointer;">
-                  <a href="{{route('petugas.pinjaman.index')}}">
+                  <a href="{{route('admin.petugas.index')}}">
                      <div class="card">
                         <div class="card-body bg-warning text-white d-flex justify-content-between align-items-center rounded">
-                           <i class="fa fa-credit-card fa-3x"></i> Kelola Peminjaman
+                           <i class="fa fa-user fa-3x"></i> Kelola Petugas
                         </div>
                      </div>
                   </a>
                </div>
                <div class="col-lg-4 mb-3" style="cursor: pointer;">
-                  <a href="{{route('petugas.simpanan.index')}}">
+                  <a href="{{route('admin.sekolah.index')}}">
                      <div class="card">
                         <div class="card-body bg-success  text-white d-flex justify-content-between align-items-center rounded">
-                           <i class="fa fa-dollar-sign fa-3x"></i> Kelola Simpanan
+                           <i class="fa fa-school fa-3x"></i> Kelola Sekolah
                         </div>
                      </div>
                   </a>
                </div>
                <div class="col-lg-4 mb-3" style="cursor: pointer;">
-                  <a href="{{route('petugas.penarikan.simpanan')}}">
+                  <a href="{{route('admin.kategori-simpanan.index')}}">
                      <div class="card">
                         <div class="card-body bg-primary d-flex justify-content-between align-items-center rounded">
-                           <i class="fa fa-dollar-sign fa-3x"></i> Kelola Penarikan Simpanan
+                           <i class="fa fa-dollar-sign fa-3x"></i> Kelola Kategori Simpanan
                         </div>
                      </div>
                   </a>
                </div>
                <div class="col-lg-4 mb-3" style="cursor: pointer;">
-                  <a href="{{route('petugas.cicilan.index')}}">
+                  <a href="{{route('admin.laporan.simpanan-bulanan')}}">
                      <div class="card">
                         <div class="card-body bg-primary d-flex justify-content-between align-items-center rounded">
-                           <i class="fa fa-file-invoice-dollar fa-3x"></i> Bayar Cicilan
+                           <i class="fa fa-receipt fa-3x"></i> Laporan Simpanan Bulanan
                         </div>
                      </div>
                   </a>
                </div>
                <div class="col-lg-4 mb-3" style="cursor: pointer;">
-                  <a href="{{route('petugas.laporan.tagihan')}}">
+                  <a href="{{route('admin.laporan.simpanan-tahunan')}}">
                      <div class="card">
                         <div class="card-body bg-danger d-flex justify-content-between align-items-center rounded">
-                           <i class="fa fa-receipt fa-3x"></i> Laporan Tagihan
-                        </div>
-                     </div>
-                  </a>
-               </div>
-               <div class="col-lg-4 mb-3" style="cursor: pointer;">
-                  <a href="{{route('petugas.penarikan.dana-sosial')}}">
-                     <div class="card">
-                        <div class="card-body bg-info d-flex justify-content-between align-items-center rounded">
-                           <i class="fa fa-money-bill fa-3x"></i> Kelola Penarikan Dana Sosial
+                           <i class="fa fa-receipt fa-3x"></i> Laporan Simpanan Tahunan
                         </div>
                      </div>
                   </a>
