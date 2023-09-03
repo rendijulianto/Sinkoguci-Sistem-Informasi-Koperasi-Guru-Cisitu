@@ -16,8 +16,8 @@
     </div>
     <div class="card mt-3">
         <div class="card-body">
-            @foreach($anggota->kategori_simpanan_anggota as $ks)
-                    <p> <b>{{$ks->kategori->nama}} : </b> Rp {{number_format($ks->saldo, 0, ',', '.')}}</p>
+            @foreach($sisaSimpanan as $key => $sisa)
+                    <p> <b>{{ ucwords(str_replace('_', ' ', $key)) }}</b>: Rp {{number_format($sisa, 0, ',', '.')}}</p>
             @endforeach
         </div>
     </div>
@@ -93,8 +93,10 @@
                         <li>
                             <b>Saldo Simpanan:</b>
                         </li>
-                    @foreach($anggota->kategori_simpanan_anggota as $ks)
-                        <li>{{$ks->kategori->nama}} : Rp {{number_format($ks->saldo, 0, ',', '.')}}</li>
+                    @foreach($sisaSimpanan as $ks => $sisa)
+                        <li>
+                            <b>{{ ucwords(str_replace('_', ' ', $ks)) }}:</b> Rp {{number_format($sisa, 0, ',', '.')}}
+                        </li>
                     @endforeach
                     </ul>
                 </div>
