@@ -84,9 +84,10 @@ class PenarikanController extends Controller
         if (!$anggota) {
             return redirect()->back()->with(['error' => 'Anggota tidak ditemukan']);
         }
+        $sisaSimpanan = $anggota->sisaSimpanan();
         $kategoriSimpanan = KategoriSimpanan::where('nama', 'like', '%Simpanan%')->orderBy('id_kategori', 'asc')->get();
         $penarikan = Penarikan::where('id_anggota', $id)->orderBy('tgl_penarikan', 'desc')->get();
-        return view('petugas.penarikan.show', compact('title', 'anggota', 'penarikan', 'kategoriSimpanan'));
+        return view('petugas.penarikan.show', compact('title', 'anggota', 'penarikan', 'sisaSimpanan', 'kategoriSimpanan'));
     }
 
 
