@@ -90,7 +90,7 @@ class Anggota extends Model
         $sisaSimpanan = [];
         $kategori = KategoriSimpanan::select('id_kategori', 'nama')->where('nama', 'like', '%Simpanan%')->orderBy('id_kategori', 'asc')->get();
         foreach ($kategori as $k) {
-            $sisaSimpanan[strtolower(str_replace(' ', '_', $k->nama))] = Simpanan::where('id_anggota', $this->id_anggota)->where('id_kategori', $k->id_kategori)->sum('jumlah') - Penarikan::where('id_anggota', $this->id_anggota)->where('id_kategori', $k->id_kategori)->sum('jumlah');
+            $sisaSimpanan[strtolower(str_replace(' ', '_', $k->nama))] = KategoriSimpananAnggota::where('id_anggota', $this->id_anggota)->where('id_kategori', $k->id_kategori)->first()->saldo ?? 0;
         }
         return $sisaSimpanan;
     }
