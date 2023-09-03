@@ -20,15 +20,32 @@
         <div class="card">
             <div class="card-body">
                 <h4 class="card_title">
-                    Data Petugas
+                    {{$title}}
                 </h4>
-                <form action="{{route('admin.petugas.index')}}" method="get">
-                    <div class="input-group mb-3">
-                        <input type="text" name="cari" id="nama" class="form-control" placeholder="Cari Petugas ..">
+                <form class="row" action="{{route('admin.petugas.index')}}" method="get">
+                    <div class="col-lg-6">
+                        <label class="form-check-label" for="level">Level</label>
+                        <div class="input-group mb-3">
+                            <select class="form-control" autocomplete="off" id="level" name="level">
+                                <option value="" selected disabled>-- Pilih Level --</option>
+                                <option value="admin" {{ Request::get('level') == 'admin' ? 'selected' : '' }}>Admin</option>
+                                <option value="petugas" {{ Request::get('level') == 'petugas' ? 'selected' : '' }}>Petugas</option>
+                            </select>
                             <div class="input-group-append">
                                 <button class="btn btn-primary" type="submit"><i class="fa fa-search"></i></button>
                             </div>
+                        </div>
                     </div>
+                    <div class="col-lg-6">
+                        <label class="form-check-label" for="nama">Kata Kunci</label>
+                        <div class="input-group mb-3">
+                            <input type="text" name="cari" id="nama" class="form-control" placeholder="Cari Petugas ..">
+                                <div class="input-group-append">
+                                    <button class="btn btn-primary" type="submit"><i class="fa fa-search"></i></button>
+                                </div>
+                        </div>
+                    </div>
+                </form>
                 <div class="single-table">
                     <div class="table-responsive">
                         <table class="table table-hover progress-table text-center">
@@ -68,6 +85,7 @@
                         </table>
                     </div>
                 </div>
+                {{ $petugas->appends(Request::all())->links('vendor.pagination.bootstrap-4') }}
             </div>
         </div>
     </div>
