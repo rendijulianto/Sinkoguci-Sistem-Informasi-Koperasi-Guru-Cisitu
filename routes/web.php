@@ -36,6 +36,7 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'middleware' => 'petugasaut
 Route::group(['prefix' => 'petugas', 'as' => 'petugas.', 'middleware' => 'petugasauth:petugas'], function () {
     Route::get('/dashboard', 'DashboardController@index')->name('dashboard');
     Route::resource('/anggota', 'AnggotaController')->names('anggota');
+    Route::get('/cetak/anggota/{id}', 'AnggotaController@cetak')->name('anggota.cetak');
     Route::resource('/simpanan', 'SimpananController')->names('simpanan');
     Route::resource('/pinjaman', 'PinjamanController')->names('pinjaman');
     Route::resource('/cicilan', 'CicilanController')->names('cicilan');

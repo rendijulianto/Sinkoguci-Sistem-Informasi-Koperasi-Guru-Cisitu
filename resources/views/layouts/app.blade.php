@@ -201,6 +201,7 @@ if (Auth::guard('petugas')->user()->level == "petugas") {
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@100;300;400;500;700;900&display=swap" rel="stylesheet">
     <!-- Jquery Js -->
     <script src="{{asset('assets/js/jquery.min.js')}}"></script>
+
    @yield('css')
 
 </head>
