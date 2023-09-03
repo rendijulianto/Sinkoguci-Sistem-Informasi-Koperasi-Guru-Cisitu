@@ -43,7 +43,8 @@ Route::group(['prefix' => 'petugas', 'as' => 'petugas.', 'middleware' => 'petuga
     Route::post('/penarikan/simpanan', 'PenarikanController@store')->name('penarikan.store');
     Route::get('/penarikan/simpanan/{id}', 'PenarikanController@show')->name('penarikan.show');
     Route::get('/penarikan/dana-sosial', 'PenarikanController@danaSosial')->name('penarikan.dana-sosial');
+    Route::post('/penarikan/dana-sosial', 'PenarikanController@storeDanaSosial')->name('penarikan.store-dana-sosial');
     Route::get('/laporan/tagihan', 'LaporanController@tagihan')->name('laporan.tagihan');
-    
+
 });
 

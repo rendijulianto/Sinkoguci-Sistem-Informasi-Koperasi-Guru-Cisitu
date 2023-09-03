@@ -16,9 +16,12 @@ class PenarikanDanaSosial extends Model
     protected $fillable = [
         'id_penarikan',
         'id_petugas',
+        'id_anggota',
         'tgl_penarikan',
         'jumlah',
         'keterangan',
+        'saldo_sebelum',
+        'saldo_sesudah',
     ];
 
     public function petugas()
@@ -30,5 +33,5 @@ class PenarikanDanaSosial extends Model
     {
         return $this->belongsTo(Anggota::class, 'id_anggota', 'id_anggota');
     }
-    
+
 }
