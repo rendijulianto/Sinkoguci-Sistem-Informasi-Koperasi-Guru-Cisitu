@@ -53,7 +53,6 @@ class PenarikanController extends Controller
             if ($saldo < $request->jumlah) {
                 return redirect()->back()->withInput()->with(['error' => 'Saldo tidak cukup']);
             }
-            // tambahkan penarikan
             Penarikan::create([
                 'id_anggota' => $request->id_anggota,
                 'id_petugas' => Auth::guard('petugas')->user()->id_petugas,
