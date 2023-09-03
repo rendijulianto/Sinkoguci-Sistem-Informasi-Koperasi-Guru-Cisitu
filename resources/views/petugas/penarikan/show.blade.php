@@ -10,14 +10,14 @@
                 alt="foto" class="rounded-circle" width="150" height="150">
                 <p>Nama : {{$anggota->nama}}</p>
                 <p>Sekolah : {{$anggota->sekolah->nama}}</p>
-                
+
             </div>
         </div>
     </div>
     <div class="card mt-3">
         <div class="card-body">
-            @foreach($anggota->kategori_simpanan_anggota as $ks)
-                    <p> <b>{{$ks->kategori->nama}} : </b> Rp {{number_format($ks->saldo, 0, ',', '.')}}</p>
+            @foreach($sisaSimpanan as $key => $sisa)
+                    <p> <b>{{ ucwords(str_replace('_', ' ', $key)) }}</b>: Rp {{number_format($sisa, 0, ',', '.')}}</p>
             @endforeach
         </div>
     </div>
@@ -37,28 +37,37 @@
                 </h4>
                 <div class="single-table">
                     <div class="table-responsive">
-                        <table class="table table-hover progress-table text-center">
+                        <table class="table table-hover progress-table">
                             <thead class="text-uppercase bg-primary">
                             <tr>
-                                <th scope="col">No</th>
-                                <th scope="col">Nominal</th>
-                                <th>Keterangan</th>
-                                <th>Tanggal Penarikan</th>
-                                <th>Petugas</th>
+                                <th rowspan="2" scope="col">No</th>
+                                <th rowspan="2">Kategori Simpanan</th>
+                                <th rowspan="2" scope="col">Nominal</th>
+                                <th rowspan="2">Keterangan</th>
+                                <th rowspan="2">Tanggal Penarikan</th>
+                                <th rowspan="2">Petugas</th>
+                                <td colspan="2" class="text-center">Saldo</td>
+                            </tr>
+                            <tr class="text-center">
+                                <td>Sebelum</td>
+                                <td>Sesudah</td>
                             </tr>
                             </thead>
                             <tbody>
                                 @forelse($penarikan as $p)
                                 <tr>
                                     <td>{{$loop->iteration}}</td>
+                                    <td>{{$p->kategori->nama}}</td>
                                     <td>Rp {{number_format($p->jumlah, 0, ',', '.')}}</td>
                                     <td>{{$p->keterangan}}</td>
-                                    <td>{{$p->tgl_penarikan}}</td>
+                                    <td>{{Carbon\Carbon::parse($p->tgl_penarikan)->translatedFormat('d F Y')}}</td>
                                     <td>{{$p->petugas->nama}}</td>
+                                    <td>Rp {{number_format($p->saldo_sebelum, 0, ',', '.')}}</td>
+                                    <td>Rp {{number_format($p->saldo_sesudah, 0, ',', '.')}}</td>
                                 </tr>
                                 @empty
-                                <tr>
-                                    <td colspan="5">Tidak ada data</td>
+                                <tr class="text-center">
+                                    <td colspan="8">Tidak ada data</td>
                                 </tr>
                                 @endforelse
                             </tbody>
@@ -84,8 +93,10 @@
                         <li>
                             <b>Saldo Simpanan:</b>
                         </li>
-                    @foreach($anggota->kategori_simpanan_anggota as $ks)
-                        <li>{{$ks->kategori->nama}} : Rp {{number_format($ks->saldo, 0, ',', '.')}}</li>
+                    @foreach($sisaSimpanan as $ks => $sisa)
+                        <li>
+                            <b>{{ ucwords(str_replace('_', ' ', $ks)) }}:</b> Rp {{number_format($sisa, 0, ',', '.')}}
+                        </li>
                     @endforeach
                     </ul>
                 </div>
