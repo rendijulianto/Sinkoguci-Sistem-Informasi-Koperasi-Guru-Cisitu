@@ -10,7 +10,7 @@
                 alt="foto" class="rounded-circle" width="150" height="150">
                 <p>Nama : {{$anggota->nama}}</p>
                 <p>Sekolah : {{$anggota->sekolah->nama}}</p>
-                
+
             </div>
         </div>
     </div>
@@ -22,7 +22,7 @@
         <a class="btn btn-primary btn-block btn-xs text-white"
         {{-- direct with sesssion --}}
         href="{{route('petugas.penarikan.simpanan')}}?id_anggota={{$anggota->id_anggota}}" target="_blank"
-      
+
         ><i class="fa fa-print"></i> Tarik Simpanan</a>
         </div>
     </div>
@@ -59,7 +59,7 @@
                                         <td>{{$loop->iteration}}</td>
                                         <td>{{$s->bulan}}</td>
                                         @foreach($kategoriSimpanan as $ks)
-                                            @php 
+                                            @php
                                                 $object = strtolower(str_replace(' ', '_', $ks->nama));
                                                 $nominal = $s->$object = $s->$object ?? 0;
                                             @endphp
@@ -104,7 +104,7 @@
                             <input type="number" class="form-control" autocomplete="off" id="{{$key}}" name="{{$key}}" placeholder="{{ ucwords(str_replace('_', ' ', $key)) }}" value="{{old($key) ? old($key) : $s}}">
                         </div>
                     @endforeach
-                    
+
                     <div class="col-12">
                         <label for="simpanan_suka_rela">Total Bayar</label>
                         <input type="text" class="form-control" autocomplete="off" id="total_bayar" name="total_bayar" placeholder="Total Bayar" value="{{old('total_bayar')}}" readonly>
@@ -132,7 +132,7 @@
     @foreach($simpananDefault as $key => $s)
         var {{$key}} = $('#{{$key}}').val() || 0;
     @endforeach
-   
+
     var total_bayar = @foreach($simpananDefault as $key => $s) parseInt({{$key}}) + @endforeach 0;
     total_bayar = new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR' }).format(total_bayar);
     $('#total_bayar').val(total_bayar);
