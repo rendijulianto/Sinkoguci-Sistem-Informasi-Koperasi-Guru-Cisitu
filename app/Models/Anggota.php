@@ -26,7 +26,7 @@ class Anggota extends Model
     {
         return $this->belongsTo(Petugas::class, 'id_petugas', 'id_petugas');
     }
-  
+
 
     public function sekolah()
     {
@@ -67,7 +67,7 @@ class Anggota extends Model
     public function kategori_simpanan_default()
     {
         $default = [];
-        $kategori = KategoriSimpanan::select('id_kategori','nama', 'jumlah')->where('nama', 'like', '%Simpanan%')->orderBy('id_kategori', 'asc')->get();
+        $kategori = KategoriSimpanan::select('id_kategori','nama', 'jumlah')->orderBy('id_kategori', 'asc')->get();
         foreach ($kategori as $k) {
             $kategori_simpanan = KategoriSimpananAnggota::where('id_anggota', $this->id_anggota)->where('id_kategori', $k->id_kategori)->first();
             $nominal = $k->jumlah;

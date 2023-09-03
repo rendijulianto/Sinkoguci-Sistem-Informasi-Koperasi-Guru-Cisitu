@@ -24,42 +24,26 @@ class SimpananController extends Controller
      */
     public function store(Request $request)
     {
-        $this->validate($request, [
+        $kategoriSimpanan = KategoriSimpanan::orderBy('id_kategori', 'asc')->get();
+        $validate_kategori = [
             'id_anggota' => 'required|numeric|exists:anggota,id_anggota',
-            'simpanan_pokok' => 'nullable|numeric',
-            'simpanan_wajib' => 'nullable|numeric',
-            'simpanan_khusus' => 'nullable|numeric',
-            'simpanan_suka_rela' => 'nullable|numeric',
-            'simpanan_hari_raya' => 'nullable|numeric',
-            'simpanan_karya_wisata' => 'nullable|numeric',
-            'dana_khusus' => 'nullable|numeric',
             'keterangan' => 'required|max:255',
             'tgl_bayar' => 'required|date',
-        ],
-        [
+        ];
+        $message_kategori = [
             'id_anggota.required'     => 'Anggota tidak ditemukan!',
             'id_anggota.numeric'     => 'Id anggota tidak valid!',
             'id_anggota.exists' => 'Id anggota tidakn ditemukan!',
-            'simpanan_pokok.required' => 'Simpanan pokok tidak boleh kosong',
-            'simpanan_pokok.numeric' => 'Simpanan pokok harus angka!',
-            'simpanan_khusus.required' => 'Simpanan khusus tidak boleh kosong',
-            'simpanan_khusus.numeric' => 'Simpanan khusus harus angka',
-            'simpanan_wajib.required' => 'Simpanan wajib tidak boleh kosong',
-            'simpanan_wajib.numeric' => 'Simpanan wajib harus angka',
-            'simpanan_suka_rela.required' => 'Simpanan suka rela tidak boleh kosong',
-            'simpanan_suka_rela.numeric' => 'Simpanan suka rela harus angka',
-            'simpanan_hari_raya.required' => 'Simpanan hari raya tidak boleh kosong',
-            'simpanan_hari_raya.numeric' => 'Simpanan hari raya harus angka',
-            'simpanan_karya_wisata.required' => 'Simpanan karya wisata tidak boleh kosong',
-            'simpanan_karya_wisata.numeric' => 'Simpanan karya wisata harus angka',
-            'dana_khusus.required' => 'Dana khusus tidak boleh kosong',
-            'dana_khusus.numeric' => 'Dana khusus harus angka',
             'keterangan.required' => 'Keterangan tidak boleh kosong',
             'keterangan.max' => 'Keterangan maksimal 255 karakter',
             'tgl_bayar.required' => 'Tanggal bayar tidak boleh kosong',
             'tgl_bayar.date' => 'Tanggal bayar harus tanggal',
-
-          ]);
+        ];
+        foreach ($kategoriSimpanan as $k) {
+            $validate_kategori[str_replace(' ', '_', $k->nama)] = 'nullable|numeric';
+            $message_kategori[str_replace(' ', '_', $k->nama).'.numeric'] = 'Jumlah harus angka';
+        }
+        $this->validate($request, $validate_kategori, $message_kategori);
         DB::beginTransaction();
         try {
            $dataSimpanan = [
@@ -70,41 +54,17 @@ class SimpananController extends Controller
                 'tgl_bayar' => $request->tgl_bayar,
             ];
 
-            if($request->simpanan_pokok) {
-                $dataSimpanan['id_kategori'] = 1;
-                $dataSimpanan['jumlah'] = $request->simpanan_pokok;
-                $simpanan = Simpanan::create($dataSimpanan);
+            foreach ($kategoriSimpanan as $k) {
+                $object = strtolower(str_replace(' ', '_', $k->nama));
+                if ($request->$object != null) {
+
+                    $dataSimpanan['id_kategori'] = $k->id_kategori;
+                    $dataSimpanan['jumlah'] = $request->$object;
+                    $simpan =  Simpanan::create($dataSimpanan);
+
+                }
             }
 
-            if($request->simpanan_wajib) {
-                $dataSimpanan['id_kategori'] = 2;
-                $dataSimpanan['jumlah'] = $request->simpanan_wajib;
-                $simpanan = Simpanan::create($dataSimpanan);
-            }
-
-            if($request->simpanan_khusus) {
-                $dataSimpanan['id_kategori'] = 3;
-                $dataSimpanan['jumlah'] = $request->simpanan_khusus;
-                $simpanan = Simpanan::create($dataSimpanan);
-            }
-
-            if($request->simpanan_suka_rela) {
-                $dataSimpanan['id_kategori'] = 5;
-                $dataSimpanan['jumlah'] = $request->simpanan_suka_rela;
-                $simpanan = Simpanan::create($dataSimpanan);
-            }
-
-            if($request->simpanan_hari_raya) {
-                $dataSimpanan['id_kategori'] = 6;
-                $dataSimpanan['jumlah'] = $request->simpanan_hari_raya;
-                $simpanan = Simpanan::create($dataSimpanan);
-            }
-
-            if($request->simpanan_karya_wisata) {
-                $dataSimpanan['id_kategori'] = 7;
-                $dataSimpanan['jumlah'] = $request->simpanan_karya_wisata;
-                $simpanan = Simpanan::create($dataSimpanan);
-            }
 
             DB::commit();
 
@@ -134,7 +94,7 @@ class SimpananController extends Controller
         }
 
         $simpanan = json_decode(json_encode($simpanan));
-        $kategoriSimpanan = KategoriSimpanan::where('nama', 'like', '%simpanan%')->orderby('id_kategori', 'asc')->get();
+        $kategoriSimpanan = KategoriSimpanan::orderby('id_kategori', 'asc')->get();
         return view('petugas.simpanan.show', compact('title', 'anggota', 'simpanan', 'kategoriSimpanan', 'sisaSimpanan', 'simpananDefault'));
     }
 }

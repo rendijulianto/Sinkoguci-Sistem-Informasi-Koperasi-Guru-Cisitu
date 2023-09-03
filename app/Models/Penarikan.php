@@ -34,7 +34,7 @@ class Penarikan extends Model
         return $this->belongsTo(Anggota::class, 'id_anggota', 'id_anggota');
     }
 
-    public function kategori_simpanan()
+    public function kategori()
     {
         return $this->belongsTo(KategoriSimpanan::class, 'id_kategori', 'id_kategori');
     }

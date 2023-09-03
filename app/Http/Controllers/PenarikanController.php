@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Models\{Anggota,KategoriSimpanan, Simpanan, Penarikan};
+use App\Models\{Anggota,KategoriSimpanan, Simpanan, Penarikan, PenarikanDanaSosial};
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 
@@ -61,8 +61,8 @@ class PenarikanController extends Controller
                 'jumlah' => $request->jumlah,
                 'keterangan' => $request->keterangan,
                 'tgl_penarikan' => $request->tgl_penarikan,
-                'saldo_sebelumnya' => $saldo,
-                'saldo_sesudahnya' => $saldo - $request->jumlah,
+                'saldo_sebelum' => $saldo,
+                'saldo_sesudah' => $saldo - $request->jumlah,
             ]);
             // kurangi saldo
             DB::table('kategori_simpanan_anggota')->where('id_anggota', $request->id_anggota)->where('id_kategori', $request->id_kategori)->update([
@@ -89,4 +89,49 @@ class PenarikanController extends Controller
         return view('petugas.penarikan.show', compact('title', 'anggota', 'penarikan', 'kategoriSimpanan'));
     }
 
+
+    public function danaSosial()
+    {
+        $title = 'Kelola Penarikan Dana Sosial';
+        PenarikanDanaSosial::count() == 0 ? $saldo_sekarang = Simpanan::where('id_kategori', 4)->sum('jumlah') : $saldo_sekarang = DB::table('penarikan_dana_sosial')->orderBy('id_penarikan', 'desc')->first()->saldo_sesudah;
+        $penarikan = PenarikanDanaSosial::orderBy('tgl_penarikan', 'desc')->get();
+        return view('petugas.penarikan.dana-sosial',  compact('title', 'saldo_sekarang', 'penarikan'));
+    }
+
+    /**
+     * Store a newly created resource in storage.
+     */
+    public function storeDanaSosial(Request $request)
+    {
+        $this->validate($request, [
+            'jumlah' => 'required|numeric',
+            'keterangan' => 'required|max:60',
+            'tgl_penarikan' => 'required|date',
+        ], [
+            'jumlah.required' => 'Jumlah tidak boleh kosong',
+            'jumlah.numeric' => 'Jumlah harus angka',
+            'keterangan.required' => 'Keterangan tidak boleh kosong',
+            'keterangan.max' => 'Keterangan maksimal 255 karakter',
+            'tgl_penarikan.required' => 'Tanggal penarikan tidak boleh kosong',
+            'tgl_penarikan.date' => 'Tanggal penarikan harus tanggal',
+        ]);
+        try {
+            $saldo_sebelum = PenarikanDanaSosial::count() == 0 ? Simpanan::where('id_kategori', 4)->sum('jumlah') : DB::table('penarikan_dana_sosial')->orderBy('id_penarikan', 'desc')->first()->saldo_sesudah;
+            if ($saldo_sebelum < $request->jumlah) {
+                return redirect()->back()->withInput()->with(['error' => 'Saldo tidak cukup']);
+            }
+            $saldo_sesudah = $saldo_sebelum - $request->jumlah;
+            PenarikanDanaSosial::create([
+                'id_petugas' => Auth::guard('petugas')->user()->id_petugas,
+                'jumlah' => $request->jumlah,
+                'keterangan' => $request->keterangan,
+                'tgl_penarikan' => $request->tgl_penarikan,
+                'saldo_sebelum' => $saldo_sebelum,
+                'saldo_sesudah' => $saldo_sesudah,
+            ]);
+            return redirect()->back()->withInput()->with(['success' => 'Penarikan berhasil ditambahkan']);
+        } catch (\Throwable $th) {
+            return redirect()->back()->withInput()->with(['error' => $th->getMessage()]);
+        }
+    }
 }
