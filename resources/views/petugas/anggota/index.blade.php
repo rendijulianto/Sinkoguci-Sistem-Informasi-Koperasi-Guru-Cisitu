@@ -10,52 +10,48 @@
     </div>
 </div>
 <div class="row">
-    <!-- Filter Sekolah dan Tambah Anggota -->
-    <div class="col-12 mt-4">
-        <div class="row">
-            <div class="col-md-6">
-                <!-- Filter Sekolah -->
-                <form action="{{ route('petugas.anggota.index') }}" method="get">
-                    <div class="form-group">
-                        <label for="filterSekolah">Filter Sekolah:</label>
-                        <select class="form-control" name="filterSekolah" id="filterSekolah">
-                            <option value="" selected>-- Semua Sekolah --</option>
-                            @foreach ($sekolahs as $sekolah)
-                                <option value="{{ $sekolah->id_sekolah }}" {{ request('filterSekolah') == $sekolah->id_sekolah ? 'selected' : '' }}>
-                                    {{ $sekolah->nama }}
-                                </option>
-                            @endforeach
-                        </select>
-                    </div>
-                    <button type="submit" class="btn btn-primary">Filter</button>
-                </form>
-            </div>
-            <div class="col-md-6">
-                <!-- Tombol Tambah Anggota -->
-                <button type="button" class="btn btn-primary float-right" data-toggle="modal" data-target="#modalTambahAnggota">
-                    <i class="fa fa-plus"></i> Tambah Anggota
-                </button>
-            </div>
-        </div>
+    <div class="col-12">
+        <button type="button" class="btn btn-primary" style="float: right;" data-toggle="modal" data-target="#modalTambahAnggota">
+            <i class="fa fa-plus"></i> Tambah Anggota
+        </button>
     </div>
-
     <!-- Daftar Anggota Table -->
-    <div class="col-12 mt-4">
+    <div class="col-12 mt-4" action="{{ route('petugas.anggota.index') }}" method="get">
         <div class="card">
             <div class="card-body">
                 <h4 class="card_title">
                     {{$title}}
                 </h4>
-                <div class="col-12 mt-4">
-                    <form action="{{ route('petugas.anggota.index') }}" method="get">
+                <form class="row"  action="{{ route('petugas.anggota.index') }}" method="get">
+                    <div class="col-lg-6">
+                        <label class="form-check-label" for="id_sekolah">Sekolah</label>
                         <div class="input-group mb-3">
-                            <input type="text" name="cari" id="nama" class="form-control" placeholder="Cari Anggota ..">
+                            <select class="form-control" autocomplete="off" id="id_sekolah" name="id_sekolah">
+                                <option value="" selected disabled>-- Pilih Sekolah --</option>
+                                <option value="all" {{ Request::get('id_sekolah') == 'all' ? 'selected' : '' }}>
+                                    Semua Sekolah
+                                </option>
+                                @foreach ($sekolahs as $item)
+                                <option value="{{$item->id_sekolah}}" {{ Request::get('id_sekolah') == $item->id_sekolah ? 'selected' : '' }}>
+                                    {{$item->nama}}
+                                </option>
+                                @endforeach
+                            </select>
                             <div class="input-group-append">
                                 <button class="btn btn-primary" type="submit"><i class="fa fa-search"></i></button>
                             </div>
                         </div>
-                    </form>
-                </div>
+                    </div>
+                    <div class="col-lg-6">
+                        <label class="form-check-label" for="nama">Kata Kunci</label>
+                        <div class="input-group mb-3">
+                            <input type="text" name="cari" id="nama" class="form-control" placeholder="Cari Anggota .." value="{{ Request::get('cari') }}">
+                            <div class="input-group-append">
+                                <button class="btn btn-primary" type="submit"><i class="fa fa-search"></i></button>
+                            </div>
+                        </div>
+                    </div>
+                </form>
                 <div class="single-table">
                     <div class="table-responsive">
                         <table class="table table-hover progress-table text-center">
@@ -93,6 +89,11 @@
                                                     </button>
                                                 </form>
                                             </li>
+                                            <li class="ml-3">
+                                                <a href="{{ route('petugas.anggota.cetak', $item->id_anggota) }}" class="btn btn-inverse-info">
+                                                    <i class="fa fa-print"></i>
+                                                </a>
+                                            </li>
                                         </ul>
                                     </td>
                                 </tr>
@@ -102,6 +103,7 @@
                         </table>
                     </div>
                 </div>
+                {{ $anggota->appends(Request::all())->links('vendor.pagination.bootstrap-4') }}
             </div>
         </div>
     </div>
@@ -137,7 +139,7 @@
                         <select class="form-control" autocomplete="off" id="id_sekolah" name="id_sekolah">
                             <option value="" selected disabled>-- Pilih Sekolah --</option>
                             @foreach ($sekolahs as $item)
-                            <option value="{{$item->id_sekolah}}" {{ old('id_sekolah') == $item->id_sekolah ? 'selected' : '' }}>
+                            <option value="{{$item->id_sekolah}}" {{old('id_sekolah') == $item->id_sekolah ? 'selected' : ''}}>
                                 {{$item->nama}}
                             </option>
                             @endforeach
@@ -180,8 +182,10 @@
                         <label for="edit_id_sekolah">Sekolah</label>
                         <select class="form-control" autocomplete="off" id="edit_id_sekolah" name="id_sekolah">
                             <option value="" selected disabled>-- Pilih Sekolah --</option>
-                            @foreach ($sekolahs as $item)
-                            <option value="{{$item->id_sekolah}}">{{$item->nama}}</option>
+                            @foreach ($sekolahs as $s)
+                            <option value="{{$s->id_sekolah}}" {{$item->id_sekolah == $s->id_sekolah ? 'selected' : ''}}>
+                                {{$s->nama}}
+                            </option>
                             @endforeach
                         </select>
                     </div>

@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Models\{Anggota, Sekolah};
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
+use PDF;
 
 
 class AnggotaController extends Controller
@@ -15,31 +16,31 @@ class AnggotaController extends Controller
      */
     public function index(Request $request)
     {
-        $title = 'Data Anggota';
-        $anggota = Anggota::with('sekolah')->orderBy('id_anggota', 'desc');
+        $title = 'Kelola Anggota';
+        $id_sekolah = $request->get('id_sekolah');
 
-        // Logika pencarian
-        if ($request->has('cari')) {
-            $cari = $request->input('cari');
-            $anggota->where(function ($query) use ($cari) {
-                $query->where('nama', 'like', '%' . $cari . '%')
-                    ->orWhere('alamat', 'like', '%' . $cari . '%');
-            });
-        }
+        $cari = $request->get('cari');
+        $anggota = Anggota::orderBy('nama', 'asc')
+            ->when($id_sekolah, function ($query, $id_sekolah) {
+                if ($id_sekolah == 'all') {
+                    return $query;
+                } else {
+                    return $query->where('id_sekolah', $id_sekolah);
+                }
+            })
+            ->when($cari, function ($query, $cari) {
+                return $query->where('nama', 'like', '%' . $cari . '%');
+            })
+            ->paginate(10);
 
-        // Logika filter sekolah
-        if ($request->has('filterSekolah')) {
-            $filterSekolah = $request->input('filterSekolah');
-            $anggota->where('id_sekolah', $filterSekolah);
-        }
 
-        $anggota = $anggota->paginate(10);
+
         $sekolahs = Sekolah::orderBy('nama', 'asc')->get();
         return view('petugas.anggota.index', compact('title', 'anggota', 'sekolahs'));
     }
 
 
-    
+
 
     /**
      * Show the form for creating a new resource.
@@ -137,5 +138,16 @@ public function destroy(string $id)
         return redirect()->back()->with('error', $th->getMessage());
     }
 }
+
+    public function cetak(string $id)
+    {
+        $anggota = Anggota::findOrFail($id);
+        // ukurannya A4 potrait
+
+
+        $pdf = PDF::loadview('petugas.anggota.cetak', compact('anggota'))->setPaper('a4', 'landscape');
+    //    preview
+        return $pdf->stream();
+    }
 
 }
