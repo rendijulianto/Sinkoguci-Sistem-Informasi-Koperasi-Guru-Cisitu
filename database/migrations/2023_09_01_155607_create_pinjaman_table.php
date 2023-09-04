@@ -15,10 +15,12 @@ return new class extends Migration
             $table->increments('id_pinjaman',11);
             $table->unsignedInteger('id_anggota');
             $table->unsignedInteger('id_petugas');
-            $table->date('tgl_pinjam');
-            $table->double('pokok');
+            $table->double('nominal');
             $table->integer('lama_angsuran');
-            $table->boolean('status')->default(false);
+            $table->double('sisa_pokok');
+            $table->double('sisa_jasa');
+            $table->date('tgl_pinjam');
+            $table->date('tgl_terakhir_bayar')->nullable();
             $table->timestamps();
             $table->foreign('id_anggota')->references('id_anggota')->on('anggota')->onDelete('cascade')->onUpdate('cascade');
             $table->foreign('id_petugas')->references('id_petugas')->on('petugas')->onDelete('cascade')->onUpdate('cascade');

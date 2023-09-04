@@ -14,12 +14,9 @@ return new class extends Migration
         Schema::create('angsuran', function (Blueprint $table) {
             $table->unsignedInteger('id_pinjaman');
             $table->unsignedInteger('id_petugas');
-            $table->integer('angsuran_ke');
+            $table->double('bayar_pokok');
+            $table->double('bayar_jasa');
             $table->date('tgl_bayar');
-            $table->double('pokok');
-            $table->double('jasa');
-            $table->double('sisa_pokok');
-            $table->double('sisa_jasa');
             $table->timestamps();
             $table->foreign('id_pinjaman')->references('id_pinjaman')->on('pinjaman')->onDelete('cascade')->onUpdate('cascade');
             $table->foreign('id_petugas')->references('id_petugas')->on('petugas')->onDelete('cascade')->onUpdate('cascade');

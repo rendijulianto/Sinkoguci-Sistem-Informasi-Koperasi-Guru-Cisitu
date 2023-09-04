@@ -17,8 +17,13 @@ class Pinjaman extends Model
         'id_anggota',
         'id_petugas',
         'tgl_pinjam',
-        'pokok',
+        'tgl_terakhir_bayar',
+        'nominal',
         'lama_angsuran',
+        'sisa_pokok',
+        'sisa_jasa',
+        'status',
+
     ];
 
     public function petugas()
@@ -35,7 +40,7 @@ class Pinjaman extends Model
     {
         return $this->hasMany(Angsuran::class, 'id_pinjaman', 'id_pinjaman');
     }
-    
+
     // apppend status
     public function getStatusAttribute()
     {
