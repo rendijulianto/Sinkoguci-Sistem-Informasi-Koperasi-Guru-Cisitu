@@ -16,8 +16,9 @@
     </div>
     <div class="card mt-3">
         <div class="card-body">
-            @foreach($sisaSimpanan as $key => $sisa)
-                    <p> <b>{{ ucwords(str_replace('_', ' ', $key)) }}</b>: Rp {{number_format($sisa, 0, ',', '.')}}</p>
+            @foreach($sisaSimpanan as $ss)
+           
+                    <p> <b>{{ ucwords(str_replace('_', ' ', $ss['nama'])) }}</b> : Rp {{number_format($ss['nominal'], 0, ',', '.')}}</p>
             @endforeach
         <a class="btn btn-primary btn-block btn-xs text-white"
         {{-- direct with sesssion --}}
@@ -42,34 +43,30 @@
                 </h4>
                 <div class="single-table">
                     <div class="table-responsive">
-                        <table class="table table-hover progress-table text-center">
+                        <table class="table table-hover progress-table table-striped table-bordered text-center">
                             <thead class="text-uppercase bg-primary">
                             <tr>
                                 <th scope="col">No</th>
                                 <th scope="col">Bulan</th>
                                 @foreach($kategoriSimpanan as $s)
-                                    <th scope="col">{{$s->nama}}</th>
+                                    <th scope="col" class="text-capitalize">{{ ucwords(str_replace('_', ' ', $s->nama)) }}</th>
                                 @endforeach
                                 <th>Total</th>
                             </tr>
                             </thead>
                             <tbody>
                                @foreach($simpanan as $s)
+                                       
                                     <tr>
-                                        <td>{{$loop->iteration}}</td>
-                                        <td>{{$s->bulan}}</td>
-                                        @foreach($kategoriSimpanan as $ks)
-                                            @php
-                                                $object = strtolower(str_replace(' ', '_', $ks->nama));
-                                                $nominal = $s->$object = $s->$object ?? 0;
-                                            @endphp
-                                            @if($nominal == 0)
-                                                <td>-</td>
+                                        <td>{{$loop->iteration }}</td>
+                                        @foreach($s as $key => $ss)
+                                            @if($key == 0)
+                                                <td>{{$ss}}</td>
                                             @else
-                                                <td>Rp {{number_format($nominal, 0, ',', '.')}}</td>
+                                                <td class="text-right">Rp {{number_format($ss, 0, ',', '.')}}</td>
                                             @endif
+                                         
                                         @endforeach
-                                        <td>Rp {{number_format($s->total, 0, ',', '.')}}</td>
                                     </tr>
                                 @endforeach
                             </tbody>
@@ -98,10 +95,11 @@
                 </div>
                 <input type="hidden" name="id_anggota" value="{{$anggota->id_anggota}}">
                 <div class="row">
-                    @foreach($simpananDefault as $key => $s)
+                    @foreach($simpananDefault as $s)
+              
                         <div class="col-6">
-                            <label for="{{$key}}">{{ ucwords(str_replace('_', ' ', $key)) }}</label>
-                            <input type="number" class="form-control" autocomplete="off" id="{{$key}}" name="{{$key}}" placeholder="{{ ucwords(str_replace('_', ' ', $key)) }}" value="{{old($key) ? old($key) : $s}}">
+                            <label for="{{$s['nama']}}">{{ ucwords(str_replace('_', ' ', $s['nama'])) }}</label>
+                            <input type="number" class="form-control" autocomplete="off" id="{{strtolower(str_replace(' ', '_', $s['nama']))}}" name="{{strtolower(str_replace(' ', '_', $s['nama']))}}" placeholder="{{ ucwords(str_replace('_', ' ', $s['nama'])) }}" value="{{old(strtolower(str_replace(' ', '_', $s['nama']))) ?? $s['jumlah']}}">
                         </div>
                     @endforeach
 
@@ -129,11 +127,11 @@
 
 <script>
  $('input[type=number]').on('keyup', function() {
-    @foreach($simpananDefault as $key => $s)
-        var {{$key}} = $('#{{$key}}').val() || 0;
+    @foreach($simpananDefault as $s)
+        var {{strtolower(str_replace(' ', '_', $s['nama']))}} = $('#{{strtolower(str_replace(' ', '_', $s['nama']))}}').val();
     @endforeach
 
-    var total_bayar = @foreach($simpananDefault as $key => $s) parseInt({{$key}}) + @endforeach 0;
+    var total_bayar = @foreach($simpananDefault as $s)parseInt({{strtolower(str_replace(' ', '_', $s['nama']))}}) + @endforeach 0;
     total_bayar = new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR' }).format(total_bayar);
     $('#total_bayar').val(total_bayar);
  });
