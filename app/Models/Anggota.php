@@ -145,7 +145,7 @@ class Anggota extends Model
             } else  if ($value->id_kategori == 1) {
                 $simpanan[strtolower(str_replace(' ', '_', $value->nama))] = 0;
             } else {
-                $simpanan[strtolower(str_replace(' ', '_', $value->nama))] = $jumlah_tagihan - $cek->jumlah;
+                $simpanan[strtolower(str_replace(' ', '_', $value->nama))] = $jumlah_tagihan - Simpanan::where('id_anggota', $this->id_anggota)->where('id_kategori', $value->id_kategori)->whereMonth('tgl_bayar', Carbon::parse($bulan)->format('m'))->sum('jumlah');
                 $total += $simpanan[strtolower(str_replace(' ', '_', $value->nama))];
             }
         }
