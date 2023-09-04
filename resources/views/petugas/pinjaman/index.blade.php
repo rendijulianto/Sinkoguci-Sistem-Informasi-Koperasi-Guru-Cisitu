@@ -61,52 +61,52 @@
                                     <th rowspan="2" scope="col">Nomor</th>
                                     <th rowspan="2" scope="col">Anggota</th>
                                     <th rowspan="2" scope="col">Nominal</th>
-                                    <th colspan="2" scope="col">Sisa</th>
+                                    <th colspan="2" scope="col" class="text-center">Sisa</th>
                                     <th rowspan="2" scope="col">Status</th>
-                                    <th rowspan="2" scope="col">Tenor</th>
+                                    <th rowspan="2" scope="col">Lama Anguran</th>
                                     <th rowspan="2" scope="col">Aksi</th>
                                 </tr>
-                                <tr>
+                                <tr class="text-center">
                                     <th scope="col">Pokok</th>
                                     <th scope="col">Jasa</th>
                                 </tr>
                             </thead>
                             <tbody>
                             @foreach ($pinjaman as $p)
-                                <tr>
-                                    <th scope="row">{{$loop->iteration}}</th>
-                                    <td>{{$p->id_pinjaman}}</td>
-                                    <td>
-                                        <div class="d-flex align-items-center">
-                                            <img src="https://ui-avatars.com/api/?name={{$p->anggota->nama}}" alt="" class="img-fluid rounded-circle" width="30">
-                                            <div>
-                                                <p class="d-inline-block ml-2 mb-0">{{$p->anggota->nama}}</p>
-                                            </div>
+                            <tr>
+                                <th scope="row">{{$loop->iteration}}</th>
+                                <td>{{$p->id_pinjaman}}</td>
+                                <td>
+                                    <div class="d-flex align-items-center">
+                                        <img src="https://ui-avatars.com/api/?name={{$p->anggota->nama}}" alt="" class="img-fluid rounded-circle" width="30">
+                                        <div>
+                                            <p class="d-inline-block ml-2 mb-0">{{$p->anggota->nama}}</p>
                                         </div>
-                                        <span>Tergabung sejak {{$p->anggota->created_at->format('d M Y')}}</span>
-                                    </td>
-                                    <td>Rp. {{number_format($p->nominal, 0, ',', '.')}}</td>
-                                    <td>Rp. {{number_format($p->sisa_pokok, 0, ',', '.')}}</td>
-                                    <td>Rp. {{number_format($p->sisa_jasa, 0, ',', '.')}}</td>
-                                    <td>
-                                        @if ($p->sisa_pokok == 0 && $p->sisa_jasa == 0)
-                                            <span class="badge badge-success">Lunas</span>
-                                        @else
-                                            <span class="badge badge-warning">Belum Lunas</span>
-                                        @endif
-                                    </td>
-                                    <td>{{$p->tenor}} Bulan</td>
-                                    <td>
-                                        <a href="{{route('petugas.pinjaman.show', $p->id_pinjaman)}}" class="btn btn-sm btn-primary"><i class="fa fa-eye"></i></a>
-                                        <a href="{{route('petugas.pinjaman.edit', $p->id_pinjaman)}}" class="btn btn-sm btn-warning"><i class="fa fa-edit"></i></a>
-                                        <form action="{{route('petugas.pinjaman.destroy', $p->id_pinjaman)}}" method="post" class="d-inline">
-                                            @csrf
-                                            @method('delete')
-                                            <button type="submit" class="btn btn-sm btn-danger"><i class="fa fa-trash"></i></button>
-                                        </form>
-                                    </td>
+                                    </div>
+                                    <span>Tergabung sejak {{$p->anggota->created_at->format('d M Y')}}</span>
+                                </td>
+                                <td>Rp. {{number_format($p->nominal, 0, ',', '.')}}</td>
+                                <td>Rp. {{number_format($p->sisa_pokok, 0, ',', '.')}}</td>
+                                <td>Rp. {{number_format($p->sisa_jasa, 0, ',', '.')}}</td>
+                                <td>
+                                    @if ($p->sisa_pokok == 0 && $p->sisa_jasa == 0)
+                                        <span class="badge badge-success">Lunas</span>
+                                    @else
+                                        <span class="badge badge-warning">Belum Lunas</span>
+                                    @endif
+                                </td>
+                                <td>{{$p->lama_angsuran}} Bulan</td>
+                                <td>
+                                    <a href="{{route('petugas.pinjaman.show', $p->id_pinjaman)}}" class="btn btn-sm btn-primary"><i class="fa fa-eye"></i></a>
+                                    <a href="{{route('petugas.pinjaman.edit', $p->id_pinjaman)}}" class="btn btn-sm btn-warning"><i class="fa fa-edit"></i></a>
+                                    <form action="{{route('petugas.pinjaman.destroy', $p->id_pinjaman)}}" method="post" class="d-inline">
+                                        @csrf
+                                        @method('delete')
+                                        <button type="submit" class="btn btn-sm btn-danger"><i class="fa fa-trash"></i></button>
+                                    </form>
+                                </td>
 
-                                </tr>
+                            </tr>
                             @endforeach
                             </tbody>
                         </table>
@@ -114,7 +114,6 @@
                 </div>
                 {{ $pinjaman->appends(Request::all())->links('vendor.pagination.bootstrap-4') }}
             </div>
-            {{ $pinjaman->appends(Request::all())->links('vendor.pagination.bootstrap-4') }}
         </div>
     </div>
 </div>

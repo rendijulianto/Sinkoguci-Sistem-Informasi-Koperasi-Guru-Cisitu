@@ -21,6 +21,7 @@ return new class extends Migration
             $table->double('sisa_jasa');
             $table->date('tgl_pinjam');
             $table->date('tgl_terakhir_bayar')->nullable();
+            $table->date('tgl_update_jasa')->nullable();
             $table->timestamps();
             $table->foreign('id_anggota')->references('id_anggota')->on('anggota')->onDelete('cascade')->onUpdate('cascade');
             $table->foreign('id_petugas')->references('id_petugas')->on('petugas')->onDelete('cascade')->onUpdate('cascade');

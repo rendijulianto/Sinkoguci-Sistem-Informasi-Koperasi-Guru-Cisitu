@@ -18,6 +18,7 @@ class Pinjaman extends Model
         'id_petugas',
         'tgl_pinjam',
         'tgl_terakhir_bayar',
+        'tgl_update_jasa',
         'nominal',
         'lama_angsuran',
         'sisa_pokok',

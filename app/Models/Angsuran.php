@@ -16,12 +16,13 @@ class Angsuran extends Model
     protected $fillable = [
         'id_pinjaman',
         'id_petugas',
-        'angsuran_ke',
+        'bayar_pokok',
+        'bayar_jasa',
         'tgl_bayar',
-        'pokok',
-        'jasa',
-        'sisa_pokok',
-        'sisa_jasa',
+        'sebelum_pokok',
+        'sebelum_jasa',
+        'setelah_pokok',
+        'setelah_jasa',
     ];
 
     public function petugas()

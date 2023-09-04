@@ -24,10 +24,10 @@ class PinjamanController extends Controller
             ->orWhereHas('petugas', function ($query) use ($cari) {
                 $query->where('nama', 'like', '%' . $cari . '%');
             })
-            ->orWhere('nominal', 'like', '%' . $cari . '%')
+            // ->orWhere('nominal', 'like', '%' . $cari . '%')
             ->orWhere('tgl_pinjam', 'like', '%' . $cari . '%')
             ->whereBetween('tgl_pinjam', [$tanggal_awal, $tanggal_akhir])
-            ->orderBy('tgl_pinjam', 'desc')
+            ->orderBy('created_at', 'desc')
             ->paginate(10);
 
 
@@ -46,7 +46,7 @@ class PinjamanController extends Controller
 
     public function store(Request $request) {
         $this->validate($request, [
-            'id_anggota' => 'required',
+            'id_anggota' => 'required|numeric|exists:anggota,id_anggota',
             'nominal' => 'required|numeric',
             'lama_angsuran' => 'required|numeric',
             'tgl_pinjam' => 'required|date',
@@ -76,5 +76,28 @@ class PinjamanController extends Controller
       } catch (\Throwable $th) {
         return redirect()->back()->withInput()->with('error', $th->getMessage());
       }
+    }
+
+
+    public function tambahJasaTagihanBulanBaru(Request $request) {
+        // Dikatakan Belum Lunas Jika Sisa Pokoknya Masih Ada atau Sisa Jasa Masih Ada
+        // daftar pinjaman yang belum lunas dan tgl_update_jasa nya bukan bulan dan tahun sekarang
+        $pinjaman = Pinjaman::where(function ($query) {
+            $query->where('sisa_pokok', '>', 0)
+                ->orWhere('sisa_jasa', '>', 0);
+        })
+            // ->whereYear('tgl_update_jasa', '!=', date('Y'))
+            ->whereMonth('tgl_update_jasa', '!=', date('m'))
+            ->get();
+
+        $persen_jasa = 0.03;
+        foreach ($pinjaman as $p) {
+            //hitung jasa per bulan
+            $jasa_per_bulan = $p->sisa_pokok * $persen_jasa;
+            //tambahkan jasa per bulan ke sisa jasa
+            $p->sisa_jasa += $jasa_per_bulan;
+            $p->tgl_update_jasa = date('Y-m-d');
+            $p->save();
+        }
     }
 }

@@ -38,6 +38,7 @@ Route::group(['prefix' => 'petugas', 'as' => 'petugas.', 'middleware' => 'petuga
     Route::resource('/anggota', 'AnggotaController')->names('anggota');
     Route::get('/cetak/anggota/{id}', 'AnggotaController@cetak')->name('anggota.cetak');
     Route::resource('/simpanan', 'SimpananController')->names('simpanan');
+    Route::get('/pinjaman/tambah-jasa-tagihan-bulan-baru', 'PinjamanController@tambahJasaTagihanBulanBaru')->name('pinjaman.tambah-jasa-tagihan-bulan-baru');
     Route::resource('/pinjaman', 'PinjamanController')->names('pinjaman');
     Route::resource('/cicilan', 'CicilanController')->names('cicilan');
     Route::get('/penarikan/simpanan', 'PenarikanController@simpanan')->name('penarikan.simpanan');
