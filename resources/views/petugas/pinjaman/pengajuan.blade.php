@@ -1,5 +1,8 @@
 @extends('layouts.app')
-
+@section('css')
+<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+@endsection
 @section('content')
 <div class="row mb-4">
     <div class="col-lg-12">
@@ -24,10 +27,10 @@
                     {{-- anggota --}}
                     <div class="col-12">
                         <label for="id_anggota">Anggota</label>
-                        <select name="id_anggota" id="id_anggota" class="form-control">
+                        <select name="id_anggota" id="id_anggota" class="form-control select2">
                             <option value="">-- Pilih Anggota --</option>
                             @foreach ($anggota as $item)
-                                <option value="{{$item->id_anggota}}">{{$item->nama}}</option>
+                                <option value="{{$item->id_anggota}}">{{$item->nama}} - {{$item->sekolah->nama}}</option>
                             @endforeach
                         </select>
                     </div>
@@ -49,7 +52,7 @@
                     {{-- perangsuran --}}
                     <div class="col-12">
                         <label for="perangsuran">Perangsuran</label>
-                        <input type="text" class="form-control" name="perangsuran" id="perangsuran" value="{{old('perangsuran')}}" placeholder="Perangsuran">
+                        <input type="text" readonly  class="form-control" name="perangsuran" id="perangsuran" value="{{old('perangsuran')}}" placeholder="Perangsuran">
                     </div>
                     <div class="col-12">
                         <label for="tgl_pinjam">Tanggal Pinjam</label>
@@ -77,8 +80,11 @@
 </div>
 @endsection
 @section('js')
+
     <script>
+       
         $(document).ready(function(){
+            $('.select2').select2();
             // jika nominal atau jangka waktu berubah
             $('#nominal, #lama_angsuran').on('keyup', function(){
                 // ambil nilai nominal

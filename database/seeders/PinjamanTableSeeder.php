@@ -31,69 +31,50 @@ class PinjamanTableSeeder extends Seeder
         // angsuran lancar (tidak ada yang nunggak)
         $pinjaman = Pinjaman::where('tgl_pinjam', '<=', date('Y-m-d'))->take(10)->get();
         foreach ($pinjaman as $p) {
-            $nominal = $p->nominal;
-            $lama_angsuran = $p->lama_angsuran;
-            $tgl_pinjam = $p->tgl_pinjam;
-            $tgl_terakhir_bayar = $p->tgl_terakhir_bayar;
-            $sisa_pokok = $p->sisa_pokok;
-            $sisa_jasa = $p->sisa_jasa;
-            $tgl_bayar = $tgl_pinjam;
-            $bayar_pokok = $nominal / $lama_angsuran;
-            $bayar_jasa = $sisa_jasa / $lama_angsuran;
-            for ($i = 1; $i <= $lama_angsuran; $i++) {
+            # Data Pinjaman 
+            $pokok_sekarang = $p->sisa_pokok;
+            $jasa_sekarang = $p->sisa_jasa;
+            $bayar_pokok = $pokok_sekarang / $p->lama_angsuran;
+            $bayar_jasa = $jasa_sekarang / $p->lama_angsuran;
+            $tgl_bayar = $p->tgl_pinjam;
+            $sebelum_pokok = $pokok_sekarang;
+            $sebelum_jasa = $jasa_sekarang;
+            $setelah_pokok = $pokok_sekarang - $bayar_pokok;
+            $setelah_jasa = $jasa_sekarang - $bayar_jasa;
+
+            for ($i = 1; $i <= $p->lama_angsuran; $i++) {
                 DB::table('angsuran')->insert([
                     'id_pinjaman' => $p->id_pinjaman,
                     'id_petugas' => 1,
                     'bayar_pokok' => $bayar_pokok,
                     'bayar_jasa' => $bayar_jasa,
                     'tgl_bayar' => $tgl_bayar,
-                    'created_at' => date('Y-m-d H:i:s', strtotime($tgl_bayar)),
-                    'updated_at' => date('Y-m-d H:i:s', strtotime($tgl_bayar)),
+                    'sebelum_pokok' => $sebelum_pokok,
+                    'sebelum_jasa' => $sebelum_jasa,
+                    'setelah_pokok' => $setelah_pokok,
+                    'setelah_jasa' => $setelah_jasa,
                 ]);
-                $tgl_bayar = date('Y-m-d', strtotime('+' . rand(1, 12) . ' months', strtotime($tgl_bayar)));
-                $sisa_pokok -= $bayar_pokok;
-                $sisa_jasa -= $bayar_jasa;
+                $tgl_bayar = date('Y-m-d', strtotime('+1 months', strtotime($tgl_bayar)));
+                $sebelum_pokok = $setelah_pokok;
+                $sebelum_jasa = $setelah_jasa;
+                $setelah_pokok = $setelah_pokok - $bayar_pokok;
+                $setelah_jasa = $setelah_jasa - $bayar_jasa;
             }
-            $p->update([
-                'sisa_pokok' => $sisa_pokok,
-                'sisa_jasa' => $sisa_jasa,
-                'tgl_terakhir_bayar' => $tgl_terakhir_bayar,
-            ]);
-        }
 
-        // angsuran nunggak (ada yang nunggak)
-        $pinjaman = Pinjaman::where('sisa_pokok', '>', 0)->where('tgl_pinjam', '<=', date('Y-m-d'))->take(10)->get();
-        foreach ($pinjaman as $p) {
-        //   dibuat seolah2 ada yang hanya menggangus 2 bulan 3 bulan dan dll
-            $nominal = $p->nominal;
-            $lama_angsuran = $p->lama_angsuran;
-            $tgl_pinjam = $p->tgl_pinjam;
-            $tgl_terakhir_bayar = $p->tgl_terakhir_bayar;
-            $sisa_pokok = $p->sisa_pokok;
-            $sisa_jasa = $p->sisa_jasa;
-            $tgl_bayar = $tgl_pinjam;
-            $bayar_pokok = $nominal / $lama_angsuran;
-            $bayar_jasa = $sisa_jasa / $lama_angsuran;
-            for ($i = 1; $i <= rand(1, $lama_angsuran); $i++) {
-                DB::table('angsuran')->insert([
-                    'id_pinjaman' => $p->id_pinjaman,
-                    'id_petugas' => 1,
-                    'bayar_pokok' => $bayar_pokok,
-                    'bayar_jasa' => $bayar_jasa,
-                    'tgl_bayar' => $tgl_bayar,
-                    'created_at' => date('Y-m-d H:i:s', strtotime($tgl_bayar)),
-                    'updated_at' => date('Y-m-d H:i:s', strtotime($tgl_bayar)),
-                ]);
-                $tgl_bayar = date('Y-m-d', strtotime('+' . rand(1, 12) . ' months', strtotime($tgl_bayar)));
-                $sisa_pokok -= $bayar_pokok;
-                $sisa_jasa -= $bayar_jasa;
-            }
             $p->update([
-                'sisa_pokok' => $sisa_pokok,
-                'sisa_jasa' => $sisa_jasa,
-                'tgl_terakhir_bayar' => $tgl_terakhir_bayar,
+                'sisa_pokok' => 0,
+                'sisa_jasa' => 0,
+                'tgl_terakhir_bayar' => date('Y-m-d', strtotime('-1 months', strtotime($tgl_bayar))),
             ]);
+            
 
         }
+
+        // // angsuran nunggak (ada yang nunggak)
+        // $pinjaman = Pinjaman::where('sisa_pokok', '>', 0)->where('tgl_pinjam', '<=', date('Y-m-d'))->take(10)->get();
+        // foreach ($pinjaman as $p) {
+        
+
+        // }
     }
 }
