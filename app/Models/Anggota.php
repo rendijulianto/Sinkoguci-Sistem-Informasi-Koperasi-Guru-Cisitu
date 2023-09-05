@@ -109,4 +109,67 @@ class Anggota extends Model
         $simpanan['total'] = $total;
         return $simpanan;
     }
+
+    public function tagihanSimpanan($bulan)
+    {
+        // cek apakah sudah ada simpanan untuk bulan ini
+        $kategori = KategoriSimpanan::select('id_kategori', 'nama', 'jumlah')->orderBy('id_kategori', 'asc')->get();
+        $simpanan = [];
+        $bulan = '01-'.$bulan.'-'.date('Y');
+      
+        $total = 0;
+        foreach ($kategori as $key => $value) {
+            // cek apakah sudah ada simpanan untuk bulan ini dan kategori ini jika sudah maka tidak perlu ditagih
+            $cek = Simpanan::where('id_anggota', $this->id_anggota)->where('id_kategori', $value->id_kategori)->whereMonth('tgl_bayar', Carbon::parse($bulan)->format('m'))->first();
+            $tagihan = KategoriSimpananAnggota::where('id_anggota', $this->id_anggota)->where('id_kategori', $value->id_kategori)->first();
+            if($tagihan == null) {
+                $jumlah_tagihan = $value->jumlah;
+            } else {
+                $jumlah_tagihan = $tagihan->nominal;
+            }
+           
+            if($cek == null) {
+                // cek apakah simpanan pokok pernah dibayar
+                if($value->id_kategori == 1) {
+                    $cek = Simpanan::where('id_anggota', $this->id_anggota)->where('id_kategori', $value->id_kategori)->first();
+                    if($cek != null) {
+                        $simpanan[strtolower(str_replace(' ', '_', $value->nama))] = 0;
+                    } else {
+                        $simpanan[strtolower(str_replace(' ', '_', $value->nama))] = $jumlah_tagihan;
+                        $total += $simpanan[strtolower(str_replace(' ', '_', $value->nama))];
+                    }
+                } else {
+                    $simpanan[strtolower(str_replace(' ', '_', $value->nama))] = $jumlah_tagihan;
+                    $total += $simpanan[strtolower(str_replace(' ', '_', $value->nama))];
+                }
+            } else  if ($value->id_kategori == 1) {
+                $simpanan[strtolower(str_replace(' ', '_', $value->nama))] = 0;
+            } else {
+                $simpanan[strtolower(str_replace(' ', '_', $value->nama))] = $jumlah_tagihan - Simpanan::where('id_anggota', $this->id_anggota)->where('id_kategori', $value->id_kategori)->whereMonth('tgl_bayar', Carbon::parse($bulan)->format('m'))->sum('jumlah');
+                $total += $simpanan[strtolower(str_replace(' ', '_', $value->nama))];
+            }
+        }
+        $simpanan['total'] = $total;
+        return $simpanan;
+    }
+
+    public function tagihanPinjaman()
+    {
+        // cek apakah memiliki pinjaman
+        $pinjaman = Pinjaman::where('id_anggota', $this->id_anggota)->where(function($q) {
+            $q->where('sisa_pokok', '>', 0)->orWhere('sisa_jasa', '>', 0);
+        })->get();
+        $tagihan = [
+            'pokok' => 0,
+            'jasa' => 0,
+            'total' => 0
+        ];
+        
+        foreach ($pinjaman as $p) {
+            $tagihan['pokok'] += $p->sisa_pokok;
+            $tagihan['jasa'] += $p->sisa_jasa;
+        }
+        $tagihan['total'] = $tagihan['pokok'] + $tagihan['jasa'];
+        return $tagihan;
+    }
 }

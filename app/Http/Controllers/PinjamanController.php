@@ -86,9 +86,15 @@ class PinjamanController extends Controller
             $query->where('sisa_pokok', '>', 0)
                 ->orWhere('sisa_jasa', '>', 0);
         })
-            // ->whereYear('tgl_update_jasa', '!=', date('Y'))
-            ->whereMonth('tgl_update_jasa', '!=', date('m'))
-            ->get();
+           
+            ->where(function ($query) {
+                $query->whereYear('tgl_update_jasa', '!=', date('Y'))
+                    ->orWhereMonth('tgl_update_jasa', '!=', date('m'))
+                    ->orWhereNull('tgl_update_jasa');
+            })
+            ->get();    
+
+
 
         $persen_jasa = 0.03;
         foreach ($pinjaman as $p) {
