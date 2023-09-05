@@ -13,13 +13,18 @@ class ResetPasswordEmail extends Mailable
 {
     use Queueable, SerializesModels;
 
+    protected $petugas;
+    protected $password;
+
     /**
      * Create a new message instance.
      */
-    public function __construct()
+    public function __construct($petugas, $password)
     {
-        //
+        $this->petugas = $petugas;
+        $this->password = $password;
     }
+
 
     /**
      * Get the message envelope.
@@ -38,7 +43,12 @@ class ResetPasswordEmail extends Mailable
     {
         return new Content(
             view: 'emails.reset-password',
+            with: [
+                'petugas' => $this->petugas,
+                'password' => $this->password,
+            ],
         );
+
     }
 
     /**

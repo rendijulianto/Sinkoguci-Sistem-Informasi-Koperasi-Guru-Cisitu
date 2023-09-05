@@ -20,6 +20,7 @@ Route::get('/', 'AuthController@index')->name('login');
 Route::post('/login', 'AuthController@isLogin')->name('isLogin');
 Route::get('/logout', 'AuthController@logout')->name('logout');
 Route::get('/lupa-password', 'AuthController@lupaPassword')->name('lupaPassword');
+Route::post('/reset-password', 'AuthController@resetPassword')->name('resetPassword');
 
 // route group for admin
 Route::group(['prefix' => 'admin', 'as' => 'admin.', 'middleware' => 'petugasauth:admin'], function () {
