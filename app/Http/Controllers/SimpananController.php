@@ -57,17 +57,12 @@ class SimpananController extends Controller
             foreach ($kategoriSimpanan as $k) {
                 $object = strtolower(str_replace(' ', '_', $k->nama));
                 if ($request->$object != null) {
-
                     $dataSimpanan['id_kategori'] = $k->id_kategori;
                     $dataSimpanan['jumlah'] = $request->$object;
                     $simpan =  Simpanan::create($dataSimpanan);
-
                 }
             }
-
-
             DB::commit();
-
             return redirect()->back()->withInput()->with(['success' => 'Menambahkan simpanan baru']);
         } catch (\Throwable $th) {
             DB::rollback();
@@ -93,7 +88,6 @@ class SimpananController extends Controller
             $simpanan[$i] = $anggota->simpananBulan($i);
         }
 
-        $simpanan = json_decode(json_encode($simpanan));
         $kategoriSimpanan = KategoriSimpanan::orderby('id_kategori', 'asc')->get();
         return view('petugas.simpanan.show', compact('title', 'anggota', 'simpanan', 'kategoriSimpanan', 'sisaSimpanan', 'simpananDefault'));
     }

@@ -16,8 +16,8 @@
     </div>
     <div class="card mt-3">
         <div class="card-body">
-            @foreach($sisaSimpanan as $key => $sisa)
-                    <p> <b>{{ ucwords(str_replace('_', ' ', $key)) }}</b>: Rp {{number_format($sisa, 0, ',', '.')}}</p>
+             @foreach($sisaSimpanan as $ss)
+                    <p> <b>{{ ucwords(str_replace('_', ' ', $ss['nama'])) }}</b> : Rp {{number_format($ss['nominal'], 0, ',', '.')}}</p>
             @endforeach
         </div>
     </div>
@@ -93,9 +93,9 @@
                         <li>
                             <b>Saldo Simpanan:</b>
                         </li>
-                    @foreach($sisaSimpanan as $ks => $sisa)
+                    @foreach($sisaSimpanan as $ss)
                         <li>
-                            <b>{{ ucwords(str_replace('_', ' ', $ks)) }}:</b> Rp {{number_format($sisa, 0, ',', '.')}}
+                            <b>{{ ucwords(str_replace('_', ' ', $ss['nama'])) }}:</b> Rp {{number_format($ss['nominal'], 0, ',', '.')}} 
                         </li>
                     @endforeach
                     </ul>

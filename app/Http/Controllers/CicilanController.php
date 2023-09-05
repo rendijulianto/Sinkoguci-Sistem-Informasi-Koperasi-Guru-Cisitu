@@ -16,11 +16,7 @@ class CicilanController extends Controller
     public function index()
     {
         $title = 'Cicilan';
-        // pinjaman yang belum lunas
-        // $pinjaman = Pinjaman::where(function ($query) {
-        //     $query->where('sisa_pokok', '>', 0)
-        //         ->orWhere('sisa_jasa', '>', 0);
-        // })->get();
+       
         $pinjaman = Pinjaman::orderBy('tgl_pinjam', 'desc')->get();
 
         return view('petugas.cicilan.index', compact('title', 'pinjaman'));

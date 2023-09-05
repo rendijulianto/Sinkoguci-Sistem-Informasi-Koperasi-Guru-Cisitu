@@ -80,17 +80,29 @@ class Anggota extends Model
                     $nominal = 0;
                 }
             }
-            $default[strtolower(str_replace(' ', '_', $k->nama))] = $nominal;
+            $default[] = [
+                'id_kategori' => $k->id_kategori,
+                'nama' => $k->nama,
+                'jumlah' => $nominal,
+            ];
         }
         return $default;
     }
 
-    public function sisaSimpanan()
+    public function sisaSimpanan($id_kategori = null)
     {
-        $sisaSimpanan = [];
-        $kategori = KategoriSimpanan::select('id_kategori', 'nama')->where('nama', 'like', '%Simpanan%')->orderBy('id_kategori', 'asc')->get();
-        foreach ($kategori as $k) {
-            $sisaSimpanan[strtolower(str_replace(' ', '_', $k->nama))] = KategoriSimpananAnggota::where('id_anggota', $this->id_anggota)->where('id_kategori', $k->id_kategori)->first()->saldo ?? 0;
+        if($id_kategori) {
+            $sisaSimpanan = $this->kategori_simpanan_anggota()->where('id_kategori', $id_kategori)->first()->saldo ?? 0;
+        } else {
+            $sisaSimpanan = [];
+            $kategori = KategoriSimpanan::select('id_kategori', 'nama')->where('nama', 'like', '%Simpanan%')->orderBy('id_kategori', 'asc')->get();
+            foreach ($kategori as $k) {
+                $sisaSimpanan[] = [
+                    'id_kategori' => $k->id_kategori,
+                    'nama' => $k->nama,
+                    'nominal' => $this->kategori_simpanan_anggota()->where('id_kategori', $k->id_kategori)->first()->saldo ?? 0,
+                ];
+            }
         }
         return $sisaSimpanan;
     }
@@ -100,11 +112,11 @@ class Anggota extends Model
         $kategori = KategoriSimpanan::select('id_kategori', 'nama')->orderBy('id_kategori', 'asc')->get();
         $simpanan = [];
         $bulan = '01-'.$bulan.'-'.date('Y');
-        $simpanan['bulan'] = Carbon::parse($bulan)->translatedFormat('F Y');
+        $simpanan[] = Carbon::parse($bulan)->translatedFormat('F Y');
         $total = 0;
         foreach ($kategori as $key => $value) {
-            $simpanan[strtolower(str_replace(' ', '_', $value->nama))] = $this->simpanan()->where('id_kategori', $value->id_kategori)->whereMonth('tgl_bayar', Carbon::parse($bulan)->format('m'))->sum('jumlah');
-            $total += $simpanan[strtolower(str_replace(' ', '_', $value->nama))];
+            $simpanan[] = $this->simpanan()->where('id_kategori', $value->id_kategori)->whereMonth('tgl_bayar', Carbon::parse($bulan)->format('m'))->sum('jumlah');
+            $total += $simpanan[$key+1];
         }
         $simpanan['total'] = $total;
         return $simpanan;
@@ -116,7 +128,6 @@ class Anggota extends Model
         $kategori = KategoriSimpanan::select('id_kategori', 'nama', 'jumlah')->orderBy('id_kategori', 'asc')->get();
         $simpanan = [];
         $bulan = '01-'.$bulan.'-'.date('Y');
-      
         $total = 0;
         foreach ($kategori as $key => $value) {
             // cek apakah sudah ada simpanan untuk bulan ini dan kategori ini jika sudah maka tidak perlu ditagih
