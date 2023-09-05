@@ -12,11 +12,10 @@ class PinjamanController extends Controller
         $tanggal_awal = date('Y-m-01');
         $tanggal_akhir = date('Y-m-t');
         $cari = $request->cari;
-        if ($request->has('tanggal_awal') && $request->has('tanggal_akhir')) {
+        if ($request->has('tanggal_awal') && $request->has('tanggal_awal')) {
             $tanggal_awal = $request->tanggal_awal;
             $tanggal_akhir = $request->tanggal_akhir;
         }
-
         $pinjaman = Pinjaman::where('id_pinjaman', 'like', '%' . $cari . '%')
             ->orWhereHas('anggota', function ($query) use ($cari) {
                 $query->where('nama', 'like', '%' . $cari . '%');
@@ -24,17 +23,14 @@ class PinjamanController extends Controller
             ->orWhereHas('petugas', function ($query) use ($cari) {
                 $query->where('nama', 'like', '%' . $cari . '%');
             })
-            // ->orWhere('nominal', 'like', '%' . $cari . '%')
             ->orWhere('tgl_pinjam', 'like', '%' . $cari . '%')
             ->whereBetween('tgl_pinjam', [$tanggal_awal, $tanggal_akhir])
-            ->orderBy('created_at', 'desc')
+            ->orderBy('sisa_pokok', 'desc')->orderBy('sisa_jasa', 'desc')
             ->paginate(10);
-
-
 
         $title = 'Kelola Pinjaman';
 
-        return view('petugas.pinjaman.index', compact('title', 'pinjaman', 'tanggal_awal', 'tanggal_akhir'));
+        return view('petugas.pinjaman.index', compact('title', 'pinjaman', 'tanggal_awal', 'tanggal_akhir', 'cari'));
     }
 
     public function create() {
@@ -86,13 +82,13 @@ class PinjamanController extends Controller
             $query->where('sisa_pokok', '>', 0)
                 ->orWhere('sisa_jasa', '>', 0);
         })
-           
+
             ->where(function ($query) {
                 $query->whereYear('tgl_update_jasa', '!=', date('Y'))
                     ->orWhereMonth('tgl_update_jasa', '!=', date('m'))
                     ->orWhereNull('tgl_update_jasa');
             })
-            ->get();    
+            ->get();
 
 
 

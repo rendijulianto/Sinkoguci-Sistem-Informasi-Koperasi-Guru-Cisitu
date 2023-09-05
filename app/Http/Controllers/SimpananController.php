@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\{Anggota,KategoriSimpanan, Simpanan, Penarikan};
+use Maatwebsite\Excel\Facades\Excel;
+use App\Exports\{SimpananExport};
 use DB;
 use Auth;
 
@@ -73,7 +75,7 @@ class SimpananController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(string $id)
+    public function show(Request $request, string $id)
     {
         $title = 'Detail Simpanan';
         $anggota = Anggota::where('id_anggota', '=', $id)->first();
@@ -88,7 +90,13 @@ class SimpananController extends Controller
             $simpanan[$i] = $anggota->simpananBulan($i);
         }
 
-        $kategoriSimpanan = KategoriSimpanan::orderby('id_kategori', 'asc')->get();
-        return view('petugas.simpanan.show', compact('title', 'anggota', 'simpanan', 'kategoriSimpanan', 'sisaSimpanan', 'simpananDefault'));
+
+        if($request->aksi == "download") {
+            $kategoriSimpanan = KategoriSimpanan::where('nama', 'like', '%Simpanan%')->orderby('id_kategori', 'asc')->get();
+            return Excel::download(new SimpananExport($anggota,$kategoriSimpanan), 'Simpanan-'.$anggota->nama.' - '.$anggota->sekolah->nama.' - '.date('d-m-Y').'.xlsx');
+        } else {
+            $kategoriSimpanan = KategoriSimpanan::orderby('id_kategori', 'asc')->get();
+            return view('petugas.simpanan.show', compact('title', 'anggota', 'simpanan', 'kategoriSimpanan', 'sisaSimpanan', 'simpananDefault'));
+        }
     }
 }

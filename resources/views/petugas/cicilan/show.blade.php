@@ -8,7 +8,7 @@
                 {{-- <img src="dummy internet --}}
                 <img src="https://dummyimage.com/150x150/c4c4/fff"
                 alt="foto" class="rounded-circle" width="150" height="150">
-               
+
 
             </div>
         </div>
@@ -17,7 +17,10 @@
 <div class="col-lg-9">
    <div class="row">
      <div class="col-12 mb-3">
-        <button type="button" class="btn btn-primary"  data-toggle="modal" data-target="#modalTambahSimpanan" style="float: right">
+        <a href="{{route('petugas.cicilan.show', $pinjaman->id_pinjaman)}}?aksi=download" class="btn btn-success" style="float: right">
+            <i class="fa fa-file-excel"></i> Download
+        </a>
+        <button type="button" class="btn btn-primary"  data-toggle="modal" data-target="#modalTambahSimpanan" style="float: right; margin-right: 10px;">
             <i class="fa fa-plus"></i> Bayar Cicilan
         </button>
      </div>
@@ -49,18 +52,18 @@
                             </tr>
                             </thead>
                             <tbody>
-                                @php 
-                               
+                                @php
+
                                 $total_bayar_pokok = 0;
                                 $total_bayar_jasa = 0;
-                                
+
                                 @endphp
                             @foreach($cicilan as $key => $c)
                                 @php
-                                  
+
                                     $total_bayar_pokok += $c->bayar_pokok;
                                     $total_bayar_jasa += $c->bayar_jasa;
-                                   
+
                                 @endphp
                                 <tr>
                                     <td>{{$loop->iteration}}</td>
@@ -125,7 +128,7 @@
                         <label for="simpanan_suka_rela">Total Bayar</label>
                         <input type="text" class="form-control" autocomplete="off" id="total_bayar" name="total_bayar" placeholder="Total Bayar" value="{{old('total_bayar')}}" readonly>
                     </div>
-                 
+
                     <div class="col-6">
                         <label for="sebelum_pokok">Sebelum Pokok</label>
                         <input type="hidden" class="form-control" autocomplete="off" id="sebelum_pokok" name="sebelum_pokok" placeholder="Sebelum Pokok" value="{{$pinjaman->sisa_pokok}}" readonly>
@@ -144,7 +147,7 @@
                         <label for="setelah_jasa">Sisa Jasa</label>
                         <input type="text" class="form-control" autocomplete="off" id="setelah_jasa" name="setelah_jasa" placeholder="Sisa Jasa" value="{{old('setelah_jasa')}}" readonly>
                     </div>
-                   
+
                 </div>
             </div>
             <div class="modal-footer">

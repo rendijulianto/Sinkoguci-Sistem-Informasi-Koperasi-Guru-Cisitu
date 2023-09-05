@@ -31,11 +31,13 @@
  @endsection
  @section('js')
  <script>
-    
+
  $(document).ready(function() {
      $('.select2').select2();
-    @if(old('id_anggota'))
-        $('#anggota').val('{{old('id_anggota')}}').trigger('change');
+    @if(old('pinjaman'))
+        $('#pinjaman').val('{{old('pinjaman')}}').trigger('change');
+    @elseif(Request::get('pinjaman'))
+        $('#pinjaman').val('{{Request::get('pinjaman')}}').trigger('change');
     @endif
     //  jalan ajax
  });

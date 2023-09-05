@@ -47,7 +47,5 @@ Route::group(['prefix' => 'petugas', 'as' => 'petugas.', 'middleware' => 'petuga
     Route::get('/penarikan/dana-sosial', 'PenarikanController@danaSosial')->name('penarikan.dana-sosial');
     Route::post('/penarikan/dana-sosial', 'PenarikanController@storeDanaSosial')->name('penarikan.store-dana-sosial');
     Route::get('/laporan/tagihan', 'LaporanController@tagihan')->name('laporan.tagihan');
-    Route::get('/laporan/tagihan/preview', 'LaporanController@previewTagihan')->name('laporan.preview-tagihan');
-
 });
 

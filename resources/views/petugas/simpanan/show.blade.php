@@ -17,7 +17,7 @@
     <div class="card mt-3">
         <div class="card-body">
             @foreach($sisaSimpanan as $ss)
-           
+
                     <p> <b>{{ ucwords(str_replace('_', ' ', $ss['nama'])) }}</b> : Rp {{number_format($ss['nominal'], 0, ',', '.')}}</p>
             @endforeach
         <a class="btn btn-primary btn-block btn-xs text-white"
@@ -31,7 +31,10 @@
 <div class="col-lg-9">
    <div class="row">
      <div class="col-12 mb-3">
-        <button type="button" class="btn btn-primary"  data-toggle="modal" data-target="#modalTambahSimpanan" style="float: right">
+        <a href="{{route('petugas.simpanan.show', $anggota->id_anggota)}}?aksi=download" class="btn btn-success" style="float: right">
+            <i class="fa fa-file-excel"></i> Download
+        </a>
+        <button type="button" class="btn btn-primary"  data-toggle="modal" data-target="#modalTambahSimpanan" style="float: right; margin-right: 10px">
             <i class="fa fa-plus"></i> Tambah
         </button>
      </div>
@@ -56,7 +59,7 @@
                             </thead>
                             <tbody>
                                @foreach($simpanan as $s)
-                                       
+
                                     <tr>
                                         <td>{{$loop->iteration }}</td>
                                         @foreach($s as $key => $ss)
@@ -65,7 +68,7 @@
                                             @else
                                                 <td class="text-right">Rp {{number_format($ss, 0, ',', '.')}}</td>
                                             @endif
-                                         
+
                                         @endforeach
                                     </tr>
                                 @endforeach
@@ -96,7 +99,7 @@
                 <input type="hidden" name="id_anggota" value="{{$anggota->id_anggota}}">
                 <div class="row">
                     @foreach($simpananDefault as $s)
-              
+
                         <div class="col-6">
                             <label for="{{$s['nama']}}">{{ ucwords(str_replace('_', ' ', $s['nama'])) }}</label>
                             <input type="number" class="form-control" autocomplete="off" id="{{strtolower(str_replace(' ', '_', $s['nama']))}}" name="{{strtolower(str_replace(' ', '_', $s['nama']))}}" placeholder="{{ ucwords(str_replace('_', ' ', $s['nama'])) }}" value="{{old(strtolower(str_replace(' ', '_', $s['nama']))) ?? $s['jumlah']}}">

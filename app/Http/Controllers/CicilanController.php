@@ -7,6 +7,8 @@ use Illuminate\Http\Request;
 use App\Models\{Pinjaman, Anggota, Petugas};
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Maatwebsite\Excel\Facades\Excel;
+use App\Exports\{AngsuranExport};
 
 class CicilanController extends Controller
 {
@@ -16,7 +18,7 @@ class CicilanController extends Controller
     public function index()
     {
         $title = 'Cicilan';
-       
+
         $pinjaman = Pinjaman::orderBy('tgl_pinjam', 'desc')->get();
 
         return view('petugas.cicilan.index', compact('title', 'pinjaman'));
@@ -81,7 +83,7 @@ class CicilanController extends Controller
             $pinjaman->angsuran()->create($angsuran);
             DB::commit();
             return redirect()->back()->with('success', 'Berhasil menambahkan data cicilan');
-        
+
         } catch (\Throwable $th) {
             DB::rollback();
             return redirect()->back()->withInput()->with('error', $th->getMessage());
@@ -91,7 +93,7 @@ class CicilanController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(string $id)
+    public function show(Request $request, string $id)
     {
         $title = 'Cicilan';
         $pinjaman = Pinjaman::findOrFail($id);
@@ -99,7 +101,11 @@ class CicilanController extends Controller
             return abort(404);
         }
         $cicilan = $pinjaman->angsuran()->orderBy('created_at', 'desc')->get();
-        return view('petugas.cicilan.show', compact('title', 'pinjaman', 'cicilan'));
+        if ($request->aksi ==  "download") {
+            return Excel::download(new AngsuranExport($pinjaman), 'Data-Cicilan-' . $pinjaman->id_pinjaman . '.xlsx');
+        } else {
+            return view('petugas.cicilan.show', compact('title', 'pinjaman', 'cicilan'));
+        }
     }
 
     /**
