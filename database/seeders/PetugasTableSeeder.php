@@ -31,6 +31,12 @@ class PetugasTableSeeder extends Seeder
             'password' => bcrypt('123'),
             'level'    => 'admin'
         ]);
+        Petugas::create([
+            'nama'     => 'Rendi Julianto',
+            'email'    => 'rendijulianto37@gmail.com',
+            'password' => bcrypt('123'),
+            'level'    => 'admin'
+        ]);
        for ($i=0; $i < 10; $i++) {
             $faker = Faker::create('id_ID');
             $randomLevel = ['admin', 'petugas'];
