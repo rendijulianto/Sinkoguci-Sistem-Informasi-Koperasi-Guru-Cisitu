@@ -46,9 +46,7 @@
             <td>Paraf Petugas</td>
         </tr>
 
-         @foreach ($anggota->simpanan()->whereHas('kategori', function($q){
-            $q->where('nama','like','simpanan%');
-        })->whereYear('tgl_bayar', date('Y'))
+         @foreach ($anggota->simpanan()->whereYear('tgl_bayar', date('Y'))
          ->get() as $s)
          <tr>
              <td>{{$s->tgl_bayar}}</td>

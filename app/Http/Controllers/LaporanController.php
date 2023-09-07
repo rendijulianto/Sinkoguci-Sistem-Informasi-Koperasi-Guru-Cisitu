@@ -6,7 +6,7 @@ use Illuminate\Http\Request;
 use App\Models\{Anggota, Simpanan, Pinjaman, Cicilan, Penarikan, Petugas, Sekolah, KategoriSimpanan};
 use Maatwebsite\Excel\Facades\Excel;
 // BillingReportExport
-use App\Exports\{BillingReportExport};
+use App\Exports\{BillingReportExport, SimpananBulananReportExport, SimpananTahunanReportExport};
 class LaporanController extends Controller
 {
     public function tagihan(Request $request)
@@ -29,19 +29,41 @@ class LaporanController extends Controller
        return view('petugas.laporan.tagihan', compact('bulan', 'sekolah', 'daftarSekolah', 'daftarKategoriSimpanan', 'title', 'tahun', 'id_sekolah'));
     }
 
-    public function previewTagihan(Request $request)
+    public function simpananBulanan(Request $request)
     {
-        $aksi = $request->aksi??'';
-        $bulan = $request->bulan??date('m-Y');
-        $id_sekolah = $request->id_sekolah??'';
-        $sekolah = Sekolah::where('id', $id_sekolah)->first();
-        if ($aksi == 'cetak') {
-            $anggota = Anggota::where('id_sekolah', $id_sekolah)->orderBy('nama', 'asc')->get();
-            return view('petugas.laporan.preview-tagihan', compact('bulan', 'sekolah', 'anggota'));
+       $title = 'Laporan Simpanan';
+       $bulan = $request->bulan??date('m');
+       $tahun = $request->tahun??date('Y');
+       $daftarSekolah = Sekolah::orderBy('nama', 'asc')->get();
+         $daftarKategoriSimpanan = KategoriSimpanan::orderby('id_kategori', 'asc')->get();
+       $id_sekolah = $request->id_sekolah??'all';
+       if($id_sekolah AND $id_sekolah  != 'all') {
+           $sekolah = Sekolah::where('id_sekolah', $id_sekolah)->get();
         } else {
-            $anggota = Anggota::where('id_sekolah', $id_sekolah)->orderBy('nama', 'asc')->paginate(10);
-            return view('petugas.laporan.preview-tagihan', compact('bulan', 'sekolah', 'anggota'));
-        }
+            $sekolah = Sekolah::orderBy('nama', 'asc')->get();
+       }
+       if($request->aksi == "download") {
+        return Excel::download(new SimpananBulananReportExport($bulan, $sekolah, $daftarKategoriSimpanan, $tahun), 'Laporan Simpanan Bulanan-'.$bulan.'-'.$tahun.'.xlsx');
+       }
+         return view('admin.laporan.simpanan', compact('bulan', 'sekolah', 'daftarSekolah', 'daftarKategoriSimpanan', 'title', 'tahun', 'id_sekolah'));
+    }
+
+    public function simpananTahunan(Request $request)
+    {
+         $title = 'Laporan Simpanan Tahunan';
+         $tahun = $request->tahun??date('Y');
+         $daftarSekolah = Sekolah::orderBy('nama', 'asc')->get();
+         $daftarKategoriSimpanan = KategoriSimpanan::orderby('id_kategori', 'asc')->get();
+         $id_sekolah = $request->id_sekolah??'all';
+         if($id_sekolah AND $id_sekolah  != 'all') {
+             $sekolah = Sekolah::where('id_sekolah', $id_sekolah)->get();
+          } else {
+              $sekolah = Sekolah::orderBy('nama', 'asc')->get();
+         }
+         if($request->aksi == "download") {
+          return Excel::download(new SimpananTahunanReportExport($sekolah, $daftarKategoriSimpanan, $tahun), 'Laporan Simpanan Tahunan-'.$tahun.'.xlsx');
+         }
+           return view('admin.laporan.simpanan-tahunan', compact( 'sekolah', 'daftarSekolah', 'daftarKategoriSimpanan', 'title', 'tahun', 'id_sekolah'));
     }
 
 

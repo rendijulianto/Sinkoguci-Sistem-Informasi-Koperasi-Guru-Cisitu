@@ -174,6 +174,28 @@ class Anggota extends Model
         return $tagihan;
     }
 
+    public function terbayarSimpanan($tahun, $bulan = null) {
+        $kategori = KategoriSimpanan::select('id_kategori', 'nama', 'jumlah')->orderBy('id_kategori', 'asc')->get();
+        $terbayar = [];
+        $total = 0;
+        foreach ($kategori as $k) {
+            $riwayat_simpanan = $this->simpanan()->where('id_kategori', $k->id_kategori)->whereYear('tgl_bayar', $tahun);
+
+            if($bulan) {
+                $riwayat_simpanan = $riwayat_simpanan->whereMonth('tgl_bayar', $bulan);
+            }
+            $riwayat_simpanan = $riwayat_simpanan->get();
+            $sudah_dibayar = 0;
+            foreach ($riwayat_simpanan as $r) {
+                $sudah_dibayar += $r->jumlah;
+            }
+            $terbayar[] = $sudah_dibayar;
+            $total += $terbayar[count($terbayar)-1];
+        }
+        $terbayar['total'] = $total;
+        return $terbayar;
+    }
+
     public function tagihanPinjaman()
     {
         // cek apakah memiliki pinjaman
