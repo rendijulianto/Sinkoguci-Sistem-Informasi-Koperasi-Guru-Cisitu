@@ -34,6 +34,10 @@ class KategoriSimpananTableSeeder extends Seeder
             'jumlah' => 0,
         ]);
         KategoriSimpanan::create([
+            'nama' => 'Hari Koperasi',
+            'jumlah' => 0,
+        ]);
+        KategoriSimpanan::create([
             'nama' => 'Simpanan Hari Raya',
             'jumlah' => 22500,
         ]);

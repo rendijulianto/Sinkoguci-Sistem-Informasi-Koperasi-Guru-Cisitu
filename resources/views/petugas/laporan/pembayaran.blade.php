@@ -82,8 +82,6 @@
                             <td>Bulan: {{date('F', mktime(0, 0, 0, $bulan, 1))}} </td>
                             <td>Tahun: {{$tahun}}</td>
                         </tr>
-
-
                     </table>
                     <div class="signle-table">
                         <div class="table-responsive">
@@ -92,7 +90,7 @@
                                     <tr>
                                         <th>No</th>
                                         <th>Nama</th>
-                                      
+
 
                                         @foreach ($daftarKategoriSimpanan as $ks)
 
@@ -100,18 +98,18 @@
                                         @endforeach
                                         <th class="text-right">Jumlah Simpanan <i  class="fa fa-info-circle"
                                             style="cursor: pointer"
-                                            
+
                                             data-toggle="tooltip" data-placement="top" title="Total Simpanan yang telah dibayar"></i></th>
                                         <th class="text-right">Pokok Piutang</th>
                                         <th class="text-right">Jasa Piutang</th>
                                         <th class="text-right">Total Piutang <i  class="fa fa-info-circle"
                                             style="cursor: pointer"
-                                            
+
                                             data-toggle="tooltip" data-placement="top" title="Total Piutang yang telah dibayar"></i></th>
 
                                         <th class="text-right">Total Terbayar <i  class="fa fa-info-circle"
                                             style="cursor: pointer"
-                                            
+
                                             data-toggle="tooltip" data-placement="top" title="Total Simpanan dan Piutang yang telah dibayar"></i></th>
                                     </tr>
                                 </thead>
@@ -127,7 +125,7 @@
                                             <td>{{$loop->iteration}}</td>
                                             <td>{{$a->nama}}</td>
 
-                                            @foreach ($a->terbayarSimpanan($tahun, $bulan) as $key => $value)   
+                                            @foreach ($a->terbayarSimpanan($tahun, $bulan) as $key => $value)
 
                                                 <td class="text-right">Rp {{number_format($value,0,',','.')}}</td>
                                             @endforeach
