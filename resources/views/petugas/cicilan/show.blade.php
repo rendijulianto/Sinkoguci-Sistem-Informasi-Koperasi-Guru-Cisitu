@@ -1,18 +1,43 @@
 
 <div class="col-lg-3">
-    <div class="card">
+   <div class="card">
         <div class="card-body">
-            {{-- image lingkaran--}}
-            <div class="text-center">
-                <h4  class="card_title">Detail Pinjaman</h4>
-                {{-- <img src="dummy internet --}}
-                <img src="https://dummyimage.com/150x150/c4c4/fff"
-                alt="foto" class="rounded-circle" width="150" height="150">
+            <table class="table table-hover progress-table text-center bg-white table-striped table-bordered">
+                <tr>
+                    <th colspan="2">Data Pinjaman</th>
+                </tr>
+                <tr>
+                    <td>Nomor Pinjaman</td>
+                    <td>{{$pinjaman->id_pinjaman}}</td>
+                </tr>
+                <tr>
+                    <td>Nominal</td>
+                    <td>Rp {{number_format($pinjaman->nominal)}}</td>
+                </tr>
+                <tr>
+                    <td>Lama Angsuran</td>
+                    <td>{{$pinjaman->lama_angsuran}} Bulan</td>
+                </tr>
+                <tr>
+                    <td>Sisa Pokok</td>
+                    <td>Rp {{number_format($pinjaman->sisa_pokok)}}</td>
+                </tr>
+                <tr>
+                    <td>Sisa Jasa</td>
+                    <td>Rp {{number_format($pinjaman->sisa_jasa)}}</td>
+                </tr>
+                <tr>
+                    <td>Tanggal Pinjaman</td>
+                    <td>{{$pinjaman->tgl_pinjam}}</td>
+                </tr>
 
-
-            </div>
+                <tr>
+                    <td>Status</td>
+                    <td>{{$pinjaman->status}}</td>
+                </tr>
+             </table>
         </div>
-    </div>
+   </div>
 </div>
 <div class="col-lg-9">
    <div class="row">
@@ -59,12 +84,7 @@
 
                                 @endphp
                             @foreach($cicilan as $key => $c)
-                                @php
 
-                                    $total_bayar_pokok += $c->bayar_pokok;
-                                    $total_bayar_jasa += $c->bayar_jasa;
-
-                                @endphp
                                 <tr>
                                     <td>{{$loop->iteration}}</td>
                                     <td>{{$c->tgl_bayar}}</td>
@@ -78,12 +98,7 @@
                                 </tr>
                             @endforeach
                             </tbody>
-                            <tr>
-                                <td colspan="4">Total</td>
-                                <td>Rp {{number_format($total_bayar_pokok)}}</td>
-                                <td>Rp {{number_format($total_bayar_jasa)}}</td>
-                                <td colspan="3"></td>
-                            </tr>
+
                         </table>
                     </div>
                 </div>

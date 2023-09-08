@@ -45,13 +45,11 @@ class Pinjaman extends Model
     // apppend status
     public function getStatusAttribute()
     {
-        $total_pokok = $this->pokok;
-        $total_angsuran_pokok = $this->angsuran->sum('pokok');
-        $sisa_pinjaman = $total_pokok - $total_angsuran_pokok;
-        if ($sisa_pinjaman == 0) {
+
+        if ($this->sisa_pokok == 0 && $this->sisa_jasa == 0) {
             return 'Lunas';
         } else {
-            return 'Belum Lunas (Rp. ' . number_format($sisa_pinjaman, 0, ',', '.') . ')';
+            return 'Belum Lunas';
         }
     }
 }

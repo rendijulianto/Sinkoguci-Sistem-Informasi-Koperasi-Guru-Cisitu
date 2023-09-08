@@ -17,8 +17,6 @@ return new class extends Migration
             $table->double('jumlah');
             $table->string('keterangan', 60);
             $table->date('tgl_penarikan');
-            $table->double('saldo_sebelum');
-            $table->double('saldo_sesudah');
             $table->timestamps();
             $table->foreign('id_petugas')->references('id_petugas')->on('petugas')->onDelete('cascade')->onUpdate('cascade');
         });

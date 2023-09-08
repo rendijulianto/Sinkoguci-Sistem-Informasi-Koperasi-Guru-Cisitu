@@ -13,7 +13,7 @@
         </div>
     </div>
 </div>
-<form class="row mb-4" method="GET" action="{{route('petugas.laporan.pembayaran')}}">
+<form class="row mb-4" method="GET" action="{{route('admin.laporan.pembayaran-bulanan')}}">
     <div class="col-3">
         <div class="form-group">
             <label class="col-form-label">Pilih Bulan</label>
@@ -60,7 +60,7 @@
     </div>
     @if($bulan != null && $tahun != null && $id_sekolah != null)
     <div class="col-lg-3 mt-3">
-        <a href="{{route('petugas.laporan.pembayaran')}}?bulan={{$bulan}}&tahun={{$tahun}}&id_sekolah={{$id_sekolah}}&aksi=download" class="btn btn-success btn-block" target="_blank">Download Excel <i class="fa fa-file-excel"></i></a>
+        <a href="{{route('admin.laporan.pembayaran-bulanan')}}?bulan={{$bulan}}&tahun={{$tahun}}&id_sekolah={{$id_sekolah}}&aksi=download" class="btn btn-success btn-block" target="_blank">Download Excel <i class="fa fa-file-excel"></i></a>
     </div>
     @endif
 </div>
