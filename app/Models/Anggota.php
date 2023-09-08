@@ -120,7 +120,7 @@ class Anggota extends Model
 
     public function simpananHari($tahun)
     {
-        $kategori = KategoriSimpanan::select('id_kategori', 'nama')->where('nama', 'like', '%Simpanan%')->orderBy('id_kategori', 'asc')->get();
+        $kategori = KategoriSimpanan::select('id_kategori', 'nama')->orderBy('id_kategori', 'asc')->get();
         $simpanan = [];
         // munculkan tgl_bayarnya saja yang ada simpanan di tahun $tahun
         $tgl_bayar = $this->simpanan()->whereYear('tgl_bayar', $tahun)->orderBy('tgl_bayar', 'asc')->pluck('tgl_bayar')->unique();
@@ -198,7 +198,7 @@ class Anggota extends Model
         $pinjaman = Pinjaman::where('id_anggota', $this->id_anggota)->where(function($q) {
             $q->where('sisa_pokok', '>', 0)->orWhere('sisa_jasa', '>', 0);
         })->first();
-       
+
         $tagihan = [
             'pokok' => 0,
             'jasa' => 0,
@@ -242,7 +242,7 @@ class Anggota extends Model
         }
         return $terbayar;
 
-    
+
     }
 
 

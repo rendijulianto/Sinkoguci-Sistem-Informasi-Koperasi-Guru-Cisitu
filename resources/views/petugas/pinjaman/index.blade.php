@@ -11,14 +11,14 @@
     </div>
 </div>
 <form class="row mb-4">
-   <div class="col-lg-3">
+   <div class="col-lg-2">
          <div class="form-group">
             <label class="col-form-label">Tanggal Awal</label>
             <br>
             <input type="date" class="form-control" name="tanggal_awal" value="{{$tanggal_awal}}">
          </div>
    </div>
-    <div class="col-lg-3">
+    <div class="col-lg-2">
         <div class="form-group">
             <label class="col-form-label">Tanggal Akhir</label>
             <br>
@@ -26,7 +26,18 @@
 
         </div>
     </div>
-    <div class="col-lg-6">
+    <div class="col-lg-3">
+        <div class="form-group">
+            <label class="col-form-label">Status</label>
+            <br>
+            <select class="custom-select select2" fdprocessedid="bq1eom" name="status" id="status">
+                <option value="all" @if($status == 'all') selected @endif>Semua</option>
+                <option value="lunas" @if($status == 'lunas') selected @endif>Lunas</option>
+                <option value="belum_lunas" @if($status == 'belum_lunas') selected @endif>Belum Lunas</option>
+            </select>
+        </div>
+    </div>
+    <div class="col-lg-5">
         <div class="form-group">
             <label class="col-form-label">Kata Kunci</label>
             <br>

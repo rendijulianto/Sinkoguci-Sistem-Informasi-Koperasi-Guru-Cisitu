@@ -12,25 +12,50 @@ class PinjamanController extends Controller
         $tanggal_awal = date('Y-m-01');
         $tanggal_akhir = date('Y-m-t');
         $cari = $request->cari;
+        $status = $request->status;
         if ($request->has('tanggal_awal') && $request->has('tanggal_awal')) {
             $tanggal_awal = $request->tanggal_awal;
             $tanggal_akhir = $request->tanggal_akhir;
         }
+        // $pinjaman = Pinjaman::where('id_pinjaman', 'like', '%' . $cari . '%')
+        //     ->where('tgl_pinjam', 'like', '%' . $cari . '%')
+        //     ->whereBetween('tgl_pinjam', [$tanggal_awal, $tanggal_akhir])
+        //     ->where(function ($query) use ($status, $cari) {
+        //         if ($status == 'lunas') {
+        //             $query->where('sisa_pokok', '=', 0)
+        //                 ->where('sisa_jasa', '=', 0);
+        //         } elseif ($status == 'belum_lunas') {
+        //             $query->where('sisa_pokok', '>', 0)
+        //                 ->orWhere('sisa_jasa', '>', 0);
+        //         }
+        //     })->orWhereHas('anggota', function ($query) use ($cari) {
+        //         $query->where('nama', 'like', '%' . $cari . '%');
+        //     })->orWhereHas('petugas', function ($query) use ($cari) {
+        //         $query->where('nama', 'like', '%' . $cari . '%');
+        //     })
+        //     ->orderBy('sisa_pokok', 'desc')->orderBy('sisa_jasa', 'desc')->paginate(10);
+
         $pinjaman = Pinjaman::where('id_pinjaman', 'like', '%' . $cari . '%')
-            ->orWhereHas('anggota', function ($query) use ($cari) {
-                $query->where('nama', 'like', '%' . $cari . '%');
-            })
-            ->orWhereHas('petugas', function ($query) use ($cari) {
-                $query->where('nama', 'like', '%' . $cari . '%');
-            })
-            ->orWhere('tgl_pinjam', 'like', '%' . $cari . '%')
+            ->where('tgl_pinjam', 'like', '%' . $cari . '%')
             ->whereBetween('tgl_pinjam', [$tanggal_awal, $tanggal_akhir])
-            ->orderBy('sisa_pokok', 'desc')->orderBy('sisa_jasa', 'desc')
-            ->paginate(10);
+            ->where(function ($query) use ($status, $cari) {
+                if ($status == 'lunas') {
+                    $query->where('sisa_pokok', '=', 0)
+                        ->where('sisa_jasa', '=', 0);
+                } elseif ($status == 'belum_lunas') {
+                    $query->where('sisa_pokok', '>', 0)
+                        ->orWhere('sisa_jasa', '>', 0);
+                }
+            })->orWhereHas('anggota', function ($query) use ($cari) {
+                $query->where('nama', 'like', '%' . $cari . '%');
+            })->orWhereHas('petugas', function ($query) use ($cari) {
+                $query->where('nama', 'like', '%' . $cari . '%');
+            })
+            ->orderBy('sisa_pokok', 'desc')->orderBy('sisa_jasa', 'desc')->paginate(10);
 
         $title = 'Kelola Pinjaman';
 
-        return view('petugas.pinjaman.index', compact('title', 'pinjaman', 'tanggal_awal', 'tanggal_akhir', 'cari'));
+        return view('petugas.pinjaman.index', compact('title', 'pinjaman', 'tanggal_awal', 'tanggal_akhir', 'cari', 'status'));
     }
 
     public function create() {

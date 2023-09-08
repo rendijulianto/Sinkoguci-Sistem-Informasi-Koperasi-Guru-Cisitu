@@ -91,11 +91,10 @@ class SimpananController extends Controller
         }
 
 
+        $kategoriSimpanan = KategoriSimpanan::orderby('id_kategori', 'asc')->get();
         if($request->aksi == "download") {
-            $kategoriSimpanan = KategoriSimpanan::where('nama', 'like', '%Simpanan%')->orderby('id_kategori', 'asc')->get();
             return Excel::download(new SimpananExport($anggota,$kategoriSimpanan), 'Simpanan-'.$anggota->nama.' - '.$anggota->sekolah->nama.' - '.date('d-m-Y').'.xlsx');
         } else {
-            $kategoriSimpanan = KategoriSimpanan::orderby('id_kategori', 'asc')->get();
             return view('petugas.simpanan.show', compact('title', 'anggota', 'simpanan', 'kategoriSimpanan', 'sisaSimpanan', 'simpananDefault'));
         }
     }
