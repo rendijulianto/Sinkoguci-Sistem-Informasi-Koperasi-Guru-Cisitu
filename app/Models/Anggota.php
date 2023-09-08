@@ -60,7 +60,7 @@ class Anggota extends Model
         return $this->hasMany(KategoriSimpananAnggota::class, 'id_anggota', 'id_anggota');
     }
 
-    public function kategori_simpanan_default()
+    public function kategori_simpanan_default($update = null)
     {
         $default = [];
         $kategori = KategoriSimpanan::select('id_kategori','nama', 'jumlah')->orderBy('id_kategori', 'asc')->get();
@@ -70,7 +70,7 @@ class Anggota extends Model
             if($kategori_simpanan != null) {
                 $nominal = $kategori_simpanan->nominal;
             }
-            if($k->id_kategori == 1) {
+            if($k->id_kategori == 1 AND !$update) {
                 $check_simpanan = Simpanan::where('id_anggota', $this->id_anggota)->where('id_kategori', $k->id_kategori)->first();
                 if($check_simpanan != null) {
                     $nominal = 0;

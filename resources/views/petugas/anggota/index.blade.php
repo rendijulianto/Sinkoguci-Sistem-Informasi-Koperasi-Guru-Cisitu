@@ -94,6 +94,13 @@
                                                     <i class="fa fa-print"></i>
                                                 </a>
                                             </li>
+                                            <li class="ml-3">
+                                                <button type="button" class="btn btn-inverse-primary edit-button" data-toggle="modal" data-target="#modalEditDefaultSimpananAnggota{{$item->id_anggota}}">
+                                                    <i class="fa fa-edit"></i> Default Simpanan
+                                                </button>
+                                            </li>
+
+
                                         </ul>
                                     </td>
                                 </tr>
@@ -189,6 +196,32 @@
                             @endforeach
                         </select>
                     </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-light" data-dismiss="modal">Tutup</button>
+                <button type="submit" class="btn btn-primary">Simpan Perubahan</button>
+            </div>
+        </form>
+    </div>
+</div>
+<div class="modal fade" id="modalEditDefaultSimpananAnggota{{$item->id_anggota}}">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <form class="modal-content edit" action="{{route('petugas.anggota.update-nominal-default-simpanan', $item->id_anggota)}}" method="post" autocomplete="off">
+            @method('POST')
+            @csrf
+            <div class="modal-header">
+                <h5 class="modal-title">Edit Default Simpanan Anggota</h5>
+                <button type="button" class="close" data-dismiss="modal"><span>&times;</span></button>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                @foreach($item->kategori_simpanan_default(true) as $s)
+                    <div class="col-6">
+                        <label for="{{$s['nama']}}">{{ ucwords(str_replace('_', ' ', $s['nama'])) }}</label>
+                        <input type="number" class="form-control" autocomplete="off" id="{{strtolower(str_replace(' ', '_', $s['nama']))}}" name="{{strtolower(str_replace(' ', '_', $s['nama']))}}" placeholder="{{ ucwords(str_replace('_', ' ', $s['nama'])) }}" value="{{old(strtolower(str_replace(' ', '_', $s['nama']))) ?? $s['jumlah']}}">
+                    </div>
+                @endforeach
                 </div>
             </div>
             <div class="modal-footer">
