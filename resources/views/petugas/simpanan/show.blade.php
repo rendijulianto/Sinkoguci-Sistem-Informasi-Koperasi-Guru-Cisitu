@@ -6,8 +6,7 @@
             <div class="text-center">
                 <h4  class="card_title">Detail Anggota</h4>
                 {{-- <img src="dummy internet --}}
-                <img src="https://dummyimage.com/150x150/c4c4/fff"
-                alt="foto" class="rounded-circle" width="150" height="150">
+                <img src="https://ui-avatars.com/api/?name={{$anggota->nama}}" alt="foto" class="rounded-circle" width="150" height="150">
                 <p>Nama : {{$anggota->nama}}</p>
                 <p>Sekolah : {{$anggota->sekolah->nama}}</p>
 
