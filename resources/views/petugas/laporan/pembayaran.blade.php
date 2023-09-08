@@ -13,7 +13,7 @@
         </div>
     </div>
 </div>
-<form class="row mb-4" method="GET" action="{{route('petugas.laporan.tagihan')}}">
+<form class="row mb-4" method="GET" action="{{route('petugas.laporan.pembayaran')}}">
     <div class="col-3">
         <div class="form-group">
             <label class="col-form-label">Pilih Bulan</label>
@@ -60,7 +60,7 @@
     </div>
     @if($bulan != null && $tahun != null && $id_sekolah != null)
     <div class="col-lg-3 mt-3">
-        <a href="{{route('petugas.laporan.tagihan')}}?bulan={{$bulan}}&tahun={{$tahun}}&id_sekolah={{$id_sekolah}}&aksi=download" class="btn btn-success btn-block" target="_blank">Download Excel <i class="fa fa-file-excel"></i></a>
+        <a href="{{route('petugas.laporan.pembayaran')}}?bulan={{$bulan}}&tahun={{$tahun}}&id_sekolah={{$id_sekolah}}&aksi=download" class="btn btn-success btn-block" target="_blank">Download Excel <i class="fa fa-file-excel"></i></a>
     </div>
     @endif
 </div>
@@ -92,15 +92,27 @@
                                     <tr>
                                         <th>No</th>
                                         <th>Nama</th>
+                                      
+
                                         @foreach ($daftarKategoriSimpanan as $ks)
+
                                             <th class="text-right">{{$ks->nama}}</th>
                                         @endforeach
-                                        <th class="text-right">Tgh Simpanan</th>
+                                        <th class="text-right">Jumlah Simpanan <i  class="fa fa-info-circle"
+                                            style="cursor: pointer"
+                                            
+                                            data-toggle="tooltip" data-placement="top" title="Total Simpanan yang telah dibayar"></i></th>
                                         <th class="text-right">Pokok Piutang</th>
-                                        <th class="text-right">Angusuran</th>
                                         <th class="text-right">Jasa Piutang</th>
-                                        <th class="text-right">Total Piutang</th>
-                                        <th class="text-right">Total Tagihan</th>
+                                        <th class="text-right">Total Piutang <i  class="fa fa-info-circle"
+                                            style="cursor: pointer"
+                                            
+                                            data-toggle="tooltip" data-placement="top" title="Total Piutang yang telah dibayar"></i></th>
+
+                                        <th class="text-right">Total Terbayar <i  class="fa fa-info-circle"
+                                            style="cursor: pointer"
+                                            
+                                            data-toggle="tooltip" data-placement="top" title="Total Simpanan dan Piutang yang telah dibayar"></i></th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -108,43 +120,21 @@
 
                                     @foreach ($s->anggota as $a)
                                     @php
-                                        $tagihanPinjaman = $a->tagihanPinjaman();
-                                        $totalTagihan = 0;
+                                        $terbayarPinjaman = $a->terbayarPinjaman($tahun, $bulan);
+                                        $totalTerbayar = 0;
                                     @endphp
                                         <tr>
                                             <td>{{$loop->iteration}}</td>
                                             <td>{{$a->nama}}</td>
 
-                                            @foreach ($a->tagihanSimpanan($bulan, $tahun) as $key => $value)
+                                            @foreach ($a->terbayarSimpanan($tahun, $bulan) as $key => $value)   
 
-                                                @if($key =='total')
-                                                    @php $totalTagihan += $value @endphp
-                                                    <td class="text-right text-white
-                                                        @if($value > 0)
-                                                            bg-warning
-                                                        @else
-                                                            bg-success
-                                                        @endif
-
-                                                    ">Rp {{number_format($value,0,',','.')}}</td>
-                                                @else
-                                                    <td class="text-right">Rp {{number_format($value,0,',','.')}}</td>
-                                                @endif
+                                                <td class="text-right">Rp {{number_format($value,0,',','.')}}</td>
                                             @endforeach
-
-                                            <td class="text-right">Rp {{number_format($tagihanPinjaman['pokok'],0,',','.')}}</td>
-                                            <td class="text-right">Rp {{number_format($tagihanPinjaman['angsuran'],0,',','.')}}</td>
-                                            <td class="text-right">Rp {{number_format($tagihanPinjaman['jasa'],0,',','.')}}</td>
-                                            <td class="text-right">Rp {{number_format($tagihanPinjaman['total'],0,',','.')}}</td>
-                                            <td class="text-right
-                                                @if($totalTagihan + $tagihanPinjaman['total'] > 0)
-                                                    bg-danger text-white
-                                                @else
-                                                    bg-success text-white
-                                                @endif
-
-                                            ">Rp {{number_format($totalTagihan + $tagihanPinjaman['total'],0,',','.')}}</td>
-
+                                            <td class="text-right">Rp {{number_format($terbayarPinjaman['pokok'],0,',','.')}}</td>
+                                            <td class="text-right">Rp {{number_format($terbayarPinjaman['jasa'],0,',','.')}}</td>
+                                            <td class="text-right">Rp {{number_format($terbayarPinjaman['total'],0,',','.')}}</td>
+                                            <td class="text-right">Rp {{number_format($totalTerbayar + $terbayarPinjaman['total'],0,',','.')}}</td>
                                         </tr>
                                     @endforeach
                                 </tbody>

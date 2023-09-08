@@ -49,10 +49,6 @@ class Anggota extends Model
         return $this->hasMany(Penarikan::class, 'id_anggota', 'id_anggota');
     }
 
-    public function angsuran()
-    {
-        return $this->hasMany(Angsuran::class, 'id_anggota', 'id_anggota');
-    }
 
     public function kategori_simpanan()
     {
@@ -201,18 +197,53 @@ class Anggota extends Model
         // cek apakah memiliki pinjaman
         $pinjaman = Pinjaman::where('id_anggota', $this->id_anggota)->where(function($q) {
             $q->where('sisa_pokok', '>', 0)->orWhere('sisa_jasa', '>', 0);
-        })->get();
+        })->first();
+       
         $tagihan = [
+            'pokok' => 0,
+            'jasa' => 0,
+            'angsuran' =>  0,
+            'total' => 0
+        ];
+
+        if($pinjaman) {
+            $nominal_angsuran = $pinjaman->nominal / $pinjaman->lama_angsuran;
+            $tagihan['pokok'] = $pinjaman->sisa_pokok;
+            $tagihan['angsuran'] = $nominal_angsuran < $pinjaman->sisa_pokok ? $nominal_angsuran : $pinjaman->sisa_pokok;
+            $tagihan['jasa'] = $pinjaman->sisa_jasa;
+        }
+        $tagihan['total'] = $tagihan['pokok'] + $tagihan['jasa'];
+        return $tagihan;
+    }
+
+    public function terbayarPinjaman($tahun, $bulan = null)
+    {
+        // cek apakah memiliki pinjaman
+        $pinjaman = Pinjaman::where('id_anggota', $this->id_anggota)->where(function($q) {
+            $q->where('sisa_pokok', '>', 0)->orWhere('sisa_jasa', '>', 0);
+        })->first();
+        $terbayar = [
             'pokok' => 0,
             'jasa' => 0,
             'total' => 0
         ];
 
-        foreach ($pinjaman as $p) {
-            $tagihan['pokok'] += $p->sisa_pokok;
-            $tagihan['jasa'] += $p->sisa_jasa;
+        if($pinjaman) {
+            $riwayat_angsuran = $pinjaman->angsuran()->whereYear('tgl_bayar', $tahun);
+            if($bulan) {
+                $riwayat_angsuran = $riwayat_angsuran->whereMonth('tgl_bayar', $bulan);
+            }
+            $riwayat_angsuran = $riwayat_angsuran->get();
+            foreach ($riwayat_angsuran as $r) {
+                $terbayar['pokok'] += $r->bayar_pokok;
+                $terbayar['jasa'] += $r->bayar_jasa;
+            }
+            $terbayar['total'] = $terbayar['pokok'] + $terbayar['jasa'];
         }
-        $tagihan['total'] = $tagihan['pokok'] + $tagihan['jasa'];
-        return $tagihan;
+        return $terbayar;
+
+    
     }
+
+
 }

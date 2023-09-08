@@ -6,7 +6,7 @@ use Illuminate\Http\Request;
 use App\Models\{Anggota, Simpanan, Pinjaman, Cicilan, Penarikan, Petugas, Sekolah, KategoriSimpanan};
 use Maatwebsite\Excel\Facades\Excel;
 // BillingReportExport
-use App\Exports\{BillingReportExport, SimpananBulananReportExport, SimpananTahunanReportExport};
+use App\Exports\{BillingReportExport, SimpananBulananReportExport, SimpananTahunanReportExport, PayReportExport};
 class LaporanController extends Controller
 {
     public function tagihan(Request $request)
@@ -16,7 +16,7 @@ class LaporanController extends Controller
        $tahun = $request->tahun??date('Y');
        $daftarSekolah = Sekolah::orderBy('nama', 'asc')->get();
        $daftarKategoriSimpanan = KategoriSimpanan::orderby('id_kategori', 'asc')->get();
-       $sekolah = '';
+   
        $id_sekolah = $request->id_sekolah??'all';
        if($id_sekolah AND $id_sekolah  != 'all') {
            $sekolah = Sekolah::where('id_sekolah', $id_sekolah)->get();
@@ -27,6 +27,27 @@ class LaporanController extends Controller
         return Excel::download(new BillingReportExport($bulan, $sekolah, $daftarKategoriSimpanan, $tahun), 'Laporan Tagihan.xlsx');
        }
        return view('petugas.laporan.tagihan', compact('bulan', 'sekolah', 'daftarSekolah', 'daftarKategoriSimpanan', 'title', 'tahun', 'id_sekolah'));
+    }
+
+    public function pembayaran(Request $request)
+    {
+      $title = 'Laporan Pembayaran';
+      $bulan = $request->bulan??date('m');
+      $tahun = $request->tahun??date('Y');
+      $id_sekolah = $request->id_sekolah??'all';
+      $daftarSekolah = Sekolah::orderBy('nama', 'asc')->get();
+      $daftarKategoriSimpanan = KategoriSimpanan::orderby('id_kategori', 'asc')->get();
+
+      if($id_sekolah AND $id_sekolah  != 'all') {
+          $sekolah = Sekolah::where('id_sekolah', $id_sekolah)->get();
+       } else {
+           $sekolah = Sekolah::orderBy('nama', 'asc')->get();
+      }
+
+      if($request->aksi == "download") {
+       return Excel::download(new PayReportExport($bulan, $sekolah, $daftarKategoriSimpanan, $tahun), 'Laporan Pembayaran.xlsx');
+      }
+      return view('petugas.laporan.pembayaran', compact('bulan', 'sekolah', 'daftarSekolah', 'daftarKategoriSimpanan', 'title', 'tahun', 'id_sekolah'));
     }
 
     public function simpananBulanan(Request $request)

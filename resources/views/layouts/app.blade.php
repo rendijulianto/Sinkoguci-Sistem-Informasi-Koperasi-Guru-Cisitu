@@ -70,6 +70,12 @@ if (Auth::guard('petugas')->user()->level == "petugas") {
             'url' => route('petugas.laporan.tagihan'),
             'icon' => 'fa fa-receipt'
         ],
+        [
+            'text' => 'Laporan Pembayaran',
+            'type'=> 'link',
+            'url' => route('petugas.laporan.pembayaran'),
+            'icon' => 'fa fa-receipt'
+        ],
     ];
 } else {
     $menu =  [
