@@ -116,16 +116,48 @@ if (Auth::guard('petugas')->user()->level == "petugas") {
             'type' => 'label',
         ],
         [
-            'text' => 'Laporan Simpanan Bulanan',
+            'text' => 'Laporan Peminjaman',
             'type'=> 'link',
-            'url' => route('admin.laporan.simpanan-bulanan'),
-            'icon' => 'fa fa-receipt'
+            'url' => route('admin.laporan.pinjaman'),
+            'icon' => 'fa fa-credit-card'
         ],
         [
-            'text' => 'Laporan Simpanan Tahunan',
-            'type'=> 'link',
-            'url' => route('admin.laporan.simpanan-tahunan'),
-            'icon' => 'fa fa-receipt'
+            'text' => 'Laporan Simpanan',
+            'type'=> 'parent',
+            'icon' => 'fa fa-receipt text-success',
+            'child' => [
+                [
+                    'text' => 'Simpanan Bulanan',
+                    'type'=> 'link',
+                    'url' => route('admin.laporan.simpanan-bulanan'),
+                    'icon' => 'fa fa-receipt'
+                ],
+                [
+                    'text' => 'Simpanan Tahunan',
+                    'type'=> 'link',
+                    'url' => route('admin.laporan.simpanan-tahunan'),
+                    'icon' => 'fa fa-receipt'
+                ]
+            ]
+        ],
+        [
+            'text' => 'Laporan Pembayaran',
+            'type'=> 'parent',
+            'icon' => 'fa fa-receipt text-success',
+            'child' => [
+                [
+                    'text' => 'Pembayaran Bulanan',
+                    'type'=> 'link',
+                    'url' => route('admin.laporan.pembayaran-bulanan'),
+                    'icon' => 'fa fa-receipt'
+                ],
+                [
+                    'text' => 'Pembayaran Tahunan',
+                    'type'=> 'link',
+                    'url' => route('admin.laporan.pembayaran-tahunan'),
+                    'icon' => 'fa fa-receipt'
+                ]
+            ]
         ],
     ];
 }
@@ -255,12 +287,7 @@ if (Auth::guard('petugas')->user()->level == "petugas") {
                         <i class="ion-android-menu"></i>
                     </button>
                 </div>
-                <div class="search-box pull-left">
-                    <form action="#">
-                        <i class="fa fa-search"></i>
-                        <input type="text" name="search" placeholder="Search..." required="">
-                    </form>
-                </div>
+
             </div>
             <!--==================================*
                      End Navigation and Search
@@ -281,19 +308,17 @@ if (Auth::guard('petugas')->user()->level == "petugas") {
                     <li class="user-dropdown">
                         <div class="dropdown">
                             <button class="btn dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                <img src="{{asset('assets/images/user.jpg')}}" alt="" class="img-fluid">
+                                <img src="https://ui-avatars.com/api/?name={{Auth::guard('petugas')->user()->nama}}" alt="User Image">
                             </button>
                             <div class="dropdown-menu dropdown_user" aria-labelledby="dropdownMenuButton" >
                                 <div class="dropdown-header d-flex flex-column align-items-center">
-                                    <div class="user_img mb-3">
-                                        <img src="{{asset('assets/images/user.jpg')}}" alt="User Image">
-                                    </div>
+
                                     <div class="user_bio text-center">
                                         <p class="name font-weight-bold mb-0">{{Auth::guard('petugas')->user()->nama}}</p>
                                         <p class="email text-muted mb-3"><a class="pl-3 pr-3" href="monica@jhon.co.uk">{{Auth::guard('petugas')->user()->email}}</a></p>
                                     </div>
                                 </div>
-                                <a class="dropdown-item" href="profile.html"><i class="fas fa-user"></i>My Profile</a>
+
                                 <span role="separator" class="divider"></span>
                                 <a class="dropdown-item" href="{{ route('logout') }}"><i class="fas fa-sign-out-alt"></i>Keluar</a>
                             </div>

@@ -13,23 +13,8 @@
         </div>
     </div>
 </div>
-<form class="row mb-4" method="GET" action="{{route('petugas.laporan.pembayaran')}}">
-    <div class="col-3">
-        <div class="form-group">
-            <label class="col-form-label">Pilih Bulan</label>
-            <br>
-            <div class="input-group">
-               <select class="custom-select select2" fdprocessedid="bq1eom" name="bulan" id="bulan">
-                    <option selected disabled> -- Pilih -- </option>
-
-                    @for($i = 1; $i <= 12; $i++)
-                        <option value="{{$i}}" @if($bulan == $i) selected @endif>{{date('F', mktime(0, 0, 0, $i, 1))}}</option>
-                    @endfor
-                </select>
-            </div>
-        </div>
-    </div>
-    <div class="col-3">
+<form class="row mb-4" method="GET" action="{{route('admin.laporan.pembayaran-tahunan')}}">
+    <div class="col-6">
         <div class="form-group">
             <label class="col-form-label">Tahun</label>
             <br>
@@ -58,20 +43,20 @@
     <div class="col-12">
         <button class="btn btn-primary btn-block" id="btn-cari">Cari Data <i class="fa fa-search"></i></button>
     </div>
-    @if($bulan != null && $tahun != null && $id_sekolah != null)
+    @if($tahun != null && $id_sekolah != null)
     <div class="col-lg-3 mt-3">
-        <a href="{{route('petugas.laporan.pembayaran')}}?bulan={{$bulan}}&tahun={{$tahun}}&id_sekolah={{$id_sekolah}}&aksi=download" class="btn btn-success btn-block" target="_blank">Download Excel <i class="fa fa-file-excel"></i></a>
+        <a href="{{route('admin.laporan.pembayaran-tahunan')}}?tahun={{$tahun}}&id_sekolah={{$id_sekolah}}&aksi=download" class="btn btn-success btn-block" target="_blank">Download Excel <i class="fa fa-file-excel"></i></a>
     </div>
     @endif
 </div>
 <div class="row mb-4">
-    @if($bulan != null && $tahun != null && $id_sekolah != null)
+    @if($tahun != null && $id_sekolah != null)
         @foreach($sekolah as $s)
         <div class="col-12 mb-4">
             <div class="card">
                 <div class="card-body">
                     <h4 class="card_title">
-                        Data Tagihan Simpanan & Pinjaman
+                       Data Pembayaran Tahun {{$tahun}}
                     </h4>
                     <table class="table table-bordered">
                         <tr>
@@ -79,7 +64,6 @@
                             <td>{{$s->nama}}</td>
                         </tr>
                         <tr>
-                            <td>Bulan: {{date('F', mktime(0, 0, 0, $bulan, 1))}} </td>
                             <td>Tahun: {{$tahun}}</td>
                         </tr>
                     </table>
@@ -118,14 +102,14 @@
 
                                     @foreach ($s->anggota as $a)
                                     @php
-                                        $terbayarPinjaman = $a->terbayarPinjaman($tahun, $bulan);
+                                        $terbayarPinjaman = $a->terbayarPinjaman($tahun);
                                         $totalTerbayar = 0;
                                     @endphp
                                         <tr>
                                             <td>{{$loop->iteration}}</td>
                                             <td>{{$a->nama}}</td>
 
-                                            @foreach ($a->terbayarSimpanan($tahun, $bulan) as $key => $value)
+                                            @foreach ($a->terbayarSimpanan($tahun) as $key => $value)
                                             @if($key =='total')
                                              @php $totalTerbayar += $value @endphp
                                             @endif
@@ -138,7 +122,6 @@
                                         </tr>
                                     @endforeach
                                 </tbody>
-
                             </table>
                         </div>
                     </div>

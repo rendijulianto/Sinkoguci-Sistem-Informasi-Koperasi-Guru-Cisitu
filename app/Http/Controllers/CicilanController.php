@@ -82,7 +82,9 @@ class CicilanController extends Controller
 
             $pinjaman->angsuran()->create($angsuran);
             DB::commit();
-            return redirect()->back()->with('success', 'Berhasil menambahkan data cicilan');
+            return redirect()->back()->withInput(
+
+            )->with('success', 'Berhasil menambahkan data cicilan');
 
         } catch (\Throwable $th) {
             DB::rollback();

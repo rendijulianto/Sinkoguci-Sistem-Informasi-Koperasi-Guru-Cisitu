@@ -34,8 +34,8 @@
 
  $(document).ready(function() {
      $('.select2').select2();
-    @if(old('pinjaman'))
-        $('#pinjaman').val('{{old('pinjaman')}}').trigger('change');
+    @if(old('id_pinjaman'))
+        $('#pinjaman').val('{{old('id_pinjaman')}}').trigger('change');
     @elseif(Request::get('pinjaman'))
         $('#pinjaman').val('{{Request::get('pinjaman')}}').trigger('change');
     @endif

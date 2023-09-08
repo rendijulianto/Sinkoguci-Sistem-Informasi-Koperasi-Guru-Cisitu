@@ -19,6 +19,7 @@ class DatabaseSeeder extends Seeder
             AnggotaTableSeeder::class,
             PinjamanTableSeeder::class,
             SimpananTableSeeder::class,
+            PenarikanTableSeeder::class,
         ]);
     }
 }

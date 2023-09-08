@@ -28,8 +28,12 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'middleware' => 'petugasaut
     Route::resource('/petugas', 'PetugasController')->names('petugas');
     Route::resource('/sekolah', 'SekolahController')->names('sekolah');
     Route::resource('/kategori_simpanan', 'KategoriSimpananController')->names('kategori-simpanan');
+    Route::get('/laporan/pinjaman', 'LaporanController@pinjaman')->name('laporan.pinjaman');
+    Route::get('/laporan/pinjaman/cicilan/{id}/download', 'LaporanController@pinjamanCicilanDownload')->name('laporan.pinjaman-cicilan-download');
     Route::get('/laporan/simpanan', 'LaporanController@simpananBulanan')->name('laporan.simpanan-bulanan');
     Route::get('/laporan/simpanan_tahunan', 'LaporanController@simpananTahunan')->name('laporan.simpanan-tahunan');
+    Route::get('/laporan/pembayaran', 'LaporanController@pembayaranBulanan')->name('laporan.pembayaran-bulanan');
+    Route::get('/laporan/pembayaran_tahunan', 'LaporanController@pembayaranTahunan')->name('laporan.pembayaran-tahunan');
 });
 
 
