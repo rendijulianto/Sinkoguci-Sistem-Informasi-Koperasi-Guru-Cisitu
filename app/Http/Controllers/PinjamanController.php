@@ -72,7 +72,7 @@ class PinjamanController extends Controller
             'sisa_jasa' => 0,
         ]);
 
-        return redirect()->back()->with('success', 'Berhasil menambahkan data pinjaman');
+        return redirect()->route('petugas.pinjaman.index')->with('success', 'Berhasil menambahkan data pinjaman');
       } catch (\Throwable $th) {
         return redirect()->back()->withInput()->with('error', $th->getMessage());
       }
@@ -96,7 +96,8 @@ class PinjamanController extends Controller
             $jasa_per_bulan = $p->sisa_pokok * $persen_jasa;
             //tambahkan jasa per bulan ke sisa jasa
             $p->sisa_jasa += $jasa_per_bulan;
-            $p->tgl_update_jasa = date('Y-m-d');
+            // $p->tgl_update_jasa = date('Y-m-d');
+            $p->tgl_update_jasa = date('Y-m-d', strtotime($p->tgl_update_jasa . ' +1 month'));
             $p->save();
         }
     }
