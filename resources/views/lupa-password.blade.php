@@ -75,7 +75,7 @@
                Slick Menu
     *===========================-->
     <link rel="stylesheet" href="{{asset('assets/css/slicknav.min.css')}}">
-    
+
     <!--=========================*
               Flag Icons
     *===========================-->
@@ -84,6 +84,10 @@
     <!--=========================*
             Google Fonts
     *===========================-->
+    <!--=========================*
+               Toastr Css
+    *===========================-->
+    <link rel="stylesheet" href="{{asset('assets/vendors/toastr/css/toastr.min.css')}}">
 
     <!-- Font USE: 'Roboto', sans-serif;-->
     <link rel="preconnect" href="https://fonts.gstatic.com">
@@ -98,7 +102,8 @@
 <body>
     <div class="lock-screen" style="background: url('{{asset('assets/images/bg-img.jpg')}}') no-repeat center center / cover;">
         <div class="login-form credentials-form">
-            <form>
+            <form action="{{route('resetPassword')}}" method="POST">
+                @csrf
                 <div class="lock-form-head">
                     <h4>Lupa Password</h4>
                     <p>Masukkan email anda untuk mendapatkan password baru</p>
@@ -106,7 +111,7 @@
                 <div class="login-form-body">
                     <div class="form-gp">
                         <label for="exampleInputPassword1">Masukan Email</label>
-                        <input type="email" id="exampleInputPassword1">
+                        <input type="email" name="email" id="exampleInputPassword1">
                         <i class="fa fa-envelope"></i>
                     </div>
                     <div class="submit-btn-area">
@@ -135,7 +140,24 @@
 <script src="{{asset('assets/js/jquery.slicknav.min.js')}}"></script>
 <!-- Fancy Box Js -->
 <script src="{{asset('assets/js/jquery.fancybox.pack.js')}}"></script>
+<!-- Toastr Js -->
+<script src="{{asset('assets/vendors/toastr/js/toastr.min.js')}}"></script>
 <!-- Main Js -->
 <script src="{{asset('assets/js/main.js')}}"></script>
+@if($errors->any())
+    <script>
+        toastr.error("{{$errors->first()}}", "Gagal!");
+    </script>
+@endif
+@if(Session::has('error'))
+    <script>
+        toastr.error("{{Session::get('error')}}", "Gagal!");
+    </script>
+@endif
+@if(Session::has('success'))
+    <script>
+        toastr.success("{{Session::get('success')}}", "Berhasil!");
+    </script>
+@endif
 </body>
 </html>

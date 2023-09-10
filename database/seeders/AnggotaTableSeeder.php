@@ -24,17 +24,16 @@ class AnggotaTableSeeder extends Seeder
                 'alamat'  => substr($faker->address, 0, 60),
                 'tgl_lahir' => $faker->date,
             ]);
-            $kategori = KategoriSimpanan::where('nama', 'like', '%Simpanan%')->get();
+            $kategori = KategoriSimpanan::all();
             foreach ($kategori as $k) {
                 KategoriSimpananAnggota::create([
                     'id_anggota' => $anggota->id_anggota,
                     'id_kategori' => $k->id_kategori,
                     'saldo' => 0,
                     'nominal' => $k->jumlah,
-                    
                 ]);
             }
         }
-       
+
     }
 }

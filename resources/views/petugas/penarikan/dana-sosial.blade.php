@@ -13,25 +13,43 @@
         </div>
     </div>
 </div>
-<div class="row">
-    <div class="col-12 mb-3">
+<form class="row mb-4">
+    <div class="col-lg-3">
+          <div class="form-group">
+             <label class="col-form-label">Tanggal Awal</label>
+             <br>
+             <input type="date" class="form-control" name="tanggal_awal" value="{{$tanggal_awal}}">
+          </div>
+    </div>
+     <div class="col-lg-3">
+         <div class="form-group">
+             <label class="col-form-label">Tanggal Akhir</label>
+             <br>
+             <input type="date" class="form-control" name="tanggal_akhir" value="{{$tanggal_akhir}}">
+
+         </div>
+     </div>
+     <div class="col-lg-6">
+         <div class="form-group">
+             <label class="col-form-label">Kata Kunci</label>
+             <br>
+             {{-- input with button --}}
+             <div class="input-group">
+                 <input type="text" class="form-control" name="cari" value="{{$cari}}" placeholder="Cari berdasarkan kata kunci">
+                 <div class="input-group-append">
+                     <button class="btn btn-sm btn-primary" type="submit"><i class="fa fa-search"></i></button>
+                 </div>
+             </div>
+         </div>
+     </div>
+     <div class="col-lg-12">
         <button type="button" class="btn btn-primary"  data-toggle="modal" data-target="#modalTambahPenarikanSimpanan" style="float: right">
             <i class="fa fa-plus"></i> Tambah
         </button>
      </div>
-    <div class="col-lg-3">
-        <div class="card">
-            <div class="card-body">
-                {{-- image lingkaran--}}
-                <div class="text-center">
-                    <h4  class="card_title mb-0">Sisa Saldo Dana Khusus</h4>
-                    <h3 class="text-primary">Rp {{number_format($saldo_sekarang, 0, ',', '.')}}</h3>
-                    <p class="text-muted">{{date('d M Y')}}</p>
-                </div>
-            </div>
-        </div>
-    </div>
-    <div class="col-lg-9">
+ </form>
+<div class="row">
+    <div class="col-lg-12">
             <div class="card">
                 <div class="card-body">
                     <h4 class="card_title">
@@ -42,17 +60,14 @@
                             <table class="table table-hover progress-table">
                                 <thead class="text-uppercase bg-primary">
                                 <tr>
-                                    <th rowspan="2" scope="col">No</th>
-                                    <th rowspan="2" scope="col">Nominal</th>
-                                    <th rowspan="2" >Keterangan</th>
-                                    <th rowspan="2" >Tanggal Penarikan</th>
-                                    <th rowspan="2" >Petugas</th>
-                                    <td colspan="2" class="text-center">Saldo</td>
+                                    <th scope="col">No</th>
+                                    <th scope="col">Nominal</th>
+                                    <th >Keterangan</th>
+                                    <th >Tanggal Penarikan</th>
+                                    <th >Petugas</th>
+
                                 </tr>
-                                <tr class="text-center">
-                                    <th>Sebelum</th>
-                                    <th>Sesudah</th>
-                                </tr>
+
                                 </thead>
                                 <tbody>
                                     @forelse($penarikan as $p)
@@ -62,8 +77,6 @@
                                         <td>{{$p->keterangan}}</td>
                                         <td>{{$p->tgl_penarikan}}</td>
                                         <td>{{$p->petugas->nama}}</td>
-                                        <td class="text-center">Rp {{number_format($p->saldo_sebelum, 0, ',', '.')}}</td>
-                                        <td class="text-center">Rp {{number_format($p->saldo_sesudah, 0, ',', '.')}}</td>
                                     </tr>
                                     @empty
                                     <tr>

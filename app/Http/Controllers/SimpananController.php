@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\{Anggota,KategoriSimpanan, Simpanan, Penarikan};
+use Maatwebsite\Excel\Facades\Excel;
+use App\Exports\{SimpananExport};
 use DB;
 use Auth;
 
@@ -57,17 +59,12 @@ class SimpananController extends Controller
             foreach ($kategoriSimpanan as $k) {
                 $object = strtolower(str_replace(' ', '_', $k->nama));
                 if ($request->$object != null) {
-
                     $dataSimpanan['id_kategori'] = $k->id_kategori;
                     $dataSimpanan['jumlah'] = $request->$object;
                     $simpan =  Simpanan::create($dataSimpanan);
-
                 }
             }
-
-
             DB::commit();
-
             return redirect()->back()->withInput()->with(['success' => 'Menambahkan simpanan baru']);
         } catch (\Throwable $th) {
             DB::rollback();
@@ -78,7 +75,7 @@ class SimpananController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(string $id)
+    public function show(Request $request, string $id)
     {
         $title = 'Detail Simpanan';
         $anggota = Anggota::where('id_anggota', '=', $id)->first();
@@ -93,8 +90,12 @@ class SimpananController extends Controller
             $simpanan[$i] = $anggota->simpananBulan($i);
         }
 
-        $simpanan = json_decode(json_encode($simpanan));
+
         $kategoriSimpanan = KategoriSimpanan::orderby('id_kategori', 'asc')->get();
-        return view('petugas.simpanan.show', compact('title', 'anggota', 'simpanan', 'kategoriSimpanan', 'sisaSimpanan', 'simpananDefault'));
+        if($request->aksi == "download") {
+            return Excel::download(new SimpananExport($anggota,$kategoriSimpanan), 'Simpanan-'.$anggota->nama.' - '.$anggota->sekolah->nama.' - '.date('d-m-Y').'.xlsx');
+        } else {
+            return view('petugas.simpanan.show', compact('title', 'anggota', 'simpanan', 'kategoriSimpanan', 'sisaSimpanan', 'simpananDefault'));
+        }
     }
 }

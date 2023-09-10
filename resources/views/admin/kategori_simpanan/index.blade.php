@@ -13,6 +13,9 @@
 <div class="row">
     <!-- Progress Table start -->
     <div class="col-12">
+        <button type="button" class="btn btn-success" style="float: right;" data-toggle="modal" data-target="#modalUbahJumlahSimpananMasal">
+            <i class="fa fa-edit"></i> Ubah Masal Nominal Simpanan
+        </button>
         <button type="button" class="btn btn-primary" style="float: right;" data-toggle="modal" data-target="#modalTambahKategoriSimpanan">
             <i class="fa fa-plus"></i> Tambah Kategori Simpanan
         </button>
@@ -77,6 +80,39 @@
         </div>
     </div>
     <!-- Progress Table end -->
+</div>
+
+<div class="modal fade" id="modalUbahJumlahSimpananMasal">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <form class="modal-content tambah" action="{{route('admin.kategori-simpanan.ubah-masal-jumlah')}}" method="post" autocomplete="off">
+            @csrf
+            <div class="modal-header">
+                <h5 class="modal-title">Ubah Masal Nominal Simpanan</h5>
+                <button type="button" class="close" data-dismiss="modal"><span>&times;</span></button>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-6">
+                        <label for="nama">Kategori</label>
+                        <select class="custom-select select2" fdprocessedid="bq1eom" name="id_kategori" id="id_kategori">
+                            <option selected disabled> -- Pilih -- </option>
+                            @foreach ($kategoriSimpanan as $item)
+                                <option value="{{$item->id_kategori}}">{{$item->nama}}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                    <div class="col-6">
+                        <label for="jumlah">Jumlah</label>
+                        <input type="number" class="form-control" autocomplete="off" id="jumlah" name="jumlah" placeholder="Jumlah" value="">
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="reset" class="btn btn-light">Bersihkan</button>
+                <button type="submit" class="btn btn-primary">Simpan</button>
+            </div>
+        </form>
+    </div>
 </div>
 
 

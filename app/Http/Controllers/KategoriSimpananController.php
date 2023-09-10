@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Models\KategoriSimpanan;
+use App\Models\{KategoriSimpanan,KategoriSimpananAnggota};
 
 class KategoriSimpananController extends Controller
 {
@@ -14,7 +14,7 @@ class KategoriSimpananController extends Controller
     {
         $cari = $request->cari;
         $title = 'Kelola Kategori Simpanan';
-    
+
         $kategoriSimpanan = KategoriSimpanan::query()
             ->when($cari, function ($query, $cari) {
                 $query->where('nama', 'like', '%' . $cari . '%')
@@ -22,7 +22,7 @@ class KategoriSimpananController extends Controller
                     ->orWhere('id_kategori', $cari);
             })
                 ->orderBy('id_kategori', 'desc')
-                ->paginate(10);  
+                ->paginate(10);
         return view('admin.kategori_simpanan.index', compact('title', 'kategoriSimpanan'));
     }
 
@@ -92,6 +92,31 @@ class KategoriSimpananController extends Controller
             $kategoriSimpanan = KategoriSimpanan::findOrFail($id);
             $kategoriSimpanan->delete();
             return redirect()->back()->with(['success' => 'Kategori Simpanan: ' . $kategoriSimpanan->nama . ' Dihapus']);
+        } catch (\Throwable $th) {
+            return redirect()->back()->with(['error' => $th->getMessage()]);
+        }
+    }
+
+    public function ubahMasalJumlah(Request $request)
+    {
+        $this->validate($request, [
+            'id_kategori' => 'required|numeric|exists:kategori_simpanan,id_kategori',
+            'jumlah' => 'required|numeric',
+        ], [
+            'id_kategori.required' => 'Kategori tidak boleh kosong',
+            'id_kategori.numeric' => 'Kategori harus berupa angka',
+            'id_kategori.exists' => 'Kategori tidak ditemukan',
+            'jumlah.required' => 'Jumlah tidak boleh kosong',
+            'jumlah.numeric' => 'Jumlah harus berupa angka',
+        ]);
+
+        try {
+            $kategoriSimpanan = KategoriSimpanan::findOrFail($request->id_kategori);
+            KategoriSimpananAnggota::where('id_kategori', $request->id_kategori)->update([
+                'nominal' => $request->jumlah,
+            ]);
+
+            return redirect()->back()->with(['success' => 'Jumlah Kategori Simpanan: ' . $kategoriSimpanan->nama . ' Diperbaharui']);
         } catch (\Throwable $th) {
             return redirect()->back()->with(['error' => $th->getMessage()]);
         }
