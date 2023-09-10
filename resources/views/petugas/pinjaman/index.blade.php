@@ -109,10 +109,18 @@
                                 <td>{{$p->lama_angsuran}} Bulan</td>
                                 <td>{{$p->tgl_pinjam}}</td>
                                 <td>
-                                    @if ($p->sisa_pokok > 0 && $p->sisa_jasa > 0)
+                                    <a href="{{route('petugas.pinjaman.show', $p->id_pinjaman)}}" class="btn btn-sm btn-primary"><i class="fa fa-eye"></i></a>
+                                    <a href="{{route('petugas.pinjaman.edit', $p->id_pinjaman)}}" class="btn btn-sm btn-warning"><i class="fa fa-edit"></i></a>
+                                    <form action="{{route('petugas.pinjaman.destroy', $p->id_pinjaman)}}" method="post" class="d-inline">
+                                        @csrf
+                                        @method('delete')
+                                        <button type="submit" class="btn btn-sm btn-danger"><i class="fa fa-trash"></i></button>
+                                    </form>
+                                    @if ($p->sisa_pokok > 0 OR $p->sisa_jasa > 0)
                                     <a href="{{route('petugas.cicilan.index')}}?pinjaman={{$p->id_pinjaman}}" class="btn btn-xs btn-primary"><i class="fa fa-money-bill"></i> Bayar Cicilan</a>
                                     @endif
                                     <a href="{{route('petugas.cicilan.show', $p->id_pinjaman)}}?aksi=download" class="btn btn-xs btn-success"><i class="fa fa-file-excel"></i> Download</a>
+
                                 </td>
                             </tr>
                             @empty
