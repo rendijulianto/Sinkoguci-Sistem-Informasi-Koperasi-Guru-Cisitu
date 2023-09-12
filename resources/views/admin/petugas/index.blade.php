@@ -37,9 +37,9 @@
                         </div>
                     </div>
                     <div class="col-lg-6">
-                        <label class="form-check-label" for="nama">Kata Kunci</label>
+                        <label class="form-check-label" for="cari">Kata Kunci</label>
                         <div class="input-group mb-3">
-                            <input type="text" name="cari" id="nama" class="form-control" placeholder="Cari Petugas ..">
+                            <input type="text" name="cari" id="cari" class="form-control" placeholder="Cari Petugas ..." value="{{ Request::get('cari') }}">
                                 <div class="input-group-append">
                                     <button class="btn btn-primary" type="submit"><i class="fa fa-search"></i></button>
                                 </div>
@@ -56,11 +56,11 @@
                                 <th scope="col">Email</th>
                                 <th scope="col">Level</th>
                                 <th scope="col">Aksi</th>
-                             
+
                             </tr>
                             </thead>
                             <tbody>
-                                @foreach ($petugas as $item)
+                                @forelse ($petugas as $item)
                                 <tr>
                                     <th scope="row">{{$item->id_petugas}}</th>
                                     <td>{{$item->nama}}</td>
@@ -80,7 +80,11 @@
                                         </ul>
                                     </td>
                                 </tr>
-                                @endforeach
+                                @empty
+                                <tr>
+                                    <td colspan="5" class="text-center">Tidak ada data</td>
+                                </tr>
+                                @endforelse
                             </tbody>
                         </table>
                     </div>

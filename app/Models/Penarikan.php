@@ -20,6 +20,8 @@ class Penarikan extends Model
         'tgl_penarikan',
         'jumlah',
         'keterangan',
+        'saldo_sebelum',
+        'saldo_sesudah',
     ];
 
     public function petugas()

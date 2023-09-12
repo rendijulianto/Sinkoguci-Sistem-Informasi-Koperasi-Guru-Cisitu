@@ -64,7 +64,9 @@ class LaporanController extends Controller
             $sekolah = Sekolah::orderBy('nama', 'asc')->get();
        }
        if($request->aksi == "download") {
-        return Excel::download(new SimpananBulananReportExport($bulan, $sekolah, $daftarKategoriSimpanan, $tahun), 'Laporan Simpanan Bulanan-'.$bulan.'-'.$tahun.'.xlsx');
+        $nama_sekolah = $id_sekolah == 'all' ? 'Semua Sekolah' : $sekolah->first()->nama;
+        $file_laporan = 'Laporan Simpanan Bulanan '.$nama_sekolah.' Bulan '.$bulan.'-'.$tahun.'.xlsx';
+        return Excel::download(new SimpananBulananReportExport($bulan, $sekolah, $daftarKategoriSimpanan, $tahun), $file_laporan);
        }
          return view('admin.laporan.simpanan', compact('bulan', 'sekolah', 'daftarSekolah', 'daftarKategoriSimpanan', 'title', 'tahun', 'id_sekolah'));
     }
@@ -82,7 +84,9 @@ class LaporanController extends Controller
               $sekolah = Sekolah::orderBy('nama', 'asc')->get();
          }
          if($request->aksi == "download") {
-          return Excel::download(new SimpananTahunanReportExport($sekolah, $daftarKategoriSimpanan, $tahun), 'Laporan Simpanan Tahunan-'.$tahun.'.xlsx');
+            $nama_sekolah = $id_sekolah == 'all' ? 'Semua Sekolah' : $sekolah->first()->nama;
+            $file_laporan = 'Laporan Simpanan Tahunan '.$nama_sekolah.' Tahun '.$tahun.'.xlsx';
+          return Excel::download(new SimpananTahunanReportExport($sekolah, $daftarKategoriSimpanan, $tahun), $file_laporan);
          }
            return view('admin.laporan.simpanan-tahunan', compact( 'sekolah', 'daftarSekolah', 'daftarKategoriSimpanan', 'title', 'tahun', 'id_sekolah'));
     }
@@ -90,56 +94,50 @@ class LaporanController extends Controller
 
     public function pinjaman(Request $request)
     {
-        $tanggal_awal = date('Y-m-01');
-        $tanggal_akhir = date('Y-m-t');
+        $tanggal_awal = date('Y-01-01');
+        $tanggal_akhir = date('Y-12-31');
         $cari = $request->cari;
         $status = $request->status;
-        if ($request->has('tanggal_awal') && $request->has('tanggal_awal')) {
+        $pinjaman = Pinjaman::query();
+
+        if(!empty($request->tanggal_awal) && !empty($request->tanggal_akhir)) {
             $tanggal_awal = $request->tanggal_awal;
             $tanggal_akhir = $request->tanggal_akhir;
+            $pinjaman->whereBetween('tgl_pinjam', [$tanggal_awal, $tanggal_akhir]);
         }
 
-
-        $pinjaman = Pinjaman::where('id_pinjaman', 'like', '%' . $cari . '%')
-            ->where('tgl_pinjam', 'like', '%' . $cari . '%')
-            ->whereBetween('tgl_pinjam', [$tanggal_awal, $tanggal_akhir])
-            ->where(function ($query) use ($status, $cari) {
-                if ($status == 'lunas') {
-                    $query->where('sisa_pokok', '=', 0)
-                        ->where('sisa_jasa', '=', 0);
-                } elseif ($status == 'belum_lunas') {
+        // status
+        if (!empty($status)) {
+            if ($status == 'lunas') {
+                $pinjaman->whereRaw('sisa_pokok = 0 AND sisa_jasa = 0');
+            } elseif ($status == 'belum_lunas') {
+                $pinjaman->where(function ($query) {
                     $query->where('sisa_pokok', '>', 0)
                         ->orWhere('sisa_jasa', '>', 0);
-                }
-            })->orWhereHas('anggota', function ($query) use ($cari) {
-                $query->where('nama', 'like', '%' . $cari . '%');
-            })->orWhereHas('petugas', function ($query) use ($cari) {
-                $query->where('nama', 'like', '%' . $cari . '%');
-            })
-            ->orderBy('sisa_pokok', 'desc')->orderBy('sisa_jasa', 'desc')->paginate(10);
+                });
+            }
+        }
+
+        if (!empty($cari)) {
+            $pinjaman->where(function ($query) use ($cari) {
+                $query->where('id_pinjaman', 'like', '%' . $cari . '%')
+                    ->orWhere('tgl_pinjam', 'like', '%' . $cari . '%')
+                    ->orWhereHas('anggota', function ($query) use ($cari) {
+                        $query->where('nama', 'like', '%' . $cari . '%');
+                    })->orWhereHas('petugas', function ($query) use ($cari) {
+                        $query->where('nama', 'like', '%' . $cari . '%');
+                    });
+            });
+        }
+
 
         $title = 'Laporan Pinjaman';
 
         if($request->aksi == "download") {
-            $pinjaman = Pinjaman::where('id_pinjaman', 'like', '%' . $cari . '%')
-            ->where('tgl_pinjam', 'like', '%' . $cari . '%')
-            ->whereBetween('tgl_pinjam', [$tanggal_awal, $tanggal_akhir])
-            ->where(function ($query) use ($status, $cari) {
-                if ($status == 'lunas') {
-                    $query->where('sisa_pokok', '=', 0)
-                        ->where('sisa_jasa', '=', 0);
-                } elseif ($status == 'belum_lunas') {
-                    $query->where('sisa_pokok', '>', 0)
-                        ->orWhere('sisa_jasa', '>', 0);
-                }
-            })->orWhereHas('anggota', function ($query) use ($cari) {
-                $query->where('nama', 'like', '%' . $cari . '%');
-            })->orWhereHas('petugas', function ($query) use ($cari) {
-                $query->where('nama', 'like', '%' . $cari . '%');
-            })
-            ->orderBy('sisa_pokok', 'desc')->orderBy('sisa_jasa', 'desc')->get();
-            return Excel::download(new PinjamanReportExport($pinjaman), 'Laporan Pinjaman.xlsx');
+            $pinjaman = $pinjaman->orderBy('id_pinjaman', 'desc')->get();
+            return Excel::download(new PinjamanReportExport($pinjaman), 'Laporan Pinjaman ' . $tanggal_awal . ' - ' . $tanggal_akhir . '.xlsx');
         }
+        $pinjaman = $pinjaman->orderBy('id_pinjaman', 'desc')->paginate(10);
 
         return view('admin.laporan.pinjaman', compact('title', 'pinjaman', 'tanggal_awal', 'tanggal_akhir', 'cari', 'status'));
     }
@@ -151,7 +149,7 @@ class LaporanController extends Controller
         if(!$pinjaman){
             return abort(404);
         }
-        return Excel::download(new AngsuranExport($pinjaman), 'Data-Cicilan-' . $pinjaman->id_pinjaman . '.xlsx');
+        return Excel::download(new AngsuranExport($pinjaman), 'Laporan Angsuran ' . $pinjaman->anggota->nama . ' Pinjaman ' . $pinjaman->id_pinjaman . '.xlsx');
     }
 
     public function pembayaranBulanan(Request $request)

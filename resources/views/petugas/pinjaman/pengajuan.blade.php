@@ -37,7 +37,7 @@
                     {{-- nominal --}}
                     <div class="col-12">
                         <label for="nominal">Nominal</label>
-                        <input type="number" class="form-control" name="nominal" id="nominal" value="{{old('nominal')}}" placeholder="Nominal">
+                        <input type="text" class="form-control autonumeric-currency" name="nominal" id="nominal" value="{{old('nominal')}}" placeholder="Nominal">
                     </div>
                     {{-- jangk waktu --}}
                     <div class="col-12">
@@ -51,8 +51,8 @@
                     </div>
                     {{-- perangsuran --}}
                     <div class="col-12">
-                        <label for="perangsuran">Perangsuran</label>
-                        <input type="text" readonly  class="form-control" name="perangsuran" id="perangsuran" value="{{old('perangsuran')}}" placeholder="Perangsuran">
+                        <label for="perangsuran">Angsuran</label>
+                        <input type="text" readonly  class="form-control autonumeric-currency" name="perangsuran" id="perangsuran" value="{{old('perangsuran')}}" placeholder="Angusuran">
                     </div>
                     <div class="col-12">
                         <label for="tgl_pinjam">Tanggal Pinjam</label>
@@ -82,7 +82,7 @@
 @section('js')
 
     <script>
-       
+        $(".autonumeric-currency").autoNumeric("init", { mDec: "0", aSep: ".", aDec: ",", aSign: "Rp " });
         $(document).ready(function(){
             $('.select2').select2();
             // jika nominal atau jangka waktu berubah
@@ -92,9 +92,9 @@
                 // ambil nilai jangka waktu
                 var lama_angsuran = $('#lama_angsuran').val();
                 // hitung perangsuran
-                var perangsuran = nominal / lama_angsuran;
+                var perangsuran = convertRupiahToNumber(nominal) / lama_angsuran;
                 // tampilkan perangsuran
-                $('#perangsuran').val('Rp. ' + new Intl.NumberFormat(['ban', 'id']).format(perangsuran));
+                $('#perangsuran').val(new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR' }).format(perangsuran).replace(',00', ''));
             });
         });
     </script>

@@ -30,7 +30,7 @@ if (Auth::guard('petugas')->user()->level == "petugas") {
             'icon' => 'fa fa-credit-card'
         ],
         [
-            'text' => 'Bayar Cicilan',
+            'text' => 'Bayar Angsuran',
             'type'=> 'link',
             'url' => route('petugas.cicilan.index'),
             'icon' => 'fa fa-file-invoice-dollar'
@@ -107,6 +107,18 @@ if (Auth::guard('petugas')->user()->level == "petugas") {
         ],
         [
             'text' => 'Kelola Kategori Simpanan',
+            'type'=> 'link',
+            'url' => route('admin.kategori-simpanan.index'),
+            'icon' => 'fa fa-dollar-sign'
+        ],
+        [
+            'text' => 'Kelola Pinjaman',
+            'type'=> 'link',
+            'url' => route('admin.kategori-simpanan.index'),
+            'icon' => 'fa fa-dollar-sign'
+        ],
+        [
+            'text' => 'Kelola Simpanan',
             'type'=> 'link',
             'url' => route('admin.kategori-simpanan.index'),
             'icon' => 'fa fa-dollar-sign'
@@ -432,6 +444,7 @@ if (Auth::guard('petugas')->user()->level == "petugas") {
 <script src="{{asset('assets/js/popper.min.js')}}"></script>
 <script src="{{asset('assets/js/bootstrap.min.js')}}"></script>
 
+<script src="https://kebutuhansosmed.com/assets/admin/plugins/autonumeric/autoNumeric-min.js"></script>
 <!-- Metis Menu Js -->
 <script src="{{asset('assets/js/metisMenu.min.js')}}"></script>
 <!-- SlimScroll Js -->
@@ -443,8 +456,18 @@ if (Auth::guard('petugas')->user()->level == "petugas") {
 <!-- Sweet Alert Js -->
 <script src="{{asset('assets/vendors/sweetalert2/js/sweetalert2.all.min.js')}}"></script>
 <!-- ========== This Page js ========== -->
+<script>
+     const convertRupiahToNumber = (rupiah) => {
+    // Rp 1.000.000
+    // Misalkan Rp Saja = 0
 
-
+    let number = parseInt(rupiah.replace(/[^0-9]/g, ''), 10);
+    if (isNaN(number)) {
+        number = 0;
+    }
+    return number;
+ }
+ </script>
 @yield('js')
 @if($errors->any())
     <script>

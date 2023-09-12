@@ -90,10 +90,9 @@
             </div>
             <div class="modal-body">
                 <div class="alert alert-info">
-                    <ul class="m-0">
-                        <li>Kosongkan simpanan / isi dengan 0 jika tidak ingin menambahkan simpanan / dana khusus.</li>
-                        <li>Simpanan pokok, wajib, khusus, karya wisata, hari raya, suka rela, dan dana khusus akan dijumlahkan menjadi total bayar.</li>
-                    </ul>
+                    <p class="m-0">* Isi nominal simpanan yang akan dibayarkan</p>
+                    <p class="m-0">* Masukan 0 jika tidak ada simpanan yang dibayarkan</p>
+                    <p class="m-0">* Jika terjadi kesalahan, hanya bisa diubah oleh <b>admin</b></p>
                 </div>
                 <input type="hidden" name="id_anggota" value="{{$anggota->id_anggota}}">
                 <div class="row">
@@ -101,7 +100,9 @@
 
                         <div class="col-6">
                             <label for="{{$s['nama']}}">{{ ucwords(str_replace('_', ' ', $s['nama'])) }}</label>
-                            <input type="number" class="form-control" autocomplete="off" id="{{strtolower(str_replace(' ', '_', $s['nama']))}}" name="{{strtolower(str_replace(' ', '_', $s['nama']))}}" placeholder="{{ ucwords(str_replace('_', ' ', $s['nama'])) }}" value="{{old(strtolower(str_replace(' ', '_', $s['nama']))) ?? $s['jumlah']}}">
+                            <input type="text" class="form-control autonumeric-currency"
+
+                            autocomplete="off" id="{{strtolower(str_replace(' ', '_', $s['nama']))}}" name="{{strtolower(str_replace(' ', '_', $s['nama']))}}" placeholder="{{ ucwords(str_replace('_', ' ', $s['nama'])) }}" value="{{old(strtolower(str_replace(' ', '_', $s['nama']))) ?? $s['jumlah']}}">
                         </div>
                     @endforeach
 
@@ -128,16 +129,21 @@
 </div>
 
 <script>
- $('input[type=number]').on('keyup', function() {
+
+ $('.autonumeric-currency').on('keyup', function() {
     @foreach($simpananDefault as $s)
         var {{strtolower(str_replace(' ', '_', $s['nama']))}} = $('#{{strtolower(str_replace(' ', '_', $s['nama']))}}').val();
     @endforeach
 
-    var total_bayar = @foreach($simpananDefault as $s)parseInt({{strtolower(str_replace(' ', '_', $s['nama']))}}) + @endforeach 0;
+    var total_bayar = @foreach($simpananDefault as $s)convertRupiahToNumber({{strtolower(str_replace(' ', '_', $s['nama']))}})+ @endforeach 0;
     total_bayar = new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR' }).format(total_bayar);
+
     $('#total_bayar').val(total_bayar);
  });
 
-$('input[type=number]').trigger('keyup');
+$('.autonumeric-currency').trigger('keyup');
+</script>
 
+<script>
+    $(".autonumeric-currency").autoNumeric("init", { mDec: "0", aSep: ".", aDec: ",", aSign: "Rp " });
 </script>

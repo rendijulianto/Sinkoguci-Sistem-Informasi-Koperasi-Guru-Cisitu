@@ -12,6 +12,23 @@ use App\Exports\{AngsuranExport};
 
 class CicilanController extends Controller
 {
+
+    private function convertRupiahToNumber($rupiah)
+    {
+       // Remove non-numeric characters and spaces
+        $numericString = preg_replace("/[^0-9]/", "", $rupiah);
+
+        // Convert the numeric string to an integer or float
+        $numericValue = (int) $numericString; // Use (float) for decimals
+
+        // Output the numeric value
+        if($numericValue == null) {
+            return 0;
+        } else {
+            return $numericValue;
+        }
+  }
+
     /**
      * Display a listing of the resource.
      */
@@ -19,7 +36,10 @@ class CicilanController extends Controller
     {
         $title = 'Cicilan';
 
-        $pinjaman = Pinjaman::orderBy('tgl_pinjam', 'desc')->get();
+        $pinjaman = Pinjaman::where(function ($query) {
+            $query->where('sisa_pokok', '>', 0)
+                ->orWhere('sisa_jasa', '>', 0);
+        })->orderBy('id_pinjaman', 'desc')->get();
 
         return view('petugas.cicilan.index', compact('title', 'pinjaman'));
     }
@@ -39,8 +59,8 @@ class CicilanController extends Controller
     {
         $this->validate($request, [
             'id_pinjaman' => 'required|numeric|exists:pinjaman,id_pinjaman',
-            'bayar_pokok' => 'required|numeric',
-            'bayar_jasa' => 'required|numeric',
+            'bayar_pokok' => 'required',
+            'bayar_jasa' => 'required',
             'tgl_bayar' => 'required|date',
         ], [
             'id_pinjaman.required' => 'Pinjaman harus dipilih',
@@ -56,8 +76,17 @@ class CicilanController extends Controller
         DB::beginTransaction();
         try {
             $pinjaman = Pinjaman::findOrFail($request->id_pinjaman);
-            $bayar_pokok = $request->bayar_pokok;
-            $bayar_jasa = $request->bayar_jasa;
+            if(!$pinjaman){
+                return redirect()->back()->withInput()->with('error', 'Pinjaman tidak ditemukan');
+            } else if  ($pinjaman->sisa_pokok == 0 AND $pinjaman->sisa_jasa == 0) {
+                return redirect()->back()->withInput()->with('error', 'Pinjaman sudah lunas');
+            } else if ($pinjaman->sisa_pokok < $this->convertRupiahToNumber($request->bayar_pokok)) {
+                return redirect()->back()->withInput()->with('error', 'Bayar pokok melebihi sisa pokok');
+            } else if ($pinjaman->sisa_jasa < $this->convertRupiahToNumber($request->bayar_jasa)) {
+                return redirect()->back()->withInput()->with('error', 'Bayar jasa melebihi sisa jasa');
+            }
+            $bayar_pokok = $this->convertRupiahToNumber($request->bayar_pokok);
+            $bayar_jasa = $this->convertRupiahToNumber($request->bayar_jasa);
             $tgl_bayar = $request->tgl_bayar;
             # Data Pinjaman
             $pokok_sekarang = $pinjaman->sisa_pokok;

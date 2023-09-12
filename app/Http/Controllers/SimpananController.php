@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Models\{Anggota,KategoriSimpanan, Simpanan, Penarikan};
+use App\Models\{Anggota,KategoriSimpanan, Simpanan, Penarikan,KategoriSimpananAnggota};
 use Maatwebsite\Excel\Facades\Excel;
 use App\Exports\{SimpananExport};
 use DB;
@@ -11,6 +11,24 @@ use Auth;
 
 class SimpananController extends Controller
 {
+
+    private function convertRupiahToNumber($rupiah)
+    {
+       // Remove non-numeric characters and spaces
+        $numericString = preg_replace("/[^0-9]/", "", $rupiah);
+
+        // Convert the numeric string to an integer or float
+        $numericValue = (int) $numericString; // Use (float) for decimals
+
+        // Output the numeric value
+        if($numericValue == null) {
+            return 0;
+        } else {
+            return $numericValue;
+        }
+  }
+
+
     /**
      * Display a listing of the resource.
      */
@@ -42,8 +60,8 @@ class SimpananController extends Controller
             'tgl_bayar.date' => 'Tanggal bayar harus tanggal',
         ];
         foreach ($kategoriSimpanan as $k) {
-            $validate_kategori[str_replace(' ', '_', $k->nama)] = 'nullable|numeric';
-            $message_kategori[str_replace(' ', '_', $k->nama).'.numeric'] = 'Jumlah harus angka';
+            $validate_kategori[str_replace(' ', '_', $k->nama)] = 'nullable';
+
         }
         $this->validate($request, $validate_kategori, $message_kategori);
         DB::beginTransaction();
@@ -60,15 +78,27 @@ class SimpananController extends Controller
                 $object = strtolower(str_replace(' ', '_', $k->nama));
                 if ($request->$object != null) {
                     $dataSimpanan['id_kategori'] = $k->id_kategori;
-                    $dataSimpanan['jumlah'] = $request->$object;
+                    $dataSimpanan['jumlah'] = $this->convertRupiahToNumber($request->$object);
                     $simpan =  Simpanan::create($dataSimpanan);
+                    $kategoriSimpananAnggota = DB::table('kategori_simpanan_anggota')
+                        ->where('id_anggota', '=', $request->id_anggota)
+                        ->where('id_kategori', '=', $k->id_kategori)
+                        ->first();
+                    if ($kategoriSimpananAnggota) {
+                        DB::table('kategori_simpanan_anggota')
+                            ->where('id_anggota', '=', $request->id_anggota)
+                            ->where('id_kategori', '=', $k->id_kategori)
+                            ->update([
+                                'saldo' => $kategoriSimpananAnggota->saldo + $this->convertRupiahToNumber($request->$object),
+                            ]);
+                    }
                 }
             }
             DB::commit();
             return redirect()->back()->withInput()->with(['success' => 'Menambahkan simpanan baru']);
         } catch (\Throwable $th) {
             DB::rollback();
-            return redirect()->back()->withInput()->with(['failed' => $th->getMessage()]);
+            return redirect()->back()->withInput()->with(['error' => $th->getMessage()]);
         }
     }
 
@@ -87,9 +117,8 @@ class SimpananController extends Controller
 
         $simpanan = [];
         for ($i=date('m'); $i >= 1; $i--) {
-            $simpanan[$i] = $anggota->simpananBulan($i);
+            $simpanan[$i] = $anggota->getSimpanan(date('Y'), $i);
         }
-
 
         $kategoriSimpanan = KategoriSimpanan::orderby('id_kategori', 'asc')->get();
         if($request->aksi == "download") {

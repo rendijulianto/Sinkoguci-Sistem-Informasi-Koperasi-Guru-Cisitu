@@ -33,7 +33,7 @@ class KategoriSimpananController extends Controller
     {
         $this->validate($request, [
             'nama' => 'required|string|max:60',
-            'jumlah' => 'required|numeric',
+            'jumlah' => 'required',
         ], [
             'nama.required' => 'Nama tidak boleh kosong',
             'nama.string' => 'Nama harus berupa string',
@@ -45,7 +45,7 @@ class KategoriSimpananController extends Controller
         try {
             KategoriSimpanan::create([
                 'nama' => $request->nama,
-                'jumlah' => $request->jumlah,
+                'jumlah' => $this->convertRupiahToNumber($request->jumlah),
             ]);
 
             return redirect()->back()->with(['success' => 'Kategori Simpanan: ' . $request->nama . ' Ditambahkan']);
@@ -54,6 +54,22 @@ class KategoriSimpananController extends Controller
         }
     }
 
+    private function convertRupiahToNumber($rupiah)
+    {
+       // Remove non-numeric characters and spaces
+        $numericString = preg_replace("/[^0-9]/", "", $rupiah);
+
+        // Convert the numeric string to an integer or float
+        $numericValue = (int) $numericString; // Use (float) for decimals
+
+        // Output the numeric value
+        if($numericValue == null) {
+            return 0;
+        } else {
+            return $numericValue;
+        }
+  }
+
     /**
      * Update the specified resource in storage.
      */
@@ -61,7 +77,7 @@ class KategoriSimpananController extends Controller
     {
         $this->validate($request, [
             'nama' => 'required|string|max:60',
-            'jumlah' => 'required|numeric',
+            'jumlah' => 'required',
         ], [
             'nama.required' => 'Nama tidak boleh kosong',
             'nama.string' => 'Nama harus berupa string',
@@ -74,7 +90,7 @@ class KategoriSimpananController extends Controller
             $kategoriSimpanan = KategoriSimpanan::findOrFail($id);
             $kategoriSimpanan->update([
                 'nama' => $request->nama,
-                'jumlah' => $request->jumlah,
+                'jumlah' => $this->convertRupiahToNumber($request->jumlah),
             ]);
 
             return redirect()->back()->with(['success' => 'Kategori Simpanan: ' . $kategoriSimpanan->nama . ' Diperbaharui']);
@@ -101,7 +117,7 @@ class KategoriSimpananController extends Controller
     {
         $this->validate($request, [
             'id_kategori' => 'required|numeric|exists:kategori_simpanan,id_kategori',
-            'jumlah' => 'required|numeric',
+            'jumlah' => 'required',
         ], [
             'id_kategori.required' => 'Kategori tidak boleh kosong',
             'id_kategori.numeric' => 'Kategori harus berupa angka',
@@ -112,8 +128,11 @@ class KategoriSimpananController extends Controller
 
         try {
             $kategoriSimpanan = KategoriSimpanan::findOrFail($request->id_kategori);
+            $kategoriSimpanan->update([
+                'jumlah' => $this->convertRupiahToNumber($request->jumlah),
+            ]);
             KategoriSimpananAnggota::where('id_kategori', $request->id_kategori)->update([
-                'nominal' => $request->jumlah,
+                'nominal' => $this->convertRupiahToNumber($request->jumlah),
             ]);
 
             return redirect()->back()->with(['success' => 'Jumlah Kategori Simpanan: ' . $kategoriSimpanan->nama . ' Diperbaharui']);

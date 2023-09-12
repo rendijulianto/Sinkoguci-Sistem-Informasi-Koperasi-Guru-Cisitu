@@ -28,7 +28,7 @@
                 </h4>
                 <form action="{{route('admin.kategori-simpanan.index')}}" method="get">
                     <div class="input-group mb-3">
-                        <input type="text" name="cari" id="pencarian" class="form-control" placeholder="Cari Data ..">
+                        <input type="text" name="cari" id="cari" class="form-control" placeholder="Cari Data .." value="{{ Request::get('cari') }}">
                             <div class="input-group-append">
                                 <button class="btn btn-primary" type="submit"><i class="fa fa-search"></i></button>
                             </div>
@@ -46,11 +46,11 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                @foreach ($kategoriSimpanan as $item)
+                                @forelse ($kategoriSimpanan as $item)
                                 <tr>
                                     <th scope="row">{{ $item->id_kategori }}</th>
                                     <td>{{ $item->nama }}</td>
-                                    <td>{{ $item->jumlah }}</td>
+                                    <td>Rp {{ number_format($item->jumlah, 0, ',', '.') }}</td>
                                     <td>
                                         <ul class="d-flex justify-content-center">
                                             <li class="mr-3">
@@ -70,7 +70,11 @@
                                         </ul>
                                     </td>
                                 </tr>
-                                @endforeach
+                                @empty
+                                <tr>
+                                    <td colspan="4" class="text-center">Tidak ada data</td>
+                                </tr>
+                                @endforelse
                             </tbody>
                         </table>
                     </div>
@@ -103,7 +107,7 @@
                     </div>
                     <div class="col-6">
                         <label for="jumlah">Jumlah</label>
-                        <input type="number" class="form-control" autocomplete="off" id="jumlah" name="jumlah" placeholder="Jumlah" value="">
+                        <input type="text" class="form-control autonumeric-currency" autocomplete="off" id="jumlah" name="jumlah" placeholder="Jumlah" value="">
                     </div>
                 </div>
             </div>
@@ -132,7 +136,7 @@
                     </div>
                     <div class="col-6">
                         <label for="jumlah">Jumlah</label>
-                        <input type="number" class="form-control" autocomplete="off" id="jumlah" name="jumlah" placeholder="Jumlah" value="">
+                        <input type="text" class="form-control autonumeric-currency" autocomplete="off" id="jumlah" name="jumlah" placeholder="Jumlah" value="">
                     </div>
                 </div>
             </div>
@@ -162,7 +166,7 @@
                     </div>
                     <div class="col-6">
                         <label for="jumlah">Jumlah</label>
-                        <input type="number" class="form-control" autocomplete="off" id="jumlah" name="jumlah" placeholder="Jumlah" value="{{ $item->jumlah }}">
+                        <input type="text" class="form-control autonumeric-currency" autocomplete="off" id="jumlah" name="jumlah" placeholder="Jumlah" value="{{ $item->jumlah }}">
                     </div>
                 </div>
             </div>
@@ -174,5 +178,9 @@
     </div>
 </div>
 @endforeach
-
+@endsection
+@section('js')
+<script>
+    $(".autonumeric-currency").autoNumeric("init", { mDec: "0", aSep: ".", aDec: ",", aSign: "Rp " });
+</script>
 @endsection

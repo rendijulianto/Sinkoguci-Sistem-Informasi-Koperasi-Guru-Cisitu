@@ -16,11 +16,11 @@ class PetugasController extends Controller
         $level = $request->level;
         $title  = 'Kelola Petugas';
         $petugas = Petugas::query();
-        
+
         if (!empty($level)) {
             $petugas->where('level', $level);
         }
-    
+
         // Sisipkan filter pencarian nama atau email jika ada
         if (!empty($cari)) {
             $petugas->where(function ($query) use ($cari) {
@@ -29,9 +29,9 @@ class PetugasController extends Controller
                       ->orWhere('level','like',"%".$cari."%")
                       ->orWhere('id_petugas','like',"%".$cari."%");
             });
-        
+
         }
-        $petugas = $petugas->paginate(10);
+        $petugas = $petugas->orderBy('id_petugas', 'desc')->paginate(10);
         $petugas->appends(['cari' => $cari, 'level' => $level]);
         return view('admin.petugas.index', compact('title', 'petugas'));
     }
@@ -47,7 +47,7 @@ class PetugasController extends Controller
             'email'     => 'required|email|unique:petugas',
             'password'  => 'required|string|min:6',
             'level'     => 'required|in:admin,petugas',
-        ], 
+        ],
         [
             'nama.required'     => 'Nama tidak boleh kosong',
             'nama.string'       => 'Nama harus berupa string',
@@ -74,7 +74,7 @@ class PetugasController extends Controller
         } catch (\Throwable $th) {
             return redirect()->back()->with(['error' => $th->getMessage()]);
         }
-        
+
     }
 
 
@@ -100,7 +100,7 @@ class PetugasController extends Controller
             'password.min'      => 'Password minimal 6 karakter',
             'level.required'    => 'Level tidak boleh kosong',
             'level.in'          => 'Level harus admin atau petugas',
-            
+
           ]);
 
         try {

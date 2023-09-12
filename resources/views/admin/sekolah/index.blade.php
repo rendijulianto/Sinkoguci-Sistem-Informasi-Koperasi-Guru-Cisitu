@@ -16,30 +16,6 @@
         <button type="button" class="btn btn-primary" style="float: right;" data-toggle="modal" data-target="#modalTambahSekolah">
             <i class="fa fa-plus"></i> Tambah Sekolah
         </button>
-        
-        <div class="modal fade" id="modalTambahSekolah">
-            <div class="modal-dialog modal-dialog-centered" role="document">
-                <form class="modal-content tambah" action="{{route('admin.sekolah.store')}}" method="post">
-                    @csrf
-                    <div class="modal-header">
-                        <h5 class="modal-title">Tambah Sekolah</h5>
-                        <button type="button" class="close" data-dismiss="modal"><span>&times;</span></button>
-                    </div>
-                    <div class="modal-body">
-                        <div class="row">
-                            <div class="col-6">
-                                <label for="nama">Nama Sekolah</label>
-                                <input type="text" name="nama" id="nama" class="form-control" placeholder="Masukkan Nama Sekolah" required>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="reset" class="btn btn-light">Bersihkan</button>
-                        <button type="submit" class="btn btn-primary">Simpan</button>
-                    </div>
-                </form>
-            </div>
-        </div>
     </div>
     <div class="col-12 mt-4">
         <div class="card">
@@ -55,7 +31,7 @@
                             </div>
                     </div>
                 </form>
-                
+
                 <div class="single-table">
                     <div class="table-responsive">
                         <table class="table table-hover progress-table text-center">
@@ -67,7 +43,7 @@
                             </tr>
                             </thead>
                             <tbody>
-                                @foreach ($sekolah as $item)
+                                @forelse ($sekolah as $item)
                                 <tr>
                                     <th scope="row">{{$item->id_sekolah}}</th>
                                     <td>{{$item->nama}}</td>
@@ -85,7 +61,11 @@
                                         </ul>
                                     </td>
                                 </tr>
-                                @endforeach    
+                                @empty
+                                <tr>
+                                    <td colspan="3" class="text-center">Tidak ada data</td>
+                                </tr>
+                                @endforelse
                             </tbody>
                         </table>
                     </div>
@@ -109,7 +89,7 @@
             </div>
             <div class="modal-body">
                 <div class="row">
-                    <div class="col-6">
+                    <div class="col-12">
                         <label for="nama">Nama Sekolah</label>
                         <input type="text" class="form-control" autocomplete="off" id="nama" name="nama" placeholder="Masukkan Nama Sekolah" value="{{old('nama')}}">
                     </div>
@@ -134,7 +114,7 @@
                 </div>
                 <div class="modal-body">
                     <div class="row">
-                        <div class="col-6">
+                        <div class="col-12">
                             <label for="nama">Nama Sekolah</label>
                             <input type="text" class="form-control" autocomplete="off" id="nama" name="nama" placeholder="Masukkan Nama Sekolah" value="{{$item->nama}}">
                         </div>

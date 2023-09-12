@@ -133,7 +133,7 @@
                                 <i class="fa fa-lock"></i>
                             </div>
                             <div class="row mb-4 rmber-area">
-                               
+
                                 <div class="col-12 text-right">
                                     <a href="{{route('lupaPassword')}}" class="text-primary">Lupa Password?</a>
                                 </div>
@@ -205,7 +205,7 @@
             error: function(data) {
                 // jika statusnya 422
                 if(data.status === 422) {
-                
+
                     let errors = '';
                     $.each(data.responseJSON.errors, function (i, error) {
                         errors += '<li>'+error[0]+'</li>';

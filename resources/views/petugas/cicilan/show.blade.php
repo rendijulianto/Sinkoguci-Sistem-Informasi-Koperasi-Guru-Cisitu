@@ -22,9 +22,14 @@
                     <td>Sisa Pokok</td>
                     <td>Rp {{number_format($pinjaman->sisa_pokok)}}</td>
                 </tr>
+
                 <tr>
                     <td>Sisa Jasa</td>
                     <td>Rp {{number_format($pinjaman->sisa_jasa)}}</td>
+                </tr>
+                <tr>
+                    <td>Angsuran Pokok</td>
+                    <td>Rp {{number_format($pinjaman->nominal / $pinjaman->lama_angsuran)}}  / Bulan</td>
                 </tr>
                 <tr>
                     <td>Tanggal Pinjaman</td>
@@ -129,30 +134,23 @@
                     </div>
                     <div class="col-6">
                         <label for="bayar_pokok">Bayar Pokok</label>
-                        <input type="number" class="form-control" autocomplete="off" id="bayar_pokok" name="bayar_pokok" placeholder="Bayar Pokok" value="{{old('bayar_pokok')}}" >
+                        <input type="text" class="form-control autonumeric-currency" autocomplete="off" id="bayar_pokok" name="bayar_pokok" placeholder="Bayar Pokok" value="{{old('bayar_pokok') ?? 0}}" >
                     </div>
                     <div class="col-6">
                         <label for="bayar_jasa">Bayar Jasa</label>
-                        <input type="number" class="form-control" autocomplete="off" id="bayar_jasa" name="bayar_jasa" placeholder="Bayar Jasa" value="{{old('bayar_jasa')}}" >
+                        <input type="text" class="form-control autonumeric-currency" autocomplete="off" id="bayar_jasa" name="bayar_jasa" placeholder="Bayar Jasa" value="{{old('bayar_jasa') ?? 0}}" >
                     </div>
                     <div class="col-6">
                         <label for="tgl_bayar">Tanggal Bayar</label>
                         <input type="date" class="form-control" autocomplete="off" name="tgl_bayar" id="tgl_bayar" value="{{old('tgl_bayar') ?? date('Y-m-d')}}">
                     </div>
-                    <div class="col-6">
+                    <div class="col-12">
                         <label for="simpanan_suka_rela">Total Bayar</label>
                         <input type="text" class="form-control" autocomplete="off" id="total_bayar" name="total_bayar" placeholder="Total Bayar" value="{{old('total_bayar')}}" readonly>
                     </div>
-
-                    <div class="col-6">
-                        <label for="sebelum_pokok">Sebelum Pokok</label>
-                        <input type="hidden" class="form-control" autocomplete="off" id="sebelum_pokok" name="sebelum_pokok" placeholder="Sebelum Pokok" value="{{$pinjaman->sisa_pokok}}" readonly>
-                        <input type="text" class="form-control" autocomplete="off"  placeholder="Sebelum Pokok" value="Rp {{number_format($pinjaman->sisa_pokok)}}" readonly>
-                    </div>
-                    <div class="col-6">
-                        <label for="sebelum_jasa">Sebelum Jasa</label>
-                        <input type="hidden" class="form-control" autocomplete="off" id="sebelum_jasa" name="sebelum_jasa" placeholder="Sebelum Jasa" value="{{$pinjaman->sisa_jasa}}" readonly>
-                        <input type="text" class="form-control" autocomplete="off"  placeholder="Sebelum Jasa" value="Rp {{number_format($pinjaman->sisa_jasa)}}" readonly>
+                    <div class="col-12">
+                        <hr class="mt-2 mb-2">
+                        <p class="text-center">Sisa Pinjaman</p>
                     </div>
                     <div class="col-6">
                         <label for="setelah_pokok">Sisa Pokok</label>
@@ -174,16 +172,18 @@
 </div>
 
 <script>
-$('input[type=number]').keyup(function() {
-    var pokok = $('input[name=bayar_pokok]').val();
-    var jasa = $('input[name=bayar_jasa]').val();
+$('.autonumeric-currency').keyup(function() {
+    var pokok = convertRupiahToNumber($('input[name=bayar_pokok]').val());
+    var jasa = convertRupiahToNumber($('input[name=bayar_jasa]').val());
     var total = parseInt(pokok) + parseInt(jasa);
     $('input[name=total_bayar]').val('Rp ' + new Intl.NumberFormat('id-ID').format(total));
     $('input[name=setelah_pokok]').val('Rp ' + new Intl.NumberFormat('id-ID').format(parseInt($('input[name=sebelum_pokok]').val()) - parseInt(pokok)));
     $('input[name=setelah_jasa]').val('Rp ' + new Intl.NumberFormat('id-ID').format(parseInt($('input[name=sebelum_jasa]').val()) - parseInt(jasa)));
 });
+//
+$('.autonumeric-currency').trigger('keyup');
 
-$('input[type=number]').trigger('keyup');
-
+$(".autonumeric-currency").autoNumeric("init", { mDec: "0", aSep: ".", aDec: ",", aSign: "Rp " });
 
 </script>
+

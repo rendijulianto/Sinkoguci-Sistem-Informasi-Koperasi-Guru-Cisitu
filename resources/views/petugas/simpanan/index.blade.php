@@ -15,6 +15,13 @@
 </div>
 <div class="row mb-4">
     <div class="col-12">
+        <div class="alert alert-info">
+            <h5 class="text-center text-white">
+                <i class="fa fa-info-circle"></i>
+                Pilih anggota untuk menambah simpanan dan menampilkan riwayat simpanan</h5>
+        </div>
+    </div>
+    <div class="col-12">
         <div class="form-group">
             <label class="col-form-label">Pilih Anggota</label>
             <br>
@@ -31,7 +38,7 @@
  @endsection
  @section('js')
  <script>
-    
+
  $(document).ready(function() {
      $('.select2').select2();
     @if(old('id_anggota'))

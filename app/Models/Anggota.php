@@ -85,38 +85,87 @@ class Anggota extends Model
         return $default;
     }
 
+
+
+
     public function sisaSimpanan($id_kategori = null)
     {
         if($id_kategori) {
             $sisaSimpanan = $this->kategori_simpanan_anggota()->where('id_kategori', $id_kategori)->first()->saldo ?? 0;
         } else {
             $sisaSimpanan = [];
-            $kategori = KategoriSimpanan::select('id_kategori', 'nama')->where('nama', 'like', '%Simpanan%')->orderBy('id_kategori', 'asc')->get();
+            $kategori = $this->kategori_simpanan_anggota()->whereHas('kategori', function($q) {
+                $q->where('nama', 'like', '%Simpanan%');
+            })->get();
             foreach ($kategori as $k) {
                 $sisaSimpanan[] = [
                     'id_kategori' => $k->id_kategori,
-                    'nama' => $k->nama,
-                    'nominal' => $this->kategori_simpanan_anggota()->where('id_kategori', $k->id_kategori)->first()->saldo ?? 0,
+                    'nama' => $k->kategori->nama,
+                    'nominal' => $k->saldo,
                 ];
             }
         }
         return $sisaSimpanan;
     }
 
-    public function simpananBulan($bulan)
+    // public function getSimpanan($tahun, $bulan = null, $tanggal = null)
+    // {
+    //     // jika $tanggal tidak null, maka ambil simpanan pada tanggal tersebut
+    //     // jika $tanggal null dan $bulan tidak null, maka ambil simpanan pada bulan tersebut
+    //     //
+    // }
+
+    // public function simpananBulan($bulan)
+    // {
+    //     $kategori = KategoriSimpanan::select('id_kategori', 'nama')->orderBy('id_kategori', 'asc')->get();
+    //     $simpanan = [];
+    //     $bulan = '01-'.$bulan.'-'.date('Y');
+    //     $simpanan[] = Carbon::parse($bulan)->translatedFormat('F Y');
+    //     $total = 0;
+    //     foreach ($kategori as $key => $value) {
+    //         $simpanan[] = $this->simpanan()->where('id_kategori', $value->id_kategori)->whereMonth('tgl_bayar', Carbon::parse($bulan)->format('m'))->sum('jumlah');
+    //         $total += $simpanan[$key+1];
+    //     }
+    //     $simpanan['total'] = $total;
+    //     return $simpanan;
+    // }
+
+    public function getSimpanan($tahun, $bulan = null, $tanggal = null)
     {
-        $kategori = KategoriSimpanan::select('id_kategori', 'nama')->orderBy('id_kategori', 'asc')->get();
         $simpanan = [];
-        $bulan = '01-'.$bulan.'-'.date('Y');
-        $simpanan[] = Carbon::parse($bulan)->translatedFormat('F Y');
-        $total = 0;
-        foreach ($kategori as $key => $value) {
-            $simpanan[] = $this->simpanan()->where('id_kategori', $value->id_kategori)->whereMonth('tgl_bayar', Carbon::parse($bulan)->format('m'))->sum('jumlah');
-            $total += $simpanan[$key+1];
+        $group = '';
+        if ($tahun) {
+            $group = Carbon::parse('01-01-'.$tahun)->translatedFormat('Y');
         }
+        if ($bulan) {
+            $group = Carbon::parse('01-'.$bulan.'-'.$tahun)->translatedFormat('F Y');
+        }
+        if ($tanggal) {
+            $group = Carbon::parse($tanggal.'-'.$bulan.'-'.$tahun)->translatedFormat('d F Y');
+        }
+        $kategori = KategoriSimpanan::select('id_kategori', 'nama')->orderBy('id_kategori', 'asc')->get();
+        $simpanan[] = $group;
+        $total = 0;
+
+        foreach ($kategori as $key => $value) {
+            $query = $this->simpanan()->where('id_kategori', $value->id_kategori);
+            if($tahun) {
+                $query = $query->whereYear('tgl_bayar', $tahun);
+            }
+            if($bulan) {
+                $query = $query->whereMonth('tgl_bayar', $bulan);
+            }
+            if($tanggal) {
+                $query = $query->whereDay('tgl_bayar', $tanggal);
+            }
+            $simpanan[] = $query->sum('jumlah');
+            $total += $simpanan[$key + 1];
+        }
+
         $simpanan['total'] = $total;
         return $simpanan;
     }
+
 
     public function simpananHari($tahun)
     {
@@ -140,65 +189,91 @@ class Anggota extends Model
         return $simpanan;
     }
 
-    public function tagihanSimpanan($bulan, $tahun)
+    public function getTagihanSimpanan($bulan, $tahun)
     {
-        // cek apakah sudah ada simpanan untuk bulan ini
+        // Ambil data kategori simpanan
         $kategori = KategoriSimpanan::select('id_kategori', 'nama', 'jumlah')->orderBy('id_kategori', 'asc')->get();
+
+        // Inisialisasi array tagihan
         $tagihan = [];
         $total = 0;
+
         foreach ($kategori as $k) {
-            $riwayat_simpanan = $this->simpanan()->where('id_kategori', $k->id_kategori)->whereMonth('tgl_bayar', $bulan)->whereYear('tgl_bayar', $tahun)->get();
-            $sudah_dibayar = 0;
-            $jumlah_tagihan = $this->kategori_simpanan_anggota()->where('id_kategori', $k->id_kategori)->first()->nominal ?? $k->jumlah;
-            foreach ($riwayat_simpanan as $r) {
-                $sudah_dibayar += $r->jumlah;
-            }
-            if(count($riwayat_simpanan) == 0) {
-                if($k->id_kategori == 1) {
-                    $tagihan[] = 0;
-                } else {
-                    $tagihan[] = $jumlah_tagihan;
-                }
-            } else if ($k->id_kategori == 1) {
-                $tagihan[] = 0;
-            } else {
-                $tagihan[] = $jumlah_tagihan - $sudah_dibayar;
-            }
-            $total += $tagihan[count($tagihan)-1];
+            // Hitung total simpanan berdasarkan kategori untuk bulan dan tahun tertentu
+            $total_simpanan = $this->simpanan()
+                ->where('id_kategori', $k->id_kategori)
+                ->whereMonth('tgl_bayar', $bulan)
+                ->whereYear('tgl_bayar', $tahun)
+                ->sum('jumlah');
+
+            // Hitung jumlah tagihan berdasarkan kategori
+            $jumlah_tagihan = $this->kategori_simpanan_anggota()
+                ->where('id_kategori', $k->id_kategori)
+                ->first()
+                ->nominal ?? $k->jumlah;
+
+            // Hitung tagihan yang belum dibayar
+            $tagihan[] = ($k->id_kategori == 1) ? 0 : max(0, $jumlah_tagihan - $total_simpanan);
+
+            // Akumulasikan total tagihan
+            $total += $tagihan[count($tagihan) - 1];
         }
+
+        // Tambahkan total tagihan ke dalam array tagihan
         $tagihan['total'] = $total;
+
         return $tagihan;
     }
 
     public function terbayarSimpanan($tahun, $bulan = null) {
+        // Ambil data kategori simpanan
         $kategori = KategoriSimpanan::select('id_kategori', 'nama', 'jumlah')->orderBy('id_kategori', 'asc')->get();
+
+        // Inisialisasi array terbayar
         $terbayar = [];
         $total = 0;
-        foreach ($kategori as $k) {
-            $riwayat_simpanan = $this->simpanan()->where('id_kategori', $k->id_kategori)->whereYear('tgl_bayar', $tahun);
 
-            if($bulan) {
-                $riwayat_simpanan = $riwayat_simpanan->whereMonth('tgl_bayar', $bulan);
+        foreach ($kategori as $k) {
+            // Query untuk mengambil riwayat simpanan berdasarkan kategori dan tahun
+            $riwayat_simpanan_query = $this->simpanan()
+                ->where('id_kategori', $k->id_kategori)
+                ->whereYear('tgl_bayar', $tahun);
+
+            // Jika bulan diisi, tambahkan kondisi where untuk bulan
+            if ($bulan) {
+                $riwayat_simpanan_query->whereMonth('tgl_bayar', $bulan);
             }
-            $riwayat_simpanan = $riwayat_simpanan->get();
-            $sudah_dibayar = 0;
-            foreach ($riwayat_simpanan as $r) {
-                $sudah_dibayar += $r->jumlah;
-            }
+
+            // Ambil data riwayat simpanan
+            $riwayat_simpanan = $riwayat_simpanan_query->get();
+
+            // Hitung total yang sudah dibayar
+            $sudah_dibayar = $riwayat_simpanan->sum('jumlah');
+
+            // Tambahkan total yang sudah dibayar ke dalam array terbayar
             $terbayar[] = $sudah_dibayar;
-            $total += $terbayar[count($terbayar)-1];
+
+            // Akumulasikan total terbayar
+            $total += $sudah_dibayar;
         }
+
+        // Tambahkan total terbayar ke dalam array terbayar
         $terbayar['total'] = $total;
+
         return $terbayar;
     }
 
+
     public function tagihanPinjaman()
     {
-        // cek apakah memiliki pinjaman
-        $pinjaman = Pinjaman::where('id_anggota', $this->id_anggota)->where(function($q) {
-            $q->where('sisa_pokok', '>', 0)->orWhere('sisa_jasa', '>', 0);
-        })->first();
+        // Cek apakah memiliki pinjaman dengan sisa pokok atau sisa jasa yang lebih dari 0
+        $pinjaman = Pinjaman::where('id_anggota', $this->id_anggota)
+            ->where(function ($q) {
+                $q->where('sisa_pokok', '>', 0)->orWhere('sisa_jasa', '>', 0);
+            })
+            ->first();
 
+        // Inisialisasi array tagihan
         $tagihan = [
             'pokok' => 0,
             'jasa' => 0,
@@ -206,44 +281,58 @@ class Anggota extends Model
             'total' => 0
         ];
 
-        if($pinjaman) {
+        if ($pinjaman) {
+            // Hitung nominal angsuran
             $nominal_angsuran = $pinjaman->nominal / $pinjaman->lama_angsuran;
+
+            // Isi nilai tagihan berdasarkan data pinjaman
             $tagihan['pokok'] = $pinjaman->sisa_pokok;
-            $tagihan['angsuran'] = $nominal_angsuran < $pinjaman->sisa_pokok ? $nominal_angsuran : $pinjaman->sisa_pokok;
+            $tagihan['angsuran'] = min($nominal_angsuran, $pinjaman->sisa_pokok);
             $tagihan['jasa'] = $pinjaman->sisa_jasa;
         }
+
+        // Hitung total tagihan
         $tagihan['total'] = $tagihan['pokok'] + $tagihan['jasa'];
+
         return $tagihan;
     }
 
+
     public function terbayarPinjaman($tahun, $bulan = null)
     {
-        // cek apakah memiliki pinjaman
-        $pinjaman = Pinjaman::where('id_anggota', $this->id_anggota)->where(function($q) {
-            $q->where('sisa_pokok', '>', 0)->orWhere('sisa_jasa', '>', 0);
-        })->first();
+        // Cek apakah memiliki pinjaman dengan sisa pokok atau sisa jasa yang lebih dari 0
+        $pinjaman = Pinjaman::where('id_anggota', $this->id_anggota)
+            ->where(function ($q) {
+                $q->where('sisa_pokok', '>', 0)->orWhere('sisa_jasa', '>', 0);
+            })
+            ->first();
+
+        // Inisialisasi array terbayar
         $terbayar = [
             'pokok' => 0,
             'jasa' => 0,
             'total' => 0
         ];
 
-        if($pinjaman) {
-            $riwayat_angsuran = $pinjaman->angsuran()->whereYear('tgl_bayar', $tahun);
-            if($bulan) {
-                $riwayat_angsuran = $riwayat_angsuran->whereMonth('tgl_bayar', $bulan);
+        if ($pinjaman) {
+            // Query untuk mengambil riwayat angsuran berdasarkan pinjaman, tahun, dan bulan (jika diisi)
+            $riwayat_angsuran_query = $pinjaman->angsuran()->whereYear('tgl_bayar', $tahun);
+
+            if ($bulan) {
+                $riwayat_angsuran_query->whereMonth('tgl_bayar', $bulan);
             }
-            $riwayat_angsuran = $riwayat_angsuran->get();
-            foreach ($riwayat_angsuran as $r) {
-                $terbayar['pokok'] += $r->bayar_pokok;
-                $terbayar['jasa'] += $r->bayar_jasa;
-            }
+
+            // Ambil data riwayat angsuran
+            $riwayat_angsuran = $riwayat_angsuran_query->get();
+
+            // Hitung total yang sudah dibayar
+            $terbayar['pokok'] = $riwayat_angsuran->sum('bayar_pokok');
+            $terbayar['jasa'] = $riwayat_angsuran->sum('bayar_jasa');
+
+            // Hitung total terbayar
             $terbayar['total'] = $terbayar['pokok'] + $terbayar['jasa'];
         }
+
         return $terbayar;
-
-
     }
-
-
 }

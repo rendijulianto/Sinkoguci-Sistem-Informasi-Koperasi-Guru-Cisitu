@@ -112,7 +112,7 @@
                     </div>
                     <div class="col-6">
                         <label for="jumlah">Jumlah Penarikan</label>
-                        <input type="number" class="form-control" autocomplete="off" id="jumlah" name="jumlah" placeholder="Jumlah Penarikan" value="{{old('jumlah')}}">
+                        <input type="text" class="form-control autonumeric-currency" autocomplete="off" id="jumlah" name="jumlah" placeholder="Jumlah Penarikan" value="{{old('jumlah') ?? 0}}">
                     </div>
                     <div class="col-6">
                         <label for="keterangan">Keterangan</label>
@@ -134,5 +134,5 @@
 
 <script>
 
-
+$(".autonumeric-currency").autoNumeric("init", { mDec: "0", aSep: ".", aDec: ",", aSign: "Rp " });
 </script>

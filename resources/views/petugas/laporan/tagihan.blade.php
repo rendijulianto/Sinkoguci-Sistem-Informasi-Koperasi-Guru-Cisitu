@@ -115,7 +115,7 @@
                                             <td>{{$loop->iteration}}</td>
                                             <td>{{$a->nama}}</td>
 
-                                            @foreach ($a->tagihanSimpanan($bulan, $tahun) as $key => $value)
+                                            @foreach ($a->getTagihanSimpanan($bulan, $tahun) as $key => $value)
 
                                                 @if($key =='total')
                                                     @php $totalTagihan += $value @endphp

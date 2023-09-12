@@ -15,6 +15,13 @@
 </div>
 <div class="row mb-4">
     <div class="col-12">
+        <div class="alert alert-info">
+            <h5 class="text-center text-white">
+                <i class="fa fa-info-circle"></i>
+                Silahkan pilih pinjaman anggota untuk melihat angsuran / cicilan
+        </div>
+    </div>
+    <div class="col-12">
         <div class="form-group">
             <label class="col-form-label">Pilih Pinjaman Anggota</label>
             <br>
@@ -30,6 +37,7 @@
 <div id="result" class="row mb-4"></div>
  @endsection
  @section('js')
+
  <script>
 
  $(document).ready(function() {

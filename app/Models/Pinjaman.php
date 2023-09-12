@@ -52,4 +52,5 @@ class Pinjaman extends Model
             return 'Belum Lunas';
         }
     }
+
 }

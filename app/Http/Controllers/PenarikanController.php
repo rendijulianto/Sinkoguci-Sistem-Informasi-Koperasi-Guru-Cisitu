@@ -19,6 +19,21 @@ class PenarikanController extends Controller
         return view('petugas.penarikan.index',  compact('title', 'anggota'));
     }
 
+    private function convertRupiahToNumber($rupiah)
+    {
+       // Remove non-numeric characters and spaces
+        $numericString = preg_replace("/[^0-9]/", "", $rupiah);
+
+        // Convert the numeric string to an integer or float
+        $numericValue = (int) $numericString; // Use (float) for decimals
+
+        // Output the numeric value
+        if($numericValue == null) {
+            return 0;
+        } else {
+            return $numericValue;
+        }
+  }
 
     /**
      * Store a newly created resource in storage.
@@ -28,7 +43,7 @@ class PenarikanController extends Controller
         $this->validate($request, [
             'id_anggota' => 'required|numeric|exists:anggota,id_anggota',
             'id_kategori' => 'required|numeric|exists:kategori_simpanan,id_kategori',
-            'jumlah' => 'required|numeric',
+            'jumlah' => 'required',
             'keterangan' => 'required|max:255',
             'tgl_penarikan' => 'required|date',
         ], [
@@ -51,22 +66,23 @@ class PenarikanController extends Controller
             $anggota = Anggota::where('id_anggota', $request->id_anggota)->first();
             $saldo = $anggota->sisaSimpanan($request->id_kategori);
 
-            if ($saldo < $request->jumlah) {
+            $jumlah = $this->convertRupiahToNumber($request->jumlah);
+            if ($saldo < $jumlah) {
                 return redirect()->back()->withInput()->with(['error' => 'Saldo tidak cukup']);
             }
             Penarikan::create([
                 'id_anggota' => $request->id_anggota,
                 'id_petugas' => Auth::guard('petugas')->user()->id_petugas,
                 'id_kategori' => $request->id_kategori,
-                'jumlah' => $request->jumlah,
+                'jumlah' => $jumlah,
                 'keterangan' => $request->keterangan,
                 'tgl_penarikan' => $request->tgl_penarikan,
                 'saldo_sebelum' => $saldo,
-                'saldo_sesudah' => $saldo - $request->jumlah,
+                'saldo_sesudah' => $saldo - $jumlah,
             ]);
             // kurangi saldo
             $anggota->kategori_simpanan_anggota()->where('id_kategori', $request->id_kategori)->update([
-                'saldo' => $saldo - $request->jumlah,
+                'saldo' => $saldo - $jumlah,
             ]);
 
             return redirect()->back()->withInput()->with(['success' => 'Penarikan berhasil ditambahkan']);
@@ -113,7 +129,7 @@ class PenarikanController extends Controller
     public function storeDanaSosial(Request $request)
     {
         $this->validate($request, [
-            'jumlah' => 'required|numeric',
+            'jumlah' => 'required',
             'keterangan' => 'required|max:60',
             'tgl_penarikan' => 'required|date',
         ], [
@@ -125,10 +141,10 @@ class PenarikanController extends Controller
             'tgl_penarikan.date' => 'Tanggal penarikan harus tanggal',
         ]);
         try {
-
+            $jumlah = $this->convertRupiahToNumber($request->jumlah);
             PenarikanDanaSosial::create([
                 'id_petugas' => Auth::guard('petugas')->user()->id_petugas,
-                'jumlah' => $request->jumlah,
+                'jumlah' => $jumlah,
                 'keterangan' => $request->keterangan,
                 'tgl_penarikan' => $request->tgl_penarikan,
             ]);

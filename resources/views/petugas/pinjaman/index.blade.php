@@ -75,6 +75,7 @@
                                     <th rowspan="2" scope="col">Status</th>
                                     <th rowspan="2" scope="col">Lama Angsuran</th>
                                     <th rowspan="2" scope="col">Tgl Pinjaman</th>
+                                    <th rowspan="2" scope="col">Petugas Penerima</th>
                                     <th rowspan="2" scope="col">Aksi</th>
                                 </tr>
                                 <tr class="text-center">
@@ -101,26 +102,24 @@
 
                                 <td>
                                     @if ($p->sisa_pokok == 0 && $p->sisa_jasa == 0)
-                                        <span class="badge badge-success">Lunas</span>
+                                    <span class="badge badge-success">Lunas</span>
                                     @else
-                                        <span class="badge badge-warning text-white">Belum Lunas</span>
+                                    <span class="badge badge-warning text-white">Belum Lunas</span>
                                     @endif
                                 </td>
                                 <td>{{$p->lama_angsuran}} Bulan</td>
-                                <td>{{$p->tgl_pinjam}}</td>
+                                <td>{{Carbon\Carbon::parse($p->created_at)->translatedFormat('d F Y')}}</td>
+                                <td> {{$p->petugas->nama}}</td>
                                 <td>
-                                    <a href="{{route('petugas.pinjaman.show', $p->id_pinjaman)}}" class="btn btn-sm btn-primary"><i class="fa fa-eye"></i></a>
-                                    <a href="{{route('petugas.pinjaman.edit', $p->id_pinjaman)}}" class="btn btn-sm btn-warning"><i class="fa fa-edit"></i></a>
-                                    <form action="{{route('petugas.pinjaman.destroy', $p->id_pinjaman)}}" method="post" class="d-inline">
-                                        @csrf
-                                        @method('delete')
-                                        <button type="submit" class="btn btn-sm btn-danger"><i class="fa fa-trash"></i></button>
-                                    </form>
-                                    @if ($p->sisa_pokok > 0 OR $p->sisa_jasa > 0)
-                                    <a href="{{route('petugas.cicilan.index')}}?pinjaman={{$p->id_pinjaman}}" class="btn btn-xs btn-primary"><i class="fa fa-money-bill"></i> Bayar Cicilan</a>
-                                    @endif
-                                    <a href="{{route('petugas.cicilan.show', $p->id_pinjaman)}}?aksi=download" class="btn btn-xs btn-success"><i class="fa fa-file-excel"></i> Download</a>
+                                    <div class="d-flex justify-content-center align-items-center"
+                                    style="gap: 10px">
 
+
+                                    @if ($p->sisa_pokok > 0 OR $p->sisa_jasa > 0)
+                                    <a href="{{route('petugas.cicilan.index')}}?pinjaman={{$p->id_pinjaman}}" class="btn btn-xs btn-primary"><i class="fa fa-money-bill"></i> Bayar Angsuran</a>
+                                    @endif
+                                    <a href="{{route('petugas.cicilan.show', $p->id_pinjaman)}}?aksi=download" class="btn btn-xs btn-success"><i class="fa fa-file-excel"></i> Download Angsuran</a>
+                                    </div>
                                 </td>
                             </tr>
                             @empty
