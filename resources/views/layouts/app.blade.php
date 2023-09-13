@@ -112,26 +112,20 @@ if (Auth::guard('petugas')->user()->level == "petugas") {
             'icon' => 'fa fa-dollar-sign'
         ],
         [
-            'text' => 'Kelola Pinjaman',
+            'text' => 'Kelola Simpanan',
             'type'=> 'link',
-            'url' => route('admin.kategori-simpanan.index'),
+            'url' => route('admin.simpanan.index'),
             'icon' => 'fa fa-dollar-sign'
         ],
         [
-            'text' => 'Kelola Simpanan',
+            'text' => 'Kelola Pinjaman',
             'type'=> 'link',
-            'url' => route('admin.kategori-simpanan.index'),
-            'icon' => 'fa fa-dollar-sign'
+            'url' => route('admin.pinjaman.index'),
+            'icon' => 'fa fa-credit-card'
         ],
         [
             'text' => 'Laporan',
             'type' => 'label',
-        ],
-        [
-            'text' => 'Laporan Peminjaman',
-            'type'=> 'link',
-            'url' => route('admin.laporan.pinjaman'),
-            'icon' => 'fa fa-credit-card'
         ],
         [
             'text' => 'Laporan Simpanan',

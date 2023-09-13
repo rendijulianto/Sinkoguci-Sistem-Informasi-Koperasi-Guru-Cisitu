@@ -28,8 +28,14 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'middleware' => 'petugasaut
     Route::resource('/petugas', 'PetugasController')->names('petugas');
     Route::resource('/sekolah', 'SekolahController')->names('sekolah');
     Route::resource('/kategori_simpanan', 'KategoriSimpananController')->names('kategori-simpanan');
+    Route::get('/simpanan', 'SimpananController@indexAdmin')->name('simpanan.index');
+    Route::put('/simpanan/{id}', 'SimpananController@update')->name('simpanan.update');
+    Route::delete('/simpanan/{id}', 'SimpananController@destroy')->name('simpanan.destroy');
     Route::post('/kategori_simpanan/ubah/masal/jumlah', 'KategoriSimpananController@ubahMasalJumlah')->name('kategori-simpanan.ubah-masal-jumlah');
-    Route::get('/laporan/pinjaman', 'LaporanController@pinjaman')->name('laporan.pinjaman');
+    Route::get('/pinjaman', 'PinjamanController@indexAdmin')->name('pinjaman.index');
+    Route::get('/pinjaman/{id}/angsuran', 'PinjamanController@angsuran')->name('pinjaman.angsuran');
+    Route::delete('/pinjaman/{id}', 'PinjamanController@destroy')->name('pinjaman.destroy');
+    Route::delete('/pinjaman/{id}/angsuran/{tgl_bayar}/{bayar_pokok}/{bayar_jasa}/{setelah_pokok}/{setelah_jasa}', 'PinjamanController@destroyAngsuran')->name('pinjaman.destroy-angsuran');
     Route::get('/laporan/pinjaman/cicilan/{id}/download', 'LaporanController@pinjamanCicilanDownload')->name('laporan.pinjaman-cicilan-download');
     Route::get('/laporan/simpanan', 'LaporanController@simpananBulanan')->name('laporan.simpanan-bulanan');
     Route::get('/laporan/simpanan_tahunan', 'LaporanController@simpananTahunan')->name('laporan.simpanan-tahunan');

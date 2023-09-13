@@ -92,55 +92,7 @@ class LaporanController extends Controller
     }
 
 
-    public function pinjaman(Request $request)
-    {
-        $tanggal_awal = date('Y-01-01');
-        $tanggal_akhir = date('Y-12-31');
-        $cari = $request->cari;
-        $status = $request->status;
-        $pinjaman = Pinjaman::query();
-
-        if(!empty($request->tanggal_awal) && !empty($request->tanggal_akhir)) {
-            $tanggal_awal = $request->tanggal_awal;
-            $tanggal_akhir = $request->tanggal_akhir;
-            $pinjaman->whereBetween('tgl_pinjam', [$tanggal_awal, $tanggal_akhir]);
-        }
-
-        // status
-        if (!empty($status)) {
-            if ($status == 'lunas') {
-                $pinjaman->whereRaw('sisa_pokok = 0 AND sisa_jasa = 0');
-            } elseif ($status == 'belum_lunas') {
-                $pinjaman->where(function ($query) {
-                    $query->where('sisa_pokok', '>', 0)
-                        ->orWhere('sisa_jasa', '>', 0);
-                });
-            }
-        }
-
-        if (!empty($cari)) {
-            $pinjaman->where(function ($query) use ($cari) {
-                $query->where('id_pinjaman', 'like', '%' . $cari . '%')
-                    ->orWhere('tgl_pinjam', 'like', '%' . $cari . '%')
-                    ->orWhereHas('anggota', function ($query) use ($cari) {
-                        $query->where('nama', 'like', '%' . $cari . '%');
-                    })->orWhereHas('petugas', function ($query) use ($cari) {
-                        $query->where('nama', 'like', '%' . $cari . '%');
-                    });
-            });
-        }
-
-
-        $title = 'Laporan Pinjaman';
-
-        if($request->aksi == "download") {
-            $pinjaman = $pinjaman->orderBy('id_pinjaman', 'desc')->get();
-            return Excel::download(new PinjamanReportExport($pinjaman), 'Laporan Pinjaman ' . $tanggal_awal . ' - ' . $tanggal_akhir . '.xlsx');
-        }
-        $pinjaman = $pinjaman->orderBy('id_pinjaman', 'desc')->paginate(10);
-
-        return view('admin.laporan.pinjaman', compact('title', 'pinjaman', 'tanggal_awal', 'tanggal_akhir', 'cari', 'status'));
-    }
+  
 
     public function pinjamanCicilanDownload(Request $request, string $id)
     {
