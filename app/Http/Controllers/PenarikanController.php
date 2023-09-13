@@ -115,11 +115,25 @@ class PenarikanController extends Controller
         $tanggal_awal = date('Y-m-01');
         $tanggal_akhir = date('Y-m-t');
         $cari = $request->cari;
-        $penarikan = PenarikanDanaSosial::where(function ($query) use ($cari) {
-            $query->where('keterangan', 'like', '%' . $cari . '%');
-        })->orWhereHas('petugas', function ($query) use ($cari) {
-            $query->where('nama', 'like', '%' . $cari . '%');
-        })->orderBy('created_at', 'desc')->paginate(10);
+        $penarikan = PenarikanDanaSosial::query();
+        if ($request->cari) {
+            $penarikan = $penarikan->where(function ($query) use ($cari) {
+                $query->where('keterangan', 'like', '%' . $cari . '%')
+                    ->orWhere('jumlah', 'like', '%' . $cari . '%')
+                    ->orWhere('tgl_penarikan', 'like', '%' . $cari . '%')
+                    ->orWhereHas('petugas', function ($query) use ($cari) {
+                        $query->where('nama', 'like', '%' . $cari . '%');
+                    });
+
+            });
+        }
+        if ($request->tanggal_awal && $request->tanggal_akhir) {
+            $tanggal_awal = $request->tanggal_awal;
+            $tanggal_akhir = $request->tanggal_akhir;
+        }
+        $penarikan = $penarikan->whereBetween('tgl_penarikan', [$tanggal_awal, $tanggal_akhir]);
+        $penarikan = $penarikan->orderBy('tgl_penarikan', 'desc')->paginate(10);
+
         return view('petugas.penarikan.dana-sosial',  compact('title', 'penarikan', 'tanggal_awal', 'tanggal_akhir', 'cari'));
     }
 

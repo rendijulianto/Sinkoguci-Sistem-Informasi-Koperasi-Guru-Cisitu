@@ -108,7 +108,7 @@
                                     @endif
                                 </td>
                                 <td>{{$p->lama_angsuran}} Bulan</td>
-                                <td>{{Carbon\Carbon::parse($p->created_at)->translatedFormat('d F Y')}}</td>
+                                <td>{{Carbon\Carbon::parse($p->tgl_pinjam)->translatedFormat('d F Y')}}</td>
                                 <td> {{$p->petugas->nama}}</td>
                                 <td>
                                     <div class="d-flex justify-content-center align-items-center"

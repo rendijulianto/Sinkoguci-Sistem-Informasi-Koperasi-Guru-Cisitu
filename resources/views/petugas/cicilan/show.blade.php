@@ -128,6 +128,8 @@
                     </ul>
                 </div>
                 <div class="row">
+                    <input type="hidden" name="sisa_pokok" id="sisa_pokok" value="{{$pinjaman->sisa_pokok}}">
+                    <input type="hidden" name="sisa_jasa" id="sisa_jasa" value="{{$pinjaman->sisa_jasa}}">
                     <div class="col-12">
                         <label for="id_pinjaman">Nomor Pinjaman</label>
                         <input type="text" class="form-control" autocomplete="off" id="id_pinjaman" name="id_pinjaman" placeholder="Nomor Pinjaman" value="{{$pinjaman->id_pinjaman}}" readonly>
@@ -177,8 +179,8 @@ $('.autonumeric-currency').keyup(function() {
     var jasa = convertRupiahToNumber($('input[name=bayar_jasa]').val());
     var total = parseInt(pokok) + parseInt(jasa);
     $('input[name=total_bayar]').val('Rp ' + new Intl.NumberFormat('id-ID').format(total));
-    $('input[name=setelah_pokok]').val('Rp ' + new Intl.NumberFormat('id-ID').format(parseInt($('input[name=sebelum_pokok]').val()) - parseInt(pokok)));
-    $('input[name=setelah_jasa]').val('Rp ' + new Intl.NumberFormat('id-ID').format(parseInt($('input[name=sebelum_jasa]').val()) - parseInt(jasa)));
+    $('input[name=setelah_pokok]').val('Rp ' + new Intl.NumberFormat('id-ID').format(convertRupiahToNumber($('input[name=sisa_pokok]').val()) - parseInt(pokok)))
+    $('input[name=setelah_jasa]').val('Rp ' + new Intl.NumberFormat('id-ID').format(convertRupiahToNumber($('input[name=sisa_jasa]').val()) - parseInt(jasa)))
 });
 //
 $('.autonumeric-currency').trigger('keyup');
