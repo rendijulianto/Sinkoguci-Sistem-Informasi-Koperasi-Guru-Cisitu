@@ -197,6 +197,10 @@ class Anggota extends Model
         // Inisialisasi array tagihan
         $tagihan = [];
         $total = 0;
+        
+        $bulanTahunSekarang = Carbon::parse('01-'. date('m-Y'))->timestamp;
+        $bulanTahunTagihan = Carbon::parse('01-'. $bulan .'-'. $tahun)->timestamp;
+
 
         foreach ($kategori as $k) {
             // Hitung total simpanan berdasarkan kategori untuk bulan dan tahun tertentu
@@ -206,11 +210,14 @@ class Anggota extends Model
                 ->whereYear('tgl_bayar', $tahun)
                 ->sum('jumlah');
 
-            // Hitung jumlah tagihan berdasarkan kategori
-            $jumlah_tagihan = $this->kategori_simpanan_anggota()
-                ->where('id_kategori', $k->id_kategori)
-                ->first()
-                ->nominal ?? $k->jumlah;
+            if ($bulanTahunTagihan < $bulanTahunSekarang) {
+                $jumlah_tagihan = $total_simpanan ?? 0;
+            } else {
+                $jumlah_tagihan = $this->kategori_simpanan_anggota()
+                    ->where('id_kategori', $k->id_kategori)
+                    ->first()
+                    ->nominal ?? $k->jumlah;
+            }
 
             // Hitung tagihan yang belum dibayar
             $tagihan[] = ($k->id_kategori == 1) ? 0 : max(0, $jumlah_tagihan - $total_simpanan);
