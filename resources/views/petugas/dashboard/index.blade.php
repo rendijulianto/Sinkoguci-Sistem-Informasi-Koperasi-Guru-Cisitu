@@ -18,8 +18,10 @@
          </div>
          <div class="card-body text-center">
            <h5 class="card-title">SELAMAT DATANG DI  SISTEM INFORMASI KPRI KANCAWINAYA GURU CISITU (KPRI KGC)</h5>
-           <b class="card-text">BADAN HUKUM No. 1059/BH/PAD/KWK-10/VII/98 <br> TANGGAL 30 JULI 1998</b> <br />
-           <i class="card-text">Alamat Jln. Raya Sumedang-Wado Km 18 Cisitu-Sumedang</i>
+           <b class="card-text">
+            NOMOR AHU-0001852/AJ/-1/38/TAHUN 2022 <br />TANGGAL 28 SEPTEMBER 2022
+            </b> <br />
+           <i class="card-text">Alamat Jalan Raya Umar Wirahadikusumah / Jalan Darmaraja KM 18 Kecamatan Cisitu Kabutan Sumedang.</i>
          </div>
        </div>
    </div>

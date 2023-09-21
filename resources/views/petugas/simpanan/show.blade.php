@@ -112,7 +112,7 @@
                     </div>
                     <div class="col-6">
                         <label for="keterangan">Keterangan</label>
-                        <textarea class="form-control" name="keterangan" autocomplete="off" id="keterangan" cols="30" rows="5" placeholder="Keterangan">{{old('keterangan')}}</textarea>
+                        <textarea class="form-control" required name="keterangan" autocomplete="off" id="keterangan" cols="30" rows="5" placeholder="Keterangan">{{old('keterangan')}}</textarea>
                     </div>
                     <div class="col-6">
                         <label for="tgl_bayar">Tanggal Bayar</label>

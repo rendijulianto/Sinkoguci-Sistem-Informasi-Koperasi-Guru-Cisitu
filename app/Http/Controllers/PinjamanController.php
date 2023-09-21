@@ -6,6 +6,10 @@ use Illuminate\Http\Request;
 use App\Models\{Pinjaman, Anggota, Petugas};
 use Illuminate\Support\Facades\Auth;
 use DB;
+use App\Exports\PinjamanReportExport;
+use Maatwebsite\Excel\Facades\Excel;
+
+
 class PinjamanController extends Controller
 {
     public function index(Request $request) {
@@ -107,7 +111,7 @@ class PinjamanController extends Controller
         $angsuran = $pinjaman->angsuran()->orderBy('created_at', 'desc')->get();
         return view('admin.pinjaman.angsuran', compact('title', 'angsuran', 'pinjaman'));
     }
-   
+
     public function destroyAngsuran(string $id, string $tgl_bayar, string $bayar_pokok, string $bayar_jasa, string $setelah_pokok, string $setelah_jasa) {
        DB::beginTransaction();
        try {
@@ -129,7 +133,7 @@ class PinjamanController extends Controller
                     ['setelah_pokok', $setelah_pokok],
                     ['setelah_jasa', $setelah_jasa],
                 ])->delete();
-                
+
                 $pinjaman = Pinjaman::findOrFail($id);
                 $pinjaman->sisa_pokok += $bayar_pokok;
                 $pinjaman->sisa_jasa += $bayar_jasa;

@@ -109,16 +109,16 @@
                     <div class="login-left">
                         <img src="{{asset('assets/images/logo.jpeg')}}" alt="Logo" width="100px">
                         <p>
-                          Jln. Darmaraja KM. 18 Kec. Cisitu, Sumedang, Jawa Barat.
+                          Jalan Raya Umar Wirahadikusumah / Jalan Darmaraja KM 18 Kecamatan Cisitu Kabutan Sumedang.
                         </p>
-                        <a href="javascript:void(0);" class="btn btn-primary">Learn More</a>
+
                     </div><!--login-left-->
                 </div><!--login-bg-->
 
                 <div class="login-form">
                     <form>
                         <div class="login-form-body">
-                            <h4 class="text-center">Selamat datang di KPRI KANCAWINAYA GURU CISITU (KPRI-KGC)</h4>
+                            <h4 class="text-center">Selamat datang di <br /> KPRI KANCAWINAYA GURU CISITU <br /> (KPRI-KGC)</h4>
                             <div class="login-logo text-center mb-3">
                                 <img src="{{asset('assets/images/logo.jpeg')}}" alt="Logo" width="100px">
                             </div><!--login-logo-->
