@@ -31,7 +31,7 @@ class PinjamanTableSeeder extends Seeder
         // angsuran lancar (tidak ada yang nunggak)
         $pinjaman = Pinjaman::where('tgl_pinjam', '<=', date('Y-m-d'))->take(10)->get();
         foreach ($pinjaman as $p) {
-            # Data Pinjaman 
+            # Data Pinjaman
             $pokok_sekarang = $p->sisa_pokok;
             $jasa_sekarang = $p->sisa_jasa;
             $bayar_pokok = $pokok_sekarang / $p->lama_angsuran;
@@ -46,6 +46,7 @@ class PinjamanTableSeeder extends Seeder
                 DB::table('angsuran')->insert([
                     'id_pinjaman' => $p->id_pinjaman,
                     'id_petugas' => 1,
+                    'id_anggota' => $p->id_anggota,
                     'bayar_pokok' => $bayar_pokok,
                     'bayar_jasa' => $bayar_jasa,
                     'tgl_bayar' => $tgl_bayar,
@@ -66,14 +67,14 @@ class PinjamanTableSeeder extends Seeder
                 'sisa_jasa' => 0,
                 'tgl_terakhir_bayar' => date('Y-m-d', strtotime('-1 months', strtotime($tgl_bayar))),
             ]);
-            
+
 
         }
 
         // // angsuran nunggak (ada yang nunggak)
         // $pinjaman = Pinjaman::where('sisa_pokok', '>', 0)->where('tgl_pinjam', '<=', date('Y-m-d'))->take(10)->get();
         // foreach ($pinjaman as $p) {
-        
+
 
         // }
     }

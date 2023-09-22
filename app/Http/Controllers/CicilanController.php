@@ -95,11 +95,13 @@ class CicilanController extends Controller
             $pinjaman->sisa_pokok = $pokok_sekarang - $bayar_pokok;
             $pinjaman->sisa_jasa = $jasa_sekarang - $bayar_jasa;
             $pinjaman->tgl_terakhir_bayar = $tgl_bayar;
+
             $pinjaman->save();
             # Data Angsuran
             $angsuran = [
                 'id_pinjaman' => $pinjaman->id_pinjaman,
                 'id_petugas' => Auth::guard('petugas')->user()->id_petugas,
+                'id_anggota' => $pinjaman->id_anggota,
                 'bayar_pokok' => $bayar_pokok,
                 'bayar_jasa' => $bayar_jasa,
                 'tgl_bayar' => $tgl_bayar,

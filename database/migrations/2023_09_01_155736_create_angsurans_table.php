@@ -12,8 +12,10 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('angsuran', function (Blueprint $table) {
+            $table->increments('id_angsuran',11);
             $table->unsignedInteger('id_pinjaman');
             $table->unsignedInteger('id_petugas');
+            $table->unsignedInteger('id_anggota');
             $table->double('bayar_pokok');
             $table->double('bayar_jasa');
             $table->date('tgl_bayar');
@@ -24,6 +26,7 @@ return new class extends Migration
             $table->timestamps();
             $table->foreign('id_pinjaman')->references('id_pinjaman')->on('pinjaman')->onDelete('cascade')->onUpdate('cascade');
             $table->foreign('id_petugas')->references('id_petugas')->on('petugas')->onDelete('cascade')->onUpdate('cascade');
+            $table->foreign('id_anggota')->references('id_anggota')->on('anggota')->onDelete('cascade')->onUpdate('cascade');
         });
     }
 

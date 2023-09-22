@@ -76,6 +76,18 @@ if (Auth::guard('petugas')->user()->level == "petugas") {
             'url' => route('petugas.laporan.pembayaran'),
             'icon' => 'fa fa-receipt'
         ],
+        [
+            'text' => 'Laporan Transaksi',
+            'type'=> 'link',
+            'url' => route('petugas.laporan.transaksi'),
+            'icon' => 'fa fa-receipt'
+        ],
+        [
+            'text' => 'Laporan Rekap Transaksi',
+            'type'=> 'link',
+            'url' => route('petugas.laporan.rekap-transaksi'),
+            'icon' => 'fa fa-receipt'
+        ],
     ];
 } else {
     $menu =  [
@@ -416,7 +428,7 @@ if (Auth::guard('petugas')->user()->level == "petugas") {
     <footer>
         <div class="footer-area">
             <p>&copy; Copyright {{
-                date('Y') }} KPRI KGC. Design by <a href="https://www.kebutuhansosmed.com/" target="_blank">HAR</a>  with <i class="fa fa-heart text-danger" aria-hidden="true"></i>.</p>
+                date('Y') }} KPRI KGC. Design by <a href="https://www.kebutuhansosmed.com/" target="_blank">ARI</a>  with <i class="fa fa-heart text-danger" aria-hidden="true"></i>.</p>
         </div>
     </footer>
     <!--=================================*

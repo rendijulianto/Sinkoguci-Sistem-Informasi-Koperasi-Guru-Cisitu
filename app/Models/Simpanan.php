@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\DB;
 
 class Simpanan extends Model
 {
@@ -36,6 +37,4 @@ class Simpanan extends Model
     {
         return $this->belongsTo(KategoriSimpanan::class, 'id_kategori', 'id_kategori');
     }
-
-    
 }

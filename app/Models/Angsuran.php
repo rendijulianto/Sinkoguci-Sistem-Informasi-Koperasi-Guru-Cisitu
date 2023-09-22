@@ -15,6 +15,7 @@ class Angsuran extends Model
 
     protected $fillable = [
         'id_pinjaman',
+        'id_anggota',
         'id_petugas',
         'bayar_pokok',
         'bayar_jasa',
@@ -34,4 +35,6 @@ class Angsuran extends Model
     {
         return $this->belongsTo(Pinjaman::class, 'id_pinjaman', 'id_pinjaman');
     }
+
+
 }
