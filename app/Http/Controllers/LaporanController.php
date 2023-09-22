@@ -82,9 +82,9 @@ $transaksi = DB::table(DB::raw('
         0 AS total_angsuran_bayar_pokok,
         0 AS total_angsuran_bayar_jasa,
         s.keterangan AS keterangan
-    FROM Simpanan s
-    JOIN Anggota ag ON s.id_anggota = ag.id_anggota
-    LEFT JOIN Petugas p ON s.id_petugas = p.id_petugas
+    FROM simpanan s
+    JOIN anggota ag ON s.id_anggota = ag.id_anggota
+    LEFT JOIN petugas p ON s.id_petugas = p.id_petugas
     GROUP BY tanggal, id_kategori, ag.nama, p.nama, s.keterangan
 
     UNION ALL
@@ -99,9 +99,9 @@ $transaksi = DB::table(DB::raw('
         SUM(a.bayar_pokok) AS total_angsuran_bayar_pokok,
         SUM(a.bayar_jasa) AS total_angsuran_bayar_jasa,
         NULL AS keterangan
-    FROM Angsuran a
-    JOIN Anggota ag ON a.id_anggota = ag.id_anggota
-    LEFT JOIN Petugas p ON a.id_petugas = p.id_petugas
+    FROM angsuran a
+    JOIN anggota ag ON a.id_anggota = ag.id_anggota
+    LEFT JOIN petugas p ON a.id_petugas = p.id_petugas
     GROUP BY tanggal, ag.nama, p.nama
     ) AS transaksi
 '))
@@ -159,9 +159,9 @@ $transaksi = DB::table(DB::raw('
                 0 AS total_angsuran_bayar_pokok,
                 0 AS total_angsuran_bayar_jasa,
                 s.keterangan AS keterangan
-            FROM Simpanan s
-            JOIN Anggota ag ON s.id_anggota = ag.id_anggota
-            LEFT JOIN Petugas p ON s.id_petugas = p.id_petugas
+            FROM simpanan s
+            JOIN anggota ag ON s.id_anggota = ag.id_anggota
+            LEFT JOIN petugas p ON s.id_petugas = p.id_petugas
             GROUP BY tanggal, id_kategori, ag.nama, p.nama, s.keterangan
 
             UNION ALL
@@ -176,9 +176,9 @@ $transaksi = DB::table(DB::raw('
                 SUM(a.bayar_pokok) AS total_angsuran_bayar_pokok,
                 SUM(a.bayar_jasa) AS total_angsuran_bayar_jasa,
                 NULL AS keterangan
-            FROM Angsuran a
-            JOIN Anggota ag ON a.id_anggota = ag.id_anggota
-            LEFT JOIN Petugas p ON a.id_petugas = p.id_petugas
+            FROM angsuran a
+            JOIN anggota ag ON a.id_anggota = ag.id_anggota
+            LEFT JOIN petugas p ON a.id_petugas = p.id_petugas
             GROUP BY tanggal, ag.nama, p.nama
             ) AS transaksi
         '))
