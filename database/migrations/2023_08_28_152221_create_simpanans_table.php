@@ -18,7 +18,6 @@ return new class extends Migration
             $table->unsignedInteger('id_kategori');
             $table->double('jumlah');
             $table->date('tgl_bayar');
-            $table->string('keterangan')->nullable();
             $table->timestamps();
             $table->foreign('id_anggota')->references('id_anggota')->on('anggota')->onDelete('cascade')->onUpdate('cascade');
             $table->foreign('id_petugas')->references('id_petugas')->on('petugas')->onDelete('cascade')->onUpdate('cascade');

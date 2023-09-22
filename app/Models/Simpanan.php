@@ -20,7 +20,6 @@ class Simpanan extends Model
         'id_kategori',
         'jumlah',
         'tgl_bayar',
-        'keterangan',
     ];
 
     public function anggota()

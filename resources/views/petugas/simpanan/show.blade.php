@@ -110,11 +110,7 @@
                         <label for="simpanan_suka_rela">Total Bayar</label>
                         <input type="text" class="form-control" autocomplete="off" id="total_bayar" name="total_bayar" placeholder="Total Bayar" value="{{old('total_bayar')}}" readonly>
                     </div>
-                    <div class="col-6">
-                        <label for="keterangan">Keterangan</label>
-                        <textarea class="form-control" required name="keterangan" autocomplete="off" id="keterangan" cols="30" rows="5" placeholder="Keterangan">{{old('keterangan')}}</textarea>
-                    </div>
-                    <div class="col-6">
+                    <div class="col-12">
                         <label for="tgl_bayar">Tanggal Bayar</label>
                         <input type="date" class="form-control" autocomplete="off" name="tgl_bayar" id="tgl_bayar" value="{{old('tgl_bayar') ?? date('Y-m-d')}}">
                     </div>

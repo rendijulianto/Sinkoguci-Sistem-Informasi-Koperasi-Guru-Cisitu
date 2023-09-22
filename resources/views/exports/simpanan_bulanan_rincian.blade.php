@@ -46,7 +46,6 @@
                         <table border="1">
                             <tr>
                                 <td>Tanggal </td>
-                                <td>Keterangan</td>
                                 <td>Jenis Simpanan</td>
                                 <td>Jumlah</td>
                                 <td>Paraf Petugas</td>
@@ -56,7 +55,6 @@
                              ->get() as $s)
                              <tr>
                                  <td>{{$s->tgl_bayar}}</td>
-                                    <td>{{$s->keterangan}}</td>
                                     <td>{{$s->kategori->nama}}</td>
                                     <td>{{$s->jumlah}}</td>
                                     <td>{{$s->petugas->nama}}</td>

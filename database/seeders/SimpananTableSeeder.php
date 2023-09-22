@@ -23,7 +23,6 @@ class SimpananTableSeeder extends Seeder
                     'id_petugas' => 1, // id petugas default
                     'tgl_bayar' => date('Y-m-d'),
                     'jumlah' => $k->jumlah,
-                    'keterangan' => 'Simpanan Awal',
                 ]);
                 if (preg_match('/Simpanan/', $k->nama)) {
                     $saldo = $k->jumlah;

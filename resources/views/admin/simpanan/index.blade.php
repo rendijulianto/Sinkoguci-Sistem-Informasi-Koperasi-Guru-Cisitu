@@ -81,11 +81,10 @@
                                     <th scope="col">Jenis Simpanan</th>
                                     <th scope="col">Tanggal</th>
                                     <th scope="col">Jumlah</th>
-                                    <th scope="col">Keterangan</th>
                                     <th scope="col">Petugas</th>
                                     <th scope="col">Aksi</th>
                                 </tr>
-                              
+
                             </thead>
                             <tbody>
                             @forelse ($simpanan as $p)
@@ -95,12 +94,11 @@
                                     <td>{{$p->kategori->nama}}</td>
                                     <td>{{$p->tgl_bayar}}</td>
                                     <td>Rp. {{number_format($p->jumlah)}}</td>
-                                    <td>{{$p->keterangan}}</td>
                                     <td>{{$p->petugas->nama}}</td>
                                     <td>
                                         <a href="#" class="btn btn-inverse-primary edit-button" data-toggle="modal" data-target="#modalEditSimpanan{{$p->id_simpanan}}">
-                       
-                                        <i class="fa fa-edit"></i> 
+
+                                        <i class="fa fa-edit"></i>
                                         </a>
                                         <form action="{{route('admin.simpanan.destroy', $p->id_simpanan)}}" method="POST" class="d-inline">
                                             @csrf
@@ -148,10 +146,6 @@
                     <div class="col-12">
                         <label for="edit_jumlah">Jumlah</label>
                         <input type="text" class="form-control autonumeric-currency" autocomplete="off" id="edit_jumlah" name="jumlah" placeholder="Jumlah" value="{{$item->jumlah}}">
-                    </div>
-                    <div class="col-6">
-                        <label for="edit_keterangan">Keterangan</label>
-                        <textarea class="form-control" autocomplete="off" id="edit_keterangan" name="keterangan" placeholder="Keterangan">{{$item->keterangan}}</textarea>
                     </div>
                 </div>
             </div>

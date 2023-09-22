@@ -62,6 +62,7 @@ $daftarKategoriSimpanan = KategoriSimpanan::orderBy('id_kategori', 'asc')->get()
     'tanggal',
     'nama_anggota',
     'nama_petugas',
+    'keterangan',
     'SUM(total_angsuran_bayar_pokok) AS angsuran_bayar_pokok',
     'SUM(total_angsuran_bayar_jasa) AS angsuran_bayar_jasa',
   ];
@@ -76,16 +77,17 @@ $transaksi = DB::table(DB::raw('
         DATE(s.tgl_bayar) AS tanggal,
         ag.nama AS nama_anggota,
         p.nama AS nama_petugas,
+        sekolah.nama AS keterangan,
         SUM(s.jumlah) AS total_simpanan,
         0 AS total_angsuran,
         s.id_kategori AS id_kategori,
         0 AS total_angsuran_bayar_pokok,
-        0 AS total_angsuran_bayar_jasa,
-        s.keterangan AS keterangan
+        0 AS total_angsuran_bayar_jasa
     FROM simpanan s
     JOIN anggota ag ON s.id_anggota = ag.id_anggota
     LEFT JOIN petugas p ON s.id_petugas = p.id_petugas
-    GROUP BY tanggal, id_kategori, ag.nama, p.nama, s.keterangan
+    JOIN sekolah ON ag.id_sekolah = sekolah.id_sekolah
+    GROUP BY tanggal, id_kategori, ag.nama, p.nama, sekolah.nama
 
     UNION ALL
 
@@ -93,25 +95,25 @@ $transaksi = DB::table(DB::raw('
         DATE(a.tgl_bayar) AS tanggal,
         ag.nama AS nama_anggota,
         p.nama AS nama_petugas,
+        sekolah.nama AS keterangan,
         0 AS total_simpanan,
         SUM(a.bayar_pokok + a.bayar_jasa) AS total_angsuran,
         NULL AS id_kategori,
         SUM(a.bayar_pokok) AS total_angsuran_bayar_pokok,
-        SUM(a.bayar_jasa) AS total_angsuran_bayar_jasa,
-        NULL AS keterangan
+        SUM(a.bayar_jasa) AS total_angsuran_bayar_jasa
     FROM angsuran a
     JOIN anggota ag ON a.id_anggota = ag.id_anggota
     LEFT JOIN petugas p ON a.id_petugas = p.id_petugas
-    GROUP BY tanggal, ag.nama, p.nama
+    LEFT JOIN sekolah ON ag.id_sekolah = sekolah.id_sekolah
+    GROUP BY tanggal, ag.nama, p.nama, sekolah.nama
     ) AS transaksi
 '))
 ->selectRaw(implode(', ', $selectClauses))
 ->where('tanggal', '=', $tgl)
-->groupBy('tanggal', 'nama_anggota', 'nama_petugas')
+->groupBy('tanggal', 'nama_anggota', 'nama_petugas', 'keterangan')
 ->orderBy('tanggal')
 ->get();
 
-// dd($transaksi);
         $title = 'Laporan Transaksi Pembayaran ';
 
         return view('petugas.laporan.transaksi', compact('transaksi', 'daftarKategoriSimpanan', 'title', 'tgl'));
@@ -157,12 +159,11 @@ $transaksi = DB::table(DB::raw('
                 0 AS total_angsuran,
                 s.id_kategori AS id_kategori,
                 0 AS total_angsuran_bayar_pokok,
-                0 AS total_angsuran_bayar_jasa,
-                s.keterangan AS keterangan
+                0 AS total_angsuran_bayar_jasa
             FROM simpanan s
             JOIN anggota ag ON s.id_anggota = ag.id_anggota
             LEFT JOIN petugas p ON s.id_petugas = p.id_petugas
-            GROUP BY tanggal, id_kategori, ag.nama, p.nama, s.keterangan
+            GROUP BY tanggal, id_kategori, ag.nama, p.nama
 
             UNION ALL
 
@@ -174,8 +175,8 @@ $transaksi = DB::table(DB::raw('
                 SUM(a.bayar_pokok + a.bayar_jasa) AS total_angsuran,
                 NULL AS id_kategori,
                 SUM(a.bayar_pokok) AS total_angsuran_bayar_pokok,
-                SUM(a.bayar_jasa) AS total_angsuran_bayar_jasa,
-                NULL AS keterangan
+                SUM(a.bayar_jasa) AS total_angsuran_bayar_jasa
+
             FROM angsuran a
             JOIN anggota ag ON a.id_anggota = ag.id_anggota
             LEFT JOIN petugas p ON a.id_petugas = p.id_petugas

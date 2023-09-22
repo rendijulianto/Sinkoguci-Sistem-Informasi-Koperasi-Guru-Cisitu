@@ -70,7 +70,7 @@
 
                                         data-toggle="tooltip" data-placement="top" title="Total Simpanan dan Piutang yang telah dibayar"></i></th>
 
-
+                                        <th>Keterangan</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -148,6 +148,9 @@
                                         <td class="text-right" colspan="2"  style="background-color: #f5f5f5">
                                             Rp {{number_format($total_simpanan + $total_piutang, 2, ',', '.')}}
                                         </td>
+                                        <td>
+                                            {{$trx->keterangan}}
+                                        </td>
 
                                     </tr>
                                 @empty
@@ -185,7 +188,7 @@
                                         <td colspan="3" class="text-center">Terbilang</td>
                                         <td colspan="100%" class="text-center">
                                             <h4>
-                                                {{strtoupper(penyebut($totalSimpanan + $totalPiutang))}} RUPIAH
+                                                {{ucwords(penyebut($totalSimpanan + $totalPiutang))}} Rupiah
                                             </h4>
                                         </td>
                                     </tr>

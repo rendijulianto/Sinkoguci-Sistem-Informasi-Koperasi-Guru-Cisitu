@@ -52,8 +52,7 @@ class SimpananController extends Controller
         $cari = $request->cari;
         if ($cari) {
             $simpanan->where(function($q) use ($cari) {
-                $q->where('keterangan', 'like', '%'.$cari.'%')
-                ->orWhere('tgl_bayar', 'like', '%'.$cari.'%')
+                $q->where('tgl_bayar', 'like', '%'.$cari.'%')
                 ->orWhere('jumlah', 'like', '%'.$cari.'%')
                 ->orWhereHas('anggota', function($query) use ($cari) {
                     $query->where('nama', 'like', '%'.$cari.'%');
@@ -80,7 +79,7 @@ class SimpananController extends Controller
         $simpanan = $simpanan->with('anggota','kategori','petugas')->orderBy('tgl_bayar', 'desc')->paginate(10);
 
         return view('admin.simpanan.index',  compact('title', 'anggota', 'simpanan', 'tanggal_awal', 'tanggal_akhir', 'cari', 'kategori', 'kategori_id', 'anggota_id'));
-        
+
     }
 
     /**
@@ -91,15 +90,12 @@ class SimpananController extends Controller
         $kategoriSimpanan = KategoriSimpanan::orderBy('id_kategori', 'asc')->get();
         $validate_kategori = [
             'id_anggota' => 'required|numeric|exists:anggota,id_anggota',
-            'keterangan' => 'required|max:255',
             'tgl_bayar' => 'required|date',
         ];
         $message_kategori = [
             'id_anggota.required'     => 'Anggota tidak ditemukan!',
             'id_anggota.numeric'     => 'Id anggota tidak valid!',
             'id_anggota.exists' => 'Id anggota tidakn ditemukan!',
-            'keterangan.required' => 'Keterangan tidak boleh kosong',
-            'keterangan.max' => 'Keterangan maksimal 255 karakter',
             'tgl_bayar.required' => 'Tanggal bayar tidak boleh kosong',
             'tgl_bayar.date' => 'Tanggal bayar harus tanggal',
         ];
@@ -114,7 +110,6 @@ class SimpananController extends Controller
                 'id_anggota' => $request->id_anggota,
                 'id_petugas' => Auth::guard('petugas')->user()->id_petugas,
                 'jumlah' => 0,
-                'keterangan' => $request->keterangan,
                 'tgl_bayar' => $request->tgl_bayar,
             ];
 
@@ -180,21 +175,18 @@ class SimpananController extends Controller
         if (!$simpanan) {
             return abort(404);
         }
-       
+
         $validate_kategori = [
             'jumlah' => 'required',
-            'keterangan' => 'required|max:255',
             'tgl_bayar' => 'required|date',
         ];
         $message_kategori = [
             'jumlah.required' => 'Jumlah tidak boleh kosong',
-            'keterangan.required' => 'Keterangan tidak boleh kosong',
-            'keterangan.max' => 'Keterangan maksimal 255 karakter',
             'tgl_bayar.required' => 'Tanggal bayar tidak boleh kosong',
             'tgl_bayar.date' => 'Tanggal bayar harus tanggal',
         ];
-    
-        
+
+
         $this->validate($request, $validate_kategori, $message_kategori);
         DB::beginTransaction();
         try {
@@ -220,7 +212,6 @@ class SimpananController extends Controller
                     ]);
                 $simpanan->update([
                     'jumlah' => $saldo_baru,
-                    'keterangan' => $request->keterangan,
                     'tgl_bayar' => $request->tgl_bayar,
                 ]);
             } else {
@@ -229,7 +220,7 @@ class SimpananController extends Controller
 
             DB::commit();
             return redirect()->back()->with(['success' => 'Mengubah simpanan']);
-         
+
         } catch (\Throwable $th) {
             DB::rollback();
             return redirect()->back()->withInput()->with(['error' => $th->getMessage()]);
@@ -264,7 +255,7 @@ class SimpananController extends Controller
             } else {
                throw new \Exception("Data tidak bisa dihapus, saldo tidak mencukupi");
             }
-            
+
             DB::commit();
             return redirect()->back()->with(['success' => 'Menghapus simpanan']);
         } catch (\Throwable $th) {
