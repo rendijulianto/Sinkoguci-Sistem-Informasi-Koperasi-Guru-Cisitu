@@ -18,7 +18,5 @@ class DashboardController extends Controller
         } else {
             return redirect(route('login'))->with('error', 'Silahkan login terlebih dahulu.');
         }
-
     }
-
 }

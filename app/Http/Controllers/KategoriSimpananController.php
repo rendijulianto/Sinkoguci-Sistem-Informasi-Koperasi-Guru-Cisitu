@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\{KategoriSimpanan,KategoriSimpananAnggota};
+use Helper;
 
 class KategoriSimpananController extends Controller
 {
@@ -43,32 +44,26 @@ class KategoriSimpananController extends Controller
         ]);
 
         try {
-            KategoriSimpanan::create([
+            $jumlah = Helper::rupiahToNumeric($request->jumlah);
+            $kategori_simppanan = KategoriSimpanan::create([
                 'nama' => $request->nama,
-                'jumlah' => $this->convertRupiahToNumber($request->jumlah),
+                'jumlah' => $jumlah,
             ]);
+
+            $anggota = Anggota::select('id_anggota')->get();
+            foreach ($anggota as $item) {
+                KategoriSimpananAnggota::create([
+                    'id_anggota' => $item->id_anggota,
+                    'id_kategori' => $kategori_simppanan->id_kategori,
+                    'nominal' => $jumlah,
+                ]);
+            }
 
             return redirect()->back()->with(['success' => 'Kategori Simpanan: ' . $request->nama . ' Ditambahkan']);
         } catch (\Throwable $th) {
             return redirect()->back()->with(['error' => $th->getMessage()]);
         }
     }
-
-    private function convertRupiahToNumber($rupiah)
-    {
-       // Remove non-numeric characters and spaces
-        $numericString = preg_replace("/[^0-9]/", "", $rupiah);
-
-        // Convert the numeric string to an integer or float
-        $numericValue = (int) $numericString; // Use (float) for decimals
-
-        // Output the numeric value
-        if($numericValue == null) {
-            return 0;
-        } else {
-            return $numericValue;
-        }
-  }
 
     /**
      * Update the specified resource in storage.
@@ -86,12 +81,17 @@ class KategoriSimpananController extends Controller
             'jumlah.numeric' => 'Jumlah harus berupa angka',
         ]);
 
+        $jumlah = Helper::rupiahToNumeric($request->jumlah);
         try {
             $kategoriSimpanan = KategoriSimpanan::findOrFail($id);
             $kategoriSimpanan->update([
                 'nama' => $request->nama,
-                'jumlah' => $this->convertRupiahToNumber($request->jumlah),
+                'jumlah' => $jumlah,
             ]);
+
+            KategoriSimpananAnggota::where('id_kategori', $id)
+    ->where('nominal', '<', $jumlah)
+    ->update(['nominal' => $jumlah]);
 
             return redirect()->back()->with(['success' => 'Kategori Simpanan: ' . $kategoriSimpanan->nama . ' Diperbaharui']);
         } catch (\Throwable $th) {
@@ -108,34 +108,6 @@ class KategoriSimpananController extends Controller
             $kategoriSimpanan = KategoriSimpanan::findOrFail($id);
             $kategoriSimpanan->delete();
             return redirect()->back()->with(['success' => 'Kategori Simpanan: ' . $kategoriSimpanan->nama . ' Dihapus']);
-        } catch (\Throwable $th) {
-            return redirect()->back()->with(['error' => $th->getMessage()]);
-        }
-    }
-
-    public function ubahMasalJumlah(Request $request)
-    {
-        $this->validate($request, [
-            'id_kategori' => 'required|numeric|exists:kategori_simpanan,id_kategori',
-            'jumlah' => 'required',
-        ], [
-            'id_kategori.required' => 'Kategori tidak boleh kosong',
-            'id_kategori.numeric' => 'Kategori harus berupa angka',
-            'id_kategori.exists' => 'Kategori tidak ditemukan',
-            'jumlah.required' => 'Jumlah tidak boleh kosong',
-            'jumlah.numeric' => 'Jumlah harus berupa angka',
-        ]);
-
-        try {
-            $kategoriSimpanan = KategoriSimpanan::findOrFail($request->id_kategori);
-            $kategoriSimpanan->update([
-                'jumlah' => $this->convertRupiahToNumber($request->jumlah),
-            ]);
-            KategoriSimpananAnggota::where('id_kategori', $request->id_kategori)->update([
-                'nominal' => $this->convertRupiahToNumber($request->jumlah),
-            ]);
-
-            return redirect()->back()->with(['success' => 'Jumlah Kategori Simpanan: ' . $kategoriSimpanan->nama . ' Diperbaharui']);
         } catch (\Throwable $th) {
             return redirect()->back()->with(['error' => $th->getMessage()]);
         }

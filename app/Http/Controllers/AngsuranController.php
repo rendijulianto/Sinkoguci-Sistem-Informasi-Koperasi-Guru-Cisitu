@@ -10,47 +10,25 @@ use Illuminate\Support\Facades\DB;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Exports\{AngsuranExport};
 
-class CicilanController extends Controller
+class AngsuranController extends Controller
 {
 
-    private function convertRupiahToNumber($rupiah)
-    {
-       // Remove non-numeric characters and spaces
-        $numericString = preg_replace("/[^0-9]/", "", $rupiah);
-
-        // Convert the numeric string to an integer or float
-        $numericValue = (int) $numericString; // Use (float) for decimals
-
-        // Output the numeric value
-        if($numericValue == null) {
-            return 0;
-        } else {
-            return $numericValue;
-        }
-  }
 
     /**
      * Display a listing of the resource.
      */
     public function index()
     {
-        $title = 'Cicilan';
+        $title = 'Angsuran';
 
         $pinjaman = Pinjaman::where(function ($query) {
             $query->where('sisa_pokok', '>', 0)
                 ->orWhere('sisa_jasa', '>', 0);
         })->orderBy('id_pinjaman', 'desc')->get();
 
-        return view('petugas.cicilan.index', compact('title', 'pinjaman'));
+        return view('petugas.angsuran.index', compact('title', 'pinjaman'));
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
-    }
 
     /**
      * Store a newly created resource in storage.
@@ -76,17 +54,18 @@ class CicilanController extends Controller
         DB::beginTransaction();
         try {
             $pinjaman = Pinjaman::findOrFail($request->id_pinjaman);
+            $bayar_pokok = Helper::rupiahToNumeric($request->bayar_pokok);
+            $bayar_jasa = Helper::rupiahToNumeric($request->bayar_jasa);
             if(!$pinjaman){
                 return redirect()->back()->withInput()->with('error', 'Pinjaman tidak ditemukan');
             } else if  ($pinjaman->sisa_pokok == 0 AND $pinjaman->sisa_jasa == 0) {
                 return redirect()->back()->withInput()->with('error', 'Pinjaman sudah lunas');
-            } else if ($pinjaman->sisa_pokok < $this->convertRupiahToNumber($request->bayar_pokok)) {
+            } else if ($pinjaman->sisa_pokok < $bayar_pokok) {
                 return redirect()->back()->withInput()->with('error', 'Bayar pokok melebihi sisa pokok');
-            } else if ($pinjaman->sisa_jasa < $this->convertRupiahToNumber($request->bayar_jasa)) {
+            } else if ($pinjaman->sisa_jasa < $bayar_jasa) {
                 return redirect()->back()->withInput()->with('error', 'Bayar jasa melebihi sisa jasa');
             }
-            $bayar_pokok = $this->convertRupiahToNumber($request->bayar_pokok);
-            $bayar_jasa = $this->convertRupiahToNumber($request->bayar_jasa);
+
             $tgl_bayar = $request->tgl_bayar;
             # Data Pinjaman
             $pokok_sekarang = $pinjaman->sisa_pokok;
@@ -115,7 +94,7 @@ class CicilanController extends Controller
             DB::commit();
             return redirect()->back()->withInput(
 
-            )->with('success', 'Berhasil menambahkan data cicilan');
+            )->with('success', 'Berhasil menambahkan data angsuran');
 
         } catch (\Throwable $th) {
             DB::rollback();
@@ -128,40 +107,17 @@ class CicilanController extends Controller
      */
     public function show(Request $request, string $id)
     {
-        $title = 'Cicilan';
+        $title = 'Angsuran';
         $pinjaman = Pinjaman::findOrFail($id);
         if(!$pinjaman){
             return abort(404);
         }
-        $cicilan = $pinjaman->angsuran()->orderBy('created_at', 'desc')->get();
+        $angsuran = $pinjaman->angsuran()->orderBy('created_at', 'desc')->get();
         if ($request->aksi ==  "download") {
-            return Excel::download(new AngsuranExport($pinjaman), 'Data-Cicilan-' . $pinjaman->id_pinjaman . '.xlsx');
+            return Excel::download(new AngsuranExport($pinjaman), 'Data-Angsuran-' . $pinjaman->id_pinjaman . '.xlsx');
         } else {
-            return view('petugas.cicilan.show', compact('title', 'pinjaman', 'cicilan'));
+            return view('petugas.angsuran.show', compact('title', 'pinjaman', 'angsuran'));
         }
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(string $id)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, string $id)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(string $id)
-    {
-        //
-    }
 }

@@ -79,33 +79,33 @@
         <div class="card">
             <div class="header">
                 <div class="logo" style="text-align: center">
-                    <img src="https://placehold.jp/150x150.png" alt="Logo"  class="img-fluid circle"/>
+                    <img src="https://kgc.poineko.my.id/assets/images/logo.jpeg"
+                    alt="Logo"  class="img-fluid"/>
                 </div>
                 <div class="koperasi-info">
                     <h4>KANCAWINAYA GURU CISITU</h4>
                     <p style="font-size: 12px">
                         <b
-                            >BADAN HUKUM No. 1059/BH/PAD/KWK-10/VII/98 TANGGAL
-                            30 JULI 1998</b
+                            >NOMOR AHU-0001852/AJ/-1/38/TAHUN 2022
+                            TANGGAL 28 SEPTEMBER 2022</b
                         >
                     </p>
                     <p style="font-size: 12px; font-style: italic">
-                        Alamat: Jln. Raya Sumedang-Wado Km 18 Cisitu-Sumedang
+                        Alamat Jalan Raya Umar Wirahadikusumah / Jalan Darmaraja KM 18 Kecamatan Cisitu Kabutan Sumedang.
                     </p>
                 </div>
             </div>
             <hr />
             <div class="anggota-info">
                 <h3>Biodata Anggota</h3>
-                <p><strong>Nomor Anggota:</strong> 1234567890</p>
-                <p><strong>Nama:</strong> Rendi Julianto</p>
-                <p><strong>Tanggal Lahir:</strong> 01 Januari 2000</p>
+                <p><strong>ID Anggota:</strong> {{$anggota->id_anggota}}</p>
+                <p><strong>Nama:</strong> {{$anggota->nama}}</p>
+                <p><strong>Tanggal Lahir:</strong> {{$anggota->tanggal_lahir}}</p>
                 <p>
-                    <strong>Alamat:</strong> Jln. Raya Sumedang-Wado Km 18
-                    Cisitu-Sumedang
+                    <strong>Alamat:</strong> {{$anggota->alamat}}
                 </p>
                 <p>
-                    <strong>Sekolah / Pekerjaan:</strong> SMK Negeri 1 Sumedang
+                    <strong>Sekolah / Pekerjaan:</strong> {{$anggota->sekolah->nama ?? '-'}}
                 </p>
             </div>
         </div>

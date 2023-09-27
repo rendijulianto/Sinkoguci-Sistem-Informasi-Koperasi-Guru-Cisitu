@@ -8,23 +8,23 @@ use Maatwebsite\Excel\Facades\Excel;
 use Carbon\Carbon;
 
 // BillingReportExport
-use App\Exports\{BillingReportExport, SimpananBulananReportExport, SimpananTahunanReportExport, PembayaranReportExport,AngsuranExport,PinjamanReportExport,PembayaranTahunanRekapReport};
+use App\Exports\{BillingReportExport, SimpananBulananReportExport, SimpananTahunanReportExport, PembayaranReportExport,AngsuranExport,PinjamanReportExport,PembayaranTahunanRekapReport, RekapPembayaranReportExport};
 use Illuminate\Support\Facades\DB;
 class LaporanController extends Controller
 {
     public function tagihan(Request $request)
     {
        $title = 'Laporan Tagihan';
-       $bulan = $request->bulan??date('m');
-       $tahun = $request->tahun??date('Y');
-       $daftarSekolah = Sekolah::orderBy('nama', 'asc')->get();
-       $daftarKategoriSimpanan = KategoriSimpanan::orderby('id_kategori', 'asc')->get();
+       $bulan = $request->bulan;
+       $tahun = $request->tahun;
+       $daftarSekolah = Sekolah::select('id_sekolah', 'nama')->orderBy('nama', 'asc')->get();
+       $daftarKategoriSimpanan = KategoriSimpanan::select('id_kategori', 'nama')->orderby('id_kategori', 'asc')->get();
 
-       $id_sekolah = $request->id_sekolah??'all';
+       $id_sekolah = $request->id_sekolah;
        if($id_sekolah AND $id_sekolah  != 'all') {
-           $sekolah = Sekolah::where('id_sekolah', $id_sekolah)->get();
+           $sekolah = Sekolah::select('id_sekolah', 'nama')->where('id_sekolah', $id_sekolah)->get();
         } else {
-            $sekolah = Sekolah::orderBy('nama', 'asc')->get();
+            $sekolah = Sekolah::select('id_sekolah', 'nama')->orderBy('nama', 'asc')->get();
        }
        if($request->aksi == "download") {
         return Excel::download(new BillingReportExport($bulan, $sekolah, $daftarKategoriSimpanan, $tahun), 'Laporan Tagihan.xlsx');
@@ -32,27 +32,8 @@ class LaporanController extends Controller
        return view('petugas.laporan.tagihan', compact('bulan', 'sekolah', 'daftarSekolah', 'daftarKategoriSimpanan', 'title', 'tahun', 'id_sekolah'));
     }
 
+
     public function pembayaran(Request $request)
-    {
-      $title = 'Laporan Pembayaran';
-      $bulan = $request->bulan??date('m');
-      $tahun = $request->tahun??date('Y');
-      $id_sekolah = $request->id_sekolah??'all';
-      $daftarSekolah = Sekolah::orderBy('nama', 'asc')->get();
-      $daftarKategoriSimpanan = KategoriSimpanan::orderby('id_kategori', 'asc')->get();
-      if($id_sekolah AND $id_sekolah  != 'all') {
-          $sekolah = Sekolah::where('id_sekolah', $id_sekolah)->get();
-       } else {
-           $sekolah = Sekolah::orderBy('nama', 'asc')->get();
-      }
-
-      if($request->aksi == "download") {
-       return Excel::download(new PembayaranReportExport($bulan, $sekolah, $daftarKategoriSimpanan, $tahun), 'Laporan Pembayaran.xlsx');
-      }
-      return view('petugas.laporan.pembayaran', compact('bulan', 'sekolah', 'daftarSekolah', 'daftarKategoriSimpanan', 'title', 'tahun', 'id_sekolah'));
-    }
-
-    public function transaksi(Request $request)
     {
 
         $tgl = $request->tgl??date('Y-m-d');
@@ -72,7 +53,7 @@ $daftarKategoriSimpanan = KategoriSimpanan::orderBy('id_kategori', 'asc')->get()
         }
         // dd($selectClauses);
 
-$transaksi = DB::table(DB::raw('
+$pembayaran = DB::table(DB::raw('
     (SELECT
         DATE(s.tgl_bayar) AS tanggal,
         ag.nama AS nama_anggota,
@@ -106,7 +87,7 @@ $transaksi = DB::table(DB::raw('
     LEFT JOIN petugas p ON a.id_petugas = p.id_petugas
     LEFT JOIN sekolah ON ag.id_sekolah = sekolah.id_sekolah
     GROUP BY tanggal, ag.nama, p.nama, sekolah.nama
-    ) AS transaksi
+    ) AS pembayaran
 '))
 ->selectRaw(implode(', ', $selectClauses))
 ->where('tanggal', '=', $tgl)
@@ -116,10 +97,14 @@ $transaksi = DB::table(DB::raw('
 
         $title = 'Laporan Transaksi Pembayaran ';
 
-        return view('petugas.laporan.transaksi', compact('transaksi', 'daftarKategoriSimpanan', 'title', 'tgl'));
+        if ($request->aksi == "download") {
+            return Excel::download(new PembayaranReportExport($pembayaran, $daftarKategoriSimpanan, $title, $tgl), 'Laporan Transaksi Pembayaran ' . $tgl . '.xlsx');
+        }
+
+        return view('petugas.laporan.pembayaran', compact('pembayaran', 'daftarKategoriSimpanan', 'title', 'tgl'));
     }
 
-    public function rekapTransaksi(Request $request)
+    public function rekapPembayaran(Request $request)
     {
 
 
@@ -150,7 +135,7 @@ $transaksi = DB::table(DB::raw('
         }
 
         // Buat kueri menggunakan Laravel Query Builder
-        $transaksi = DB::table(DB::raw('
+        $pembayaran = DB::table(DB::raw('
             (SELECT
                 DATE(s.tgl_bayar) AS tanggal,
                 ag.nama AS nama_anggota,
@@ -181,7 +166,7 @@ $transaksi = DB::table(DB::raw('
             JOIN anggota ag ON a.id_anggota = ag.id_anggota
             LEFT JOIN petugas p ON a.id_petugas = p.id_petugas
             GROUP BY tanggal, ag.nama, p.nama
-            ) AS transaksi
+            ) AS pembayaran
         '))
             ->selectRaw(implode(', ', $selectClauses))
             ->whereIn('tanggal', $dates)
@@ -192,104 +177,10 @@ $transaksi = DB::table(DB::raw('
 
         $title = 'Laporan Transaksi Pembayaran ';
 
-        return view('petugas.laporan.rekap-transaksi', compact('transaksi', 'daftarKategoriSimpanan', 'title', 'tgl_awal', 'tgl_akhir', 'dates'));
-    }
-
-    public function simpananBulanan(Request $request)
-    {
-       $title = 'Laporan Simpanan';
-       $bulan = $request->bulan??date('m');
-       $tahun = $request->tahun??date('Y');
-       $daftarSekolah = Sekolah::orderBy('nama', 'asc')->get();
-         $daftarKategoriSimpanan = KategoriSimpanan::orderby('id_kategori', 'asc')->get();
-       $id_sekolah = $request->id_sekolah??'all';
-       if($id_sekolah AND $id_sekolah  != 'all') {
-           $sekolah = Sekolah::where('id_sekolah', $id_sekolah)->get();
-        } else {
-            $sekolah = Sekolah::orderBy('nama', 'asc')->get();
-       }
-       if($request->aksi == "download") {
-        $nama_sekolah = $id_sekolah == 'all' ? 'Semua Sekolah' : $sekolah->first()->nama;
-        $file_laporan = 'Laporan Simpanan Bulanan '.$nama_sekolah.' Bulan '.$bulan.'-'.$tahun.'.xlsx';
-        return Excel::download(new SimpananBulananReportExport($bulan, $sekolah, $daftarKategoriSimpanan, $tahun), $file_laporan);
-       }
-         return view('admin.laporan.simpanan', compact('bulan', 'sekolah', 'daftarSekolah', 'daftarKategoriSimpanan', 'title', 'tahun', 'id_sekolah'));
-    }
-
-    public function simpananTahunan(Request $request)
-    {
-         $title = 'Laporan Simpanan Tahunan';
-         $tahun = $request->tahun??date('Y');
-         $daftarSekolah = Sekolah::orderBy('nama', 'asc')->get();
-         $daftarKategoriSimpanan = KategoriSimpanan::orderby('id_kategori', 'asc')->get();
-         $id_sekolah = $request->id_sekolah??'all';
-         if($id_sekolah AND $id_sekolah  != 'all') {
-             $sekolah = Sekolah::where('id_sekolah', $id_sekolah)->get();
-          } else {
-              $sekolah = Sekolah::orderBy('nama', 'asc')->get();
-         }
-         if($request->aksi == "download") {
-            $nama_sekolah = $id_sekolah == 'all' ? 'Semua Sekolah' : $sekolah->first()->nama;
-            $file_laporan = 'Laporan Simpanan Tahunan '.$nama_sekolah.' Tahun '.$tahun.'.xlsx';
-          return Excel::download(new SimpananTahunanReportExport($sekolah, $daftarKategoriSimpanan, $tahun), $file_laporan);
-         }
-           return view('admin.laporan.simpanan-tahunan', compact( 'sekolah', 'daftarSekolah', 'daftarKategoriSimpanan', 'title', 'tahun', 'id_sekolah'));
-    }
-
-
-
-
-    public function pinjamanCicilanDownload(Request $request, string $id)
-    {
-        $title = 'Cicilan';
-        $pinjaman = Pinjaman::findOrFail($id);
-        if(!$pinjaman){
-            return abort(404);
+        if ($request->aksi == "download") {
+            return Excel::download(new RekapPembayaranReportExport($pembayaran, $daftarKategoriSimpanan, $title, $tgl_awal, $tgl_akhir, $dates), 'Laporan Rekap Pembayaran ' . $tgl_awal . ' - ' . $tgl_akhir . '.xlsx');
         }
-        return Excel::download(new AngsuranExport($pinjaman), 'Laporan Angsuran ' . $pinjaman->anggota->nama . ' Pinjaman ' . $pinjaman->id_pinjaman . '.xlsx');
+
+        return view('petugas.laporan.rekap-pembayaran', compact('pembayaran', 'daftarKategoriSimpanan', 'title', 'tgl_awal', 'tgl_akhir', 'dates'));
     }
-
-    public function pembayaranBulanan(Request $request)
-    {
-      $title = 'Laporan Pembayaran';
-      $bulan = $request->bulan??date('m');
-      $tahun = $request->tahun??date('Y');
-      $id_sekolah = $request->id_sekolah??'all';
-      $daftarSekolah = Sekolah::orderBy('nama', 'asc')->get();
-      $daftarKategoriSimpanan = KategoriSimpanan::orderby('id_kategori', 'asc')->get();
-
-      if($id_sekolah AND $id_sekolah  != 'all') {
-          $sekolah = Sekolah::where('id_sekolah', $id_sekolah)->get();
-       } else {
-           $sekolah = Sekolah::orderBy('nama', 'asc')->get();
-      }
-
-      if($request->aksi == "download") {
-       return Excel::download(new PembayaranReportExport($bulan, $sekolah, $daftarKategoriSimpanan, $tahun), 'Laporan Pembayaran.xlsx');
-      }
-      return view('admin.laporan.pembayaran', compact('bulan', 'sekolah', 'daftarSekolah', 'daftarKategoriSimpanan', 'title', 'tahun', 'id_sekolah'));
-    }
-
-
-    public function pembayaranTahunan(Request $request)
-    {
-      $title = 'Laporan Pembayaran';
-      $tahun = $request->tahun??date('Y');
-      $id_sekolah = $request->id_sekolah??'all';
-      $daftarSekolah = Sekolah::orderBy('nama', 'asc')->get();
-      $daftarKategoriSimpanan = KategoriSimpanan::orderby('id_kategori', 'asc')->get();
-
-      if($id_sekolah AND $id_sekolah  != 'all') {
-          $sekolah = Sekolah::where('id_sekolah', $id_sekolah)->get();
-       } else {
-           $sekolah = Sekolah::orderBy('nama', 'asc')->get();
-      }
-
-      if($request->aksi == "download") {
-       return Excel::download(new PembayaranTahunanRekapReport($sekolah, $daftarKategoriSimpanan, $tahun), 'Laporan Pembayaran.xlsx');
-      }
-      return view('admin.laporan.pembayaran-tahunan', compact('sekolah', 'daftarSekolah', 'daftarKategoriSimpanan', 'title', 'tahun', 'id_sekolah'));
-    }
-
-
 }

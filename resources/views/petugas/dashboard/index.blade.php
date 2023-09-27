@@ -59,10 +59,10 @@
                   </a>
                </div>
                <div class="col-lg-4 mb-3" style="cursor: pointer;">
-                  <a href="{{route('petugas.cicilan.index')}}">
+                  <a href="{{route('petugas.angsuran.index')}}">
                      <div class="card">
                         <div class="card-body bg-primary d-flex justify-content-between align-items-center rounded">
-                           <i class="fa fa-file-invoice-dollar fa-3x"></i> Bayar Cicilan
+                           <i class="fa fa-file-invoice-dollar fa-3x"></i> Bayar Angsuran
                         </div>
                      </div>
                   </a>

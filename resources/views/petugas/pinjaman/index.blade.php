@@ -91,14 +91,14 @@
                                     <p class="mt-0">
                                         {{$p->anggota->nama}} <br>
                                         <small>{{$p->anggota->alamat}}</small> <br>
-                                        <small>Tgl Lahir: {{$p->anggota->tgl_lahir}}</small><br>
+                                        <small>Tgl Lahir: {{Helper::dateIndo($p->anggota->tgl_lahir)}}</small><br>
                                         <small>Sekolah: {{$p->anggota->sekolah->nama}}</small><br>
-                                        <small>Tergabung sejak {{$p->anggota->created_at->format('d M Y')}}</small> <br>
+                                        <small>Tergabung sejak {{Helper::dateTimeIndo($p->anggota->created_at)}}</small>
                                     </p>
                                 </td>
-                                <td class="text-right">Rp. {{number_format($p->nominal, 0, ',', '.')}}</td>
-                                <td class="text-right">Rp. {{number_format($p->sisa_pokok, 0, ',', '.')}}</td>
-                                <td class="text-right">Rp. {{number_format($p->sisa_jasa, 0, ',', '.')}}</td>
+                                <td class="text-right">{{Helper::numericToRupiah($p->nominal, 0, ',', '.')}}</td>
+                                <td class="text-right">{{Helper::numericToRupiah($p->sisa_pokok, 0, ',', '.')}}</td>
+                                <td class="text-right">{{Helper::numericToRupiah($p->sisa_jasa, 0, ',', '.')}}</td>
 
                                 <td>
                                     @if ($p->sisa_pokok == 0 && $p->sisa_jasa == 0)
@@ -116,9 +116,9 @@
 
 
                                     @if ($p->sisa_pokok > 0 OR $p->sisa_jasa > 0)
-                                    <a href="{{route('petugas.cicilan.index')}}?pinjaman={{$p->id_pinjaman}}" class="btn btn-xs btn-primary"><i class="fa fa-money-bill"></i> Bayar Angsuran</a>
+                                    <a href="{{route('petugas.angsuran.index')}}?pinjaman={{$p->id_pinjaman}}" class="btn btn-xs btn-primary"><i class="fa fa-money-bill"></i> Bayar Angsuran</a>
                                     @endif
-                                    <a href="{{route('petugas.cicilan.show', $p->id_pinjaman)}}?aksi=download" class="btn btn-xs btn-success"><i class="fa fa-file-excel"></i> Download Angsuran</a>
+                                    <a href="{{route('petugas.angsuran.show', $p->id_pinjaman)}}?aksi=download" class="btn btn-xs btn-success"><i class="fa fa-file-excel"></i> Download Angsuran</a>
                                     </div>
                                 </td>
                             </tr>

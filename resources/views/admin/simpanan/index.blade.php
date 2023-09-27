@@ -92,8 +92,8 @@
                                     <td>{{$loop->iteration}}</td>
                                     <td>{{$p->anggota->nama}}</td>
                                     <td>{{$p->kategori->nama}}</td>
-                                    <td>{{$p->tgl_bayar}}</td>
-                                    <td>Rp. {{number_format($p->jumlah)}}</td>
+                                    <td>{{Helper::dateIndo($p->tgl_bayar)}}</td>
+                                    <td>{{Helper::numericToRupiah($p->jumlah)}}</td>
                                     <td>{{$p->petugas->nama}}</td>
                                     <td>
                                         <a href="#" class="btn btn-inverse-primary edit-button" data-toggle="modal" data-target="#modalEditSimpanan{{$p->id_simpanan}}">

@@ -62,6 +62,8 @@
                                     <th scope="col">Tanggal Lahir</th>
                                     <th scope="col">Alamat</th>
                                     <th scope="col">Sekolah</th>
+                                    <th scope="col">Terdaftar</th>
+                                    <th scope="col">Diperbaharui</th>
                                     <th scope="col">Aksi</th>
                                 </tr>
                             </thead>
@@ -70,9 +72,11 @@
                                 <tr>
                                     <th scope="row">{{$item->id_anggota}}</th>
                                     <td>{{$item->nama}}</td>
-                                    <td>{{$item->tgl_lahir}}</td>
+                                    <td>{{Helper::dateIndo($item->tgl_lahir)}}</td>
                                     <td>{{$item->alamat}}</td>
                                     <td>{{$item->sekolah->nama}}</td>
+                                    <td>{{Helper::dateTimeIndo($item->created_at)}}</td>
+                                    <td>{{Helper::dateTimeIndo($item->updated_at)}}</td>
                                     <td>
                                         <ul class="d-flex justify-content-center">
                                             <li class="mr-3">
@@ -95,8 +99,8 @@
                                                 </a>
                                             </li>
                                             <li class="ml-3">
-                                                <button type="button" class="btn btn-inverse-primary edit-button" data-toggle="modal" data-target="#modalEditDefaultSimpananAnggota{{$item->id_anggota}}">
-                                                    <i class="fa fa-edit"></i> Default Simpanan
+                                                <button type="button" class="btn btn-inverse-success edit-button" data-toggle="modal" data-target="#modalEditDefaultSimpananAnggota{{$item->id_anggota}}">
+                                                    <i class="fa fa-money-bill"></i>
                                                 </button>
                                             </li>
 

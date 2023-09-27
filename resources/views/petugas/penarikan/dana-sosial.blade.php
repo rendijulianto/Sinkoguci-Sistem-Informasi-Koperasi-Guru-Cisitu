@@ -95,7 +95,7 @@
             <form class="modal-content tambah" action="{{route('petugas.penarikan.store-dana-sosial')}}" method="POST">
                 @csrf
                 <div class="modal-header">
-                    <h5 class="modal-title">Tambah Penarikan Simpanan</h5>
+                    <h5 class="modal-title">Tambah Catatan Penarikan Dana Sosial</h5>
                     <button type="button" class="close" data-dismiss="modal"><span>&times;</span></button>
                 </div>
                 <div class="modal-body">

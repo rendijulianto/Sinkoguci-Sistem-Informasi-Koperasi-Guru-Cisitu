@@ -14,22 +14,24 @@
     </div>
 </div>
 <form class="row mb-4" method="GET" action="{{route('petugas.laporan.tagihan')}}">
-    <div class="col-3">
+    <div class="col-12 col-lg-3">
         <div class="form-group">
             <label class="col-form-label">Pilih Bulan</label>
             <br>
             <div class="input-group">
                <select class="custom-select select2" fdprocessedid="bq1eom" name="bulan" id="bulan">
                     <option selected disabled> -- Pilih -- </option>
-
-                    @for($i = 1; $i <= 12; $i++)
-                        <option value="{{$i}}" @if($bulan == $i) selected @endif>{{date('F', mktime(0, 0, 0, $i, 1))}}</option>
-                    @endfor
+                    @php
+                        $daftarBulan =  Helper::listOfMonth();
+                    @endphp
+                    @foreach ($daftarBulan as $key => $value)
+                        <option value="{{$key}}" @if($bulan == $key) selected @endif>{{$value}}</option>
+                    @endforeach
                 </select>
             </div>
         </div>
     </div>
-    <div class="col-3">
+    <div class="col-12 col-lg-3">
         <div class="form-group">
             <label class="col-form-label">Tahun</label>
             <br>
@@ -43,11 +45,12 @@
             </div>
         </div>
     </div>
-    <div class="col-6">
+    <div class="col-12 col-lg-3">
         <div class="form-group">
             <label class="col-form-label">Pilih Sekolah</label>
             <br>
             <select class="custom-select select2" fdprocessedid="bq1eom" name="id_sekolah" id="id_sekolah">
+                <option selected disabled> -- Pilih -- </option>
                 <option value="all" @if($id_sekolah == 'all') selected @endif>Semua Sekolah</option>
                 @foreach ($daftarSekolah as $ak)
                 <option value="{{$ak->id_sekolah}}" @if($id_sekolah == $ak->id_sekolah) selected @endif>{{$ak->nama}}</option>
@@ -55,16 +58,17 @@
             </select>
         </div>
     </div>
-    <div class="col-12">
+    <div class="col-12 col-lg-3">
+        <label class="col-form-label">‎ </label>
         <button class="btn btn-primary btn-block" id="btn-cari">Cari Data <i class="fa fa-search"></i></button>
     </div>
     @if($bulan != null && $tahun != null && $id_sekolah != null)
-    <div class="col-lg-3 mt-3">
+    <div class="col-lg-12 mt-3">
         <a href="{{route('petugas.laporan.tagihan')}}?bulan={{$bulan}}&tahun={{$tahun}}&id_sekolah={{$id_sekolah}}&aksi=download" class="btn btn-success btn-block" target="_blank">Download Excel <i class="fa fa-file-excel"></i></a>
     </div>
     @endif
 </div>
-<div class="row mb-4">
+<div class="row">
     @if($bulan != null && $tahun != null && $id_sekolah != null)
         @foreach($sekolah as $s)
         <div class="col-12 mb-4">
@@ -79,8 +83,8 @@
                             <td>{{$s->nama}}</td>
                         </tr>
                         <tr>
-                            <td>Bulan: {{date('F', mktime(0, 0, 0, $bulan, 1))}} </td>
-                            <td>Tahun: {{$tahun}}</td>
+                            <td colspan="2">Bulan: {{Helper::monthIndo(date('Y-'.$bulan))}}</td>
+
                         </tr>
 
 
@@ -126,16 +130,16 @@
                                                             bg-success
                                                         @endif
 
-                                                    ">Rp {{number_format($value,0,',','.')}}</td>
+                                                    ">{{Helper::numericToRupiah($value,0,',','.')}}</td>
                                                 @else
-                                                    <td class="text-right">Rp {{number_format($value,0,',','.')}}</td>
+                                                    <td class="text-right">{{Helper::numericToRupiah($value,0,',','.')}}</td>
                                                 @endif
                                             @endforeach
 
-                                            <td class="text-right">Rp {{number_format($tagihanPinjaman['pokok'],0,',','.')}}</td>
-                                            <td class="text-right">Rp {{number_format($tagihanPinjaman['angsuran'],0,',','.')}}</td>
-                                            <td class="text-right">Rp {{number_format($tagihanPinjaman['jasa'],0,',','.')}}</td>
-                                            <td class="text-right">Rp {{number_format($tagihanPinjaman['total'],0,',','.')}}</td>
+                                            <td class="text-right">{{Helper::numericToRupiah($tagihanPinjaman['pokok'],0,',','.')}}</td>
+                                            <td class="text-right">{{Helper::numericToRupiah($tagihanPinjaman['angsuran'],0,',','.')}}</td>
+                                            <td class="text-right">{{Helper::numericToRupiah($tagihanPinjaman['jasa'],0,',','.')}}</td>
+                                            <td class="text-right">{{Helper::numericToRupiah($tagihanPinjaman['total'],0,',','.')}}</td>
                                             <td class="text-right
                                                 @if($totalTagihan + $tagihanPinjaman['total'] > 0)
                                                     bg-danger text-white
@@ -143,7 +147,7 @@
                                                     bg-success text-white
                                                 @endif
 
-                                            ">Rp {{number_format($totalTagihan + $tagihanPinjaman['total'],0,',','.')}}</td>
+                                            ">{{Helper::numericToRupiah($totalTagihan + $tagihanPinjaman['total'],0,',','.')}}</td>
 
                                         </tr>
                                     @endforeach
@@ -156,6 +160,12 @@
             </div>
         </div>
         @endforeach
+    @else
+        <div class="col-12">
+            <div class="alert alert-info">
+                <h4 class="text-center text-white">Silahkan pilih bulan, tahun dan sekolah terlebih dahulu !</h4>
+            </div>
+        </div>
     @endif
 </div>
  @endsection

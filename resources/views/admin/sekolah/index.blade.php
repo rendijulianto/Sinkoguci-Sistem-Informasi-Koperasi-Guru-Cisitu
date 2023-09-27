@@ -38,7 +38,9 @@
                             <thead class="text-uppercase">
                             <tr>
                                 <th scope="col">No</th>
-                                <th scope="col">Nama Sekolah</th>
+                                <th scope="col">Nama</th>
+                                <th scope="col">Terdaftar</th>
+                                <th scope="col">Diperbarui</th>
                                 <th scope="col">Aksi</th>
                             </tr>
                             </thead>
@@ -47,6 +49,8 @@
                                 <tr>
                                     <th scope="row">{{$item->id_sekolah}}</th>
                                     <td>{{$item->nama}}</td>
+                                    <td>{{Helper::dateTimeIndo($item->created_at)}}</td>
+                                    <td>{{Helper::dateTimeIndo($item->updated_at)}}</td>
                                     <td>
                                         <ul class="d-flex justify-content-center">
                                             <li class="mr-3"><a button type="button" class="btn btn-inverse-primary" data-toggle="modal" data-target="#modalEditSekolah{{$item->id_sekolah}}"><i class="fa fa-edit"></i></a></li>

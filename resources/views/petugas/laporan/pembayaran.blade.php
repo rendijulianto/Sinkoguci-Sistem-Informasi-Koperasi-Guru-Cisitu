@@ -14,143 +14,173 @@
     </div>
 </div>
 <form class="row mb-4" method="GET" action="{{route('petugas.laporan.pembayaran')}}">
-    <div class="col-3">
+    <div class="col-6">
         <div class="form-group">
-            <label class="col-form-label">Pilih Bulan</label>
+            <label class="col-form-label">Pilih Tanggal </label>
             <br>
             <div class="input-group">
-               <select class="custom-select select2" fdprocessedid="bq1eom" name="bulan" id="bulan">
-                    <option selected disabled> -- Pilih -- </option>
-
-                    @for($i = 1; $i <= 12; $i++)
-                        <option value="{{$i}}" @if($bulan == $i) selected @endif>{{date('F', mktime(0, 0, 0, $i, 1))}}</option>
-                    @endfor
-                </select>
-            </div>
-        </div>
-    </div>
-    <div class="col-3">
-        <div class="form-group">
-            <label class="col-form-label">Tahun</label>
-            <br>
-            <div class="input-group">
-                    <select class="custom-select select2" fdprocessedid="bq1eom" name="tahun" id="tahun">
-                        <option selected disabled> -- Pilih -- </option>
-                        @for($i = date('Y'); $i >= 1998; $i--)
-                            <option value="{{$i}}" @if($tahun == $i) selected @endif>{{$i}}</option>
-                        @endfor
-                    </select>
+                <input type="date" class="form-control" name="tgl" id="tgl" value="{{$tgl}}">
             </div>
         </div>
     </div>
     <div class="col-6">
-        <div class="form-group">
-            <label class="col-form-label">Pilih Sekolah</label>
-            <br>
-            <select class="custom-select select2" fdprocessedid="bq1eom" name="id_sekolah" id="id_sekolah">
-                <option value="all" @if($id_sekolah == 'all') selected @endif>Semua Sekolah</option>
-                @foreach ($daftarSekolah as $ak)
-                <option value="{{$ak->id_sekolah}}" @if($id_sekolah == $ak->id_sekolah) selected @endif>{{$ak->nama}}</option>
-                @endforeach
-            </select>
-        </div>
-    </div>
-    <div class="col-12">
+        <label class="col-form-label">‎ </label>
         <button class="btn btn-primary btn-block" id="btn-cari">Cari Data <i class="fa fa-search"></i></button>
     </div>
-    @if($bulan != null && $tahun != null && $id_sekolah != null)
-    <div class="col-lg-3 mt-3">
-        <a href="{{route('petugas.laporan.pembayaran')}}?bulan={{$bulan}}&tahun={{$tahun}}&id_sekolah={{$id_sekolah}}&aksi=download" class="btn btn-success btn-block" target="_blank">Download Excel <i class="fa fa-file-excel"></i></a>
+    @if(count($pembayaran) > 0)
+    <div class="col-lg-12 mt-3">
+        <a href="{{route('petugas.laporan.pembayaran')}}?tgl={{$tgl}}
+        &aksi=download" class="btn btn-success btn-block" target="_blank">Download Excel <i class="fa fa-file-excel"></i></a>
     </div>
     @endif
 </div>
 <div class="row mb-4">
-    @if($bulan != null && $tahun != null && $id_sekolah != null)
-        @foreach($sekolah as $s)
-        <div class="col-12 mb-4">
-            <div class="card">
-                <div class="card-body">
-                    <h4 class="card_title">
-                        Data Tagihan Simpanan & Pinjaman
-                    </h4>
-                    <table class="table table-bordered">
-                        <tr>
-                            <td>Nama Sekolah</td>
-                            <td>{{$s->nama}}</td>
-                        </tr>
-                        <tr>
-                            <td>Bulan: {{date('F', mktime(0, 0, 0, $bulan, 1))}} </td>
-                            <td>Tahun: {{$tahun}}</td>
-                        </tr>
-                    </table>
-                    <div class="signle-table">
-                        <div class="table-responsive">
-                            <table class="table table-bordered">
-                                <thead class="bg-primary">
-                                    <tr>
-                                        <th>No</th>
-                                        <th>Nama</th>
+    <div class="col-12 mb-4">
+        <div class="card">
+            <div class="card-body">
+                <h4 class="card_title">
+                    Data Transaksi Pembayaran | Tanggal : {{Helper::dateIndo($tgl)}}
+                </h4>
+                <div class="signle-table">
+                    <div class="table-responsive">
+                        <table class="table table-bordered">
+                            <thead class="bg-primary">
+                                <tr>
+                                    <th>No</th>
+                                    <th>Nama</th>
+                                    <th class="text-right">Petugas <i  class="fa fa-info-circle"
+                                        style="cursor: pointer"
 
-
-                                        @foreach ($daftarKategoriSimpanan as $ks)
-
-                                            <th class="text-right">{{$ks->nama}}</th>
-                                        @endforeach
-                                        <th class="text-right">Jumlah Simpanan <i  class="fa fa-info-circle"
-                                            style="cursor: pointer"
-
-                                            data-toggle="tooltip" data-placement="top" title="Total Simpanan yang telah dibayar"></i></th>
-                                        <th class="text-right">Pokok Piutang</th>
-                                        <th class="text-right">Jasa Piutang</th>
-                                        <th class="text-right">Total Piutang <i  class="fa fa-info-circle"
-                                            style="cursor: pointer"
-
-                                            data-toggle="tooltip" data-placement="top" title="Total Piutang yang telah dibayar"></i></th>
-
-                                        <th class="text-right">Total Terbayar <i  class="fa fa-info-circle"
-                                            style="cursor: pointer"
-
-                                            data-toggle="tooltip" data-placement="top" title="Total Simpanan dan Piutang yang telah dibayar"></i></th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-
-
-                                    @foreach ($s->anggota as $a)
+                                        data-toggle="tooltip" data-placement="top" title="Petugas yang melakukan pembayaran"></i></th>
+                                    @foreach ($daftarKategoriSimpanan as $ks)
                                     @php
-                                        $terbayarPinjaman = $a->terbayarPinjaman($tahun, $bulan);
-                                        $totalTerbayar = 0;
+                                        $totalPerKategori['nominal_kategori_id_'.$ks->id_kategori] = 0;
                                     @endphp
-                                        <tr>
-                                            <td>{{$loop->iteration}}</td>
-                                            <td>{{$a->nama}}</td>
-
-                                            @foreach ($a->terbayarSimpanan($tahun, $bulan) as $key => $value)
-                                            @if($key =='total')
-                                             @php $totalTerbayar += $value @endphp
-                                            @endif
-                                                <td class="text-right">Rp {{number_format($value,0,',','.')}}</td>
-                                            @endforeach
-                                            <td class="text-right">Rp {{number_format($terbayarPinjaman['pokok'],0,',','.')}}</td>
-                                            <td class="text-right">Rp {{number_format($terbayarPinjaman['jasa'],0,',','.')}}</td>
-                                            <td class="text-right">Rp {{number_format($terbayarPinjaman['total'],0,',','.')}}</td>
-                                            <td class="text-right">Rp {{number_format($totalTerbayar + $terbayarPinjaman['total'],0,',','.')}}</td>
-                                        </tr>
+                                        <th class="text-right">{{$ks->nama}}</th>
                                     @endforeach
-                                </tbody>
+                                    <th class="text-right">Jumlah Simpanan <i  class="fa fa-info-circle"
+                                        style="cursor: pointer"
 
-                            </table>
-                        </div>
+                                        data-toggle="tooltip" data-placement="top" title="Total Simpanan yang telah dibayar"></i></th>
+
+                                    <th class="text-right">Pokok Piutang</th>
+                                    <th class="text-right">Jasa Piutang</th>
+                                    <th class="text-right">Total Piutang <i  class="fa fa-info-circle"
+                                        style="cursor: pointer"
+
+                                        data-toggle="tooltip" data-placement="top" title="Total Piutang yang telah dibayar"></i></th>
+                                        <th>Keterangan</th>
+                                    <th class="text-right" colspan="2">Total Terbayar <i  class="fa fa-info-circle"
+                                        style="cursor: pointer"
+
+                                        data-toggle="tooltip" data-placement="top" title="Total Simpanan dan Piutang yang telah dibayar"></i></th>
+
+
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @php
+                                    $totalSimpanan = 0;
+                                    $totalPokok = 0;
+                                    $totalJasa = 0;
+                                    $totalPiutang = 0;
+                                @endphp
+                                @forelse ($pembayaran as $trx)
+                                @php
+                                    $total_simpanan = 0;
+                                    $total_piutang = $trx->angsuran_bayar_pokok + $trx->angsuran_bayar_jasa;
+                                    $totalPokok += $trx->angsuran_bayar_pokok;
+                                    $totalJasa += $trx->angsuran_bayar_jasa;
+                                    $totalPiutang += $total_piutang;
+
+                                @endphp
+                                    <tr>
+                                        <td>{{$loop->iteration}}</td>
+                                        <td>{{$trx->nama_anggota}}</td>
+                                        <td>{{$trx->nama_petugas}}</td>
+                                        @foreach ($daftarKategoriSimpanan as $k)
+                                            <td class="text-right">
+                                                {{-- nominal_kategori_id_ --}}
+                                               @php
+                                                $obj = 'nominal_kategori_id_'.$k->id_kategori;
+                                                echo 'Rp '.number_format($trx->$obj, 2, ',', '.');
+                                                $total_simpanan += $trx->$obj;
+                                                $totalPerKategori['nominal_kategori_id_'.$k->id_kategori] += $trx->$obj;
+                                                @endphp
+                                            </td>
+
+
+                                        @endforeach
+                                        <td class="text-right" style="background-color: #f5f5f5">
+                                            {{Helper::numericToRupiah($total_simpanan, 2, ',', '.')}}
+                                        </td>
+                                        <td class="text-right">
+                                            {{Helper::numericToRupiah($trx->angsuran_bayar_pokok, 2, ',', '.')}}
+                                        </td>
+                                        <td>
+                                            {{Helper::numericToRupiah($trx->angsuran_bayar_jasa, 2, ',', '.')}}
+                                        </td>
+                                        <td class="text-right">
+                                            {{Helper::numericToRupiah($total_piutang, 2, ',', '.')}}
+                                        </td>
+                                        <td>
+                                            {{$trx->keterangan}}
+                                        </td>
+                                        <td class="text-right" colspan="2"  style="background-color: #f5f5f5">
+                                            {{Helper::numericToRupiah($total_simpanan + $total_piutang, 2, ',', '.')}}
+                                        </td>
+
+
+                                    </tr>
+                                @empty
+                                    <tr>
+                                        <td colspan="100%" class="text-center">Tidak ada data</td>
+                                    </tr>
+                                @endforelse
+                            </tbody>
+                            @if(count($pembayaran) > 0)
+                            <tfoot>
+                                    <tr style="background-color: #f5f5f5" class="text-right">
+
+                                        <td colspan="3" class="text-center">Total</td>
+
+                                        @foreach ($daftarKategoriSimpanan as $k)
+                                        @php
+                                            $totalSimpanan += $totalPerKategori['nominal_kategori_id_'.$k->id_kategori];
+
+                                        @endphp
+                                            <td> {{Helper::numericToRupiah($totalPerKategori['nominal_kategori_id_'.$k->id_kategori], 2, ',', '.')}}</td>
+                                        @endforeach
+                                        <td> {{Helper::numericToRupiah($totalSimpanan, 2, ',', '.')}}</td>
+                                        <td> {{Helper::numericToRupiah($totalPokok, 2, ',', '.')}}</td>
+                                        <td> {{Helper::numericToRupiah($totalJasa, 2, ',', '.')}}</td>
+                                        <td> {{Helper::numericToRupiah($totalPiutang, 2, ',', '.')}}</td>
+                                        <td colspan="2">
+                                            <h4>
+
+                                                {{Helper::numericToRupiah($totalSimpanan + $totalPiutang, 2, ',', '.')}}
+                                            </h4>
+                                        </td>
+
+                                    </tr>
+                                    <tr style="background-color: #f5f5f5" class="text-right">
+                                        <td colspan="3" class="text-center">Terbilang</td>
+                                        <td colspan="100%" class="text-center">
+                                            <h4>
+                                                {{ucwords(Helper::terbilangRupiah($totalSimpanan + $totalPiutang))}} Rupiah
+                                            </h4>
+                                        </td>
+                                    </tr>
+                            </tfoot>
+                            @endif
+                        </table>
                     </div>
                 </div>
             </div>
         </div>
-        @endforeach
-    @endif
+    </div>
 </div>
  @endsection
  @section('js')
-    <script>
 
-    </script>
 @endsection

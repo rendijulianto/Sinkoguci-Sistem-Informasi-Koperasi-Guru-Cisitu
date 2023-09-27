@@ -36,11 +36,6 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'middleware' => 'petugasaut
     Route::get('/pinjaman/{id}/angsuran', 'PinjamanController@angsuran')->name('pinjaman.angsuran');
     Route::delete('/pinjaman/{id}', 'PinjamanController@destroy')->name('pinjaman.destroy');
     Route::delete('/pinjaman/{id}/angsuran/{tgl_bayar}/{bayar_pokok}/{bayar_jasa}/{setelah_pokok}/{setelah_jasa}', 'PinjamanController@destroyAngsuran')->name('pinjaman.destroy-angsuran');
-    Route::get('/laporan/pinjaman/cicilan/{id}/download', 'LaporanController@pinjamanCicilanDownload')->name('laporan.pinjaman-cicilan-download');
-    Route::get('/laporan/simpanan', 'LaporanController@simpananBulanan')->name('laporan.simpanan-bulanan');
-    Route::get('/laporan/simpanan_tahunan', 'LaporanController@simpananTahunan')->name('laporan.simpanan-tahunan');
-    Route::get('/laporan/pembayaran', 'LaporanController@pembayaranBulanan')->name('laporan.pembayaran-bulanan');
-    Route::get('/laporan/pembayaran_tahunan', 'LaporanController@pembayaranTahunan')->name('laporan.pembayaran-tahunan');
 });
 
 
@@ -53,7 +48,7 @@ Route::group(['prefix' => 'petugas', 'as' => 'petugas.', 'middleware' => 'petuga
     Route::resource('/simpanan', 'SimpananController')->names('simpanan');
     Route::get('/pinjaman/tambah-jasa-tagihan-bulan-baru', 'PinjamanController@tambahJasaTagihanBulanBaru')->name('pinjaman.tambah-jasa-tagihan-bulan-baru');
     Route::resource('/pinjaman', 'PinjamanController')->names('pinjaman');
-    Route::resource('/cicilan', 'CicilanController')->names('cicilan');
+    Route::resource('/angsuran', 'AngsuranController')->names('angsuran');
     Route::get('/penarikan/simpanan', 'PenarikanController@simpanan')->name('penarikan.simpanan');
     Route::post('/penarikan/simpanan', 'PenarikanController@store')->name('penarikan.store');
     Route::get('/penarikan/simpanan/{id}', 'PenarikanController@show')->name('penarikan.show');
@@ -61,7 +56,6 @@ Route::group(['prefix' => 'petugas', 'as' => 'petugas.', 'middleware' => 'petuga
     Route::post('/penarikan/dana-sosial', 'PenarikanController@storeDanaSosial')->name('penarikan.store-dana-sosial');
     Route::get('/laporan/tagihan', 'LaporanController@tagihan')->name('laporan.tagihan');
     Route::get('/laporan/pembayaran', 'LaporanController@pembayaran')->name('laporan.pembayaran');
-    Route::get('/laporan/transaksi', 'LaporanController@transaksi')->name('laporan.transaksi');
-    Route::get('/laporan/rekap_transaksi', 'LaporanController@rekapTransaksi')->name('laporan.rekap-transaksi');
+    Route::get('/laporan/rekap_pembayaran', 'LaporanController@rekapPembayaran')->name('laporan.rekap-pembayaran');
 });
 

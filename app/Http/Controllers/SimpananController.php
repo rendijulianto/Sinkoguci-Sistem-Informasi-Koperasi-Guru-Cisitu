@@ -12,22 +12,6 @@ use Auth;
 class SimpananController extends Controller
 {
 
-    private function convertRupiahToNumber($rupiah)
-    {
-       // Remove non-numeric characters and spaces
-        $numericString = preg_replace("/[^0-9]/", "", $rupiah);
-
-        // Convert the numeric string to an integer or float
-        $numericValue = (int) $numericString; // Use (float) for decimals
-
-        // Output the numeric value
-        if($numericValue == null) {
-            return 0;
-        } else {
-            return $numericValue;
-        }
-  }
-
 
     /**
      * Display a listing of the resource.
@@ -116,8 +100,9 @@ class SimpananController extends Controller
             foreach ($kategoriSimpanan as $k) {
                 $object = strtolower(str_replace(' ', '_', $k->nama));
                 if ($request->$object != null) {
+                    $jumlah = Helper::rupiahToNumeric($request->$object);
                     $dataSimpanan['id_kategori'] = $k->id_kategori;
-                    $dataSimpanan['jumlah'] = $this->convertRupiahToNumber($request->$object);
+                    $dataSimpanan['jumlah'] = $jumlah;
                     $simpan =  Simpanan::create($dataSimpanan);
                     $kategoriSimpananAnggota = DB::table('kategori_simpanan_anggota')
                         ->where('id_anggota', '=', $request->id_anggota)
@@ -128,7 +113,7 @@ class SimpananController extends Controller
                             ->where('id_anggota', '=', $request->id_anggota)
                             ->where('id_kategori', '=', $k->id_kategori)
                             ->update([
-                                'saldo' => $kategoriSimpananAnggota->saldo + $this->convertRupiahToNumber($request->$object),
+                                'saldo' => $kategoriSimpananAnggota->saldo + $jumlah,
                             ]);
                     }
                 }
@@ -152,6 +137,7 @@ class SimpananController extends Controller
             return abort(404);
         }
         $simpananDefault = $anggota->kategori_simpanan_default();
+        // dd($simpananDefault);
         $sisaSimpanan = $anggota->sisaSimpanan();
 
         $simpanan = [];
@@ -196,7 +182,7 @@ class SimpananController extends Controller
                 ->where('id_kategori', '=', $simpanan->id_kategori)
                 ->first();
             $saldo_sekarang = $simpanan->jumlah;
-            $saldo_baru = $this->convertRupiahToNumber($request->jumlah);
+            $saldo_baru = Helper::rupiahToNumeric($request->jumlah);
             if ($saldo_sekarang > $saldo_baru) {
                 $saldo = $kategoriSimpananAnggota->saldo - ($saldo_sekarang - $saldo_baru);
             } else {

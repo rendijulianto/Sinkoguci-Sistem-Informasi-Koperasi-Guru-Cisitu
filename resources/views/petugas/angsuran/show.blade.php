@@ -12,7 +12,7 @@
                 </tr>
                 <tr>
                     <td>Nominal</td>
-                    <td>Rp {{number_format($pinjaman->nominal)}}</td>
+                    <td>{{number_format($pinjaman->nominal)}}</td>
                 </tr>
                 <tr>
                     <td>Lama Angsuran</td>
@@ -20,16 +20,16 @@
                 </tr>
                 <tr>
                     <td>Sisa Pokok</td>
-                    <td>Rp {{number_format($pinjaman->sisa_pokok)}}</td>
+                    <td>{{number_format($pinjaman->sisa_pokok)}}</td>
                 </tr>
 
                 <tr>
                     <td>Sisa Jasa</td>
-                    <td>Rp {{number_format($pinjaman->sisa_jasa)}}</td>
+                    <td>{{number_format($pinjaman->sisa_jasa)}}</td>
                 </tr>
                 <tr>
                     <td>Angsuran Pokok</td>
-                    <td>Rp {{number_format($pinjaman->nominal / $pinjaman->lama_angsuran)}}  / Bulan</td>
+                    <td>{{number_format($pinjaman->nominal / $pinjaman->lama_angsuran)}}  / Bulan</td>
                 </tr>
                 <tr>
                     <td>Tanggal Pinjaman</td>
@@ -47,7 +47,7 @@
 <div class="col-lg-9">
    <div class="row">
      <div class="col-12 mb-3">
-        <a href="{{route('petugas.cicilan.show', $pinjaman->id_pinjaman)}}?aksi=download" class="btn btn-success" style="float: right">
+        <a href="{{route('petugas.angsuran.show', $pinjaman->id_pinjaman)}}?aksi=download" class="btn btn-success" style="float: right">
             <i class="fa fa-file-excel"></i> Download
         </a>
         <button type="button" class="btn btn-primary"  data-toggle="modal" data-target="#modalTambahSimpanan" style="float: right; margin-right: 10px;">
@@ -88,18 +88,17 @@
                                 $total_bayar_jasa = 0;
 
                                 @endphp
-                            @foreach($cicilan as $key => $c)
-
+                            @foreach($angsuran as $key => $item)
                                 <tr>
                                     <td>{{$loop->iteration}}</td>
-                                    <td>{{$c->tgl_bayar}}</td>
-                                    <td>Rp {{number_format($c->sebelum_pokok <= $c->pinjaman->nominal ? $c->sebelum_pokok : $c->pinjaman->nominal / $c->pinjaman->lama_angsuran)}}</td>
-                                    <td>Rp {{number_format($c->sebelum_jasa)}}</td>
-                                    <td>Rp {{number_format($c->bayar_pokok)}}</td>
-                                    <td>Rp {{number_format($c->bayar_jasa)}}</td>
-                                    <td>Rp {{number_format($c->setelah_pokok)}}</td>
-                                    <td>Rp {{number_format($c->setelah_jasa)}}</td>
-                                    <td>{{$c->petugas->nama}}</td>
+                                    <td>{{Helper::dateIndo($item->tgl_bayar)}}</td>
+                                    <td>{{Helper::numericToRupiah($item->sebelum_pokok <= $item->pinjaman->nominal ? $item->sebelum_pokok : $item->pinjaman->nominal / $item->pinjaman->lama_angsuran)}}</td>
+                                    <td>{{Helper::numericToRupiah($item->sebelum_jasa)}}</td>
+                                    <td>{{Helper::numericToRupiah($item->bayar_pokok)}}</td>
+                                    <td>{{Helper::numericToRupiah($item->bayar_jasa)}}</td>
+                                    <td>{{Helper::numericToRupiah($item->setelah_pokok)}}</td>
+                                    <td>{{Helper::numericToRupiah($item->setelah_jasa)}}</td>
+                                    <td>{{$item->petugas->nama}}</td>
                                 </tr>
                             @endforeach
                             </tbody>
@@ -114,7 +113,7 @@
 </div>
 <div class="modal fade" id="modalTambahSimpanan">
     <div class="modal-dialog modal-dialog-centered" role="document">
-        <form class="modal-content tambah" action="{{route('petugas.cicilan.store')}}" method="POST">
+        <form class="modal-content tambah" action="{{route('petugas.angsuran.store')}}" method="POST">
             @csrf
             <div class="modal-header">
                 <h5 class="modal-title">Bayar Cicilan</h5>
@@ -178,9 +177,9 @@ $('.autonumeric-currency').keyup(function() {
     var pokok = convertRupiahToNumber($('input[name=bayar_pokok]').val());
     var jasa = convertRupiahToNumber($('input[name=bayar_jasa]').val());
     var total = parseInt(pokok) + parseInt(jasa);
-    $('input[name=total_bayar]').val('Rp ' + new Intl.NumberFormat('id-ID').format(total));
-    $('input[name=setelah_pokok]').val('Rp ' + new Intl.NumberFormat('id-ID').format(convertRupiahToNumber($('input[name=sisa_pokok]').val()) - parseInt(pokok)))
-    $('input[name=setelah_jasa]').val('Rp ' + new Intl.NumberFormat('id-ID').format(convertRupiahToNumber($('input[name=sisa_jasa]').val()) - parseInt(jasa)))
+    $('input[name=total_bayar]').val('' + new Intl.NumberFormat('id-ID').format(total));
+    $('input[name=setelah_pokok]').val('' + new Intl.NumberFormat('id-ID').format(convertRupiahToNumber($('input[name=sisa_pokok]').val()) - parseInt(pokok)))
+    $('input[name=setelah_jasa]').val('' + new Intl.NumberFormat('id-ID').format(convertRupiahToNumber($('input[name=sisa_jasa]').val()) - parseInt(jasa)))
 });
 //
 $('.autonumeric-currency').trigger('keyup');

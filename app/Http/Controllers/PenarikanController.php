@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Models\{Anggota,KategoriSimpanan, Simpanan, Penarikan, PenarikanDanaSosial};
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
+use Helper;
 
 class PenarikanController extends Controller
 {
@@ -18,22 +19,6 @@ class PenarikanController extends Controller
         $anggota = Anggota::orderBy('nama', 'asc')->get();
         return view('petugas.penarikan.index',  compact('title', 'anggota'));
     }
-
-    private function convertRupiahToNumber($rupiah)
-    {
-       // Remove non-numeric characters and spaces
-        $numericString = preg_replace("/[^0-9]/", "", $rupiah);
-
-        // Convert the numeric string to an integer or float
-        $numericValue = (int) $numericString; // Use (float) for decimals
-
-        // Output the numeric value
-        if($numericValue == null) {
-            return 0;
-        } else {
-            return $numericValue;
-        }
-  }
 
     /**
      * Store a newly created resource in storage.
@@ -66,7 +51,7 @@ class PenarikanController extends Controller
             $anggota = Anggota::where('id_anggota', $request->id_anggota)->first();
             $saldo = $anggota->sisaSimpanan($request->id_kategori);
 
-            $jumlah = $this->convertRupiahToNumber($request->jumlah);
+            $jumlah = Helper::rupiahToNumeric($request->jumlah);
             if ($saldo < $jumlah) {
                 return redirect()->back()->withInput()->with(['error' => 'Saldo tidak cukup']);
             }
@@ -155,7 +140,7 @@ class PenarikanController extends Controller
             'tgl_penarikan.date' => 'Tanggal penarikan harus tanggal',
         ]);
         try {
-            $jumlah = $this->convertRupiahToNumber($request->jumlah);
+            $jumlah = Helper::rupiahToNumeric($request->jumlah);
             PenarikanDanaSosial::create([
                 'id_petugas' => Auth::guard('petugas')->user()->id_petugas,
                 'jumlah' => $jumlah,

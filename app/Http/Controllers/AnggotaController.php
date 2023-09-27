@@ -20,20 +20,19 @@ class AnggotaController extends Controller
         $id_sekolah = $request->get('id_sekolah');
 
         $cari = $request->get('cari');
-        $anggota = Anggota::orderBy('nama', 'asc')
-            ->when($id_sekolah, function ($query, $id_sekolah) {
-                if ($id_sekolah == 'all') {
-                    return $query;
-                } else {
-                    return $query->where('id_sekolah', $id_sekolah);
-                }
-            })
-            ->when($cari, function ($query, $cari) {
-                return $query->where('nama', 'like', '%' . $cari . '%');
-            })
-            ->paginate(10);
 
-
+        $anggota = Anggota::query();
+        if ($id_sekolah) {
+            if ($id_sekolah == 'all') {
+                $anggota = $anggota->where('id_sekolah', '!=', null);
+            } else {
+                $anggota = $anggota->where('id_sekolah', $id_sekolah);
+            }
+        }
+        if ($cari) {
+            $anggota = $anggota->where('nama', 'like', '%' . $cari . '%')->orWhere('id_anggota', 'like', '%' . $cari . '%')->orWhere('alamat', 'like', '%' . $cari . '%');
+        }
+        $anggota = $anggota->orderBy('id_anggota', 'desc')->paginate(10);
 
         $sekolahs = Sekolah::orderBy('nama', 'asc')->get();
         $kategoriSimpanan = KategoriSimpanan::orderBy('id_kategori', 'asc')->get();
@@ -73,9 +72,6 @@ class AnggotaController extends Controller
                 ]);
             }
 
-
-
-
             DB::commit();
             return redirect()->back()->with('success', 'Anggota berhasil ditambahkan');
         } catch (\Throwable $th) {
@@ -83,27 +79,6 @@ class AnggotaController extends Controller
             return redirect()->back()->withInput()->with('error', $th->getMessage());
         }
     }
-
-/**
- * Display the specified resource.
- */
-public function show(string $id)
-    {
-        $title = 'Detail Anggota';
-        $anggota = Anggota::findOrFail($id);
-        return view('petugas.anggota.show', compact('title', 'anggota'));
-    }
-
-/**
- * Show the form for editing the specified resource.
- */
-public function edit(string $id)
-{
-    $title = 'Edit Anggota';
-    $anggota = Anggota::findOrFail($id);
-    $sekolahs = Sekolah::orderBy('nama', 'asc')->get();
-    return view('petugas.anggota.edit', compact('title', 'anggota', 'sekolahs'));
-}
 
 /**
  * Update the specified resource in storage.
@@ -162,35 +137,34 @@ public function destroy(string $id)
         $kategoriSimpanan = KategoriSimpanan::orderBy('id_kategori', 'asc')->get();
         $validate_kategori = [];
         $message = [];
-
         foreach ($kategoriSimpanan as $k) {
             $validate_kategori[strtolower(str_replace(' ', '_', $k->nama))] = 'nullable|numeric|min:' . $k->jumlah;
             $message[strtolower(str_replace(' ', '_', $k->nama)) . '.numeric'] = 'Jumlah harus angka';
             $message[strtolower(str_replace(' ', '_', $k->nama)) . '.min'] = 'Jumlah nominal ' . $k->nama . ' minimal Rp ' . number_format($k->jumlah, 0, ',', '.');
         }
-
-
         $this->validate($request, $validate_kategori, $message);
-
-
         DB::beginTransaction();
         try {
             $anggota = Anggota::findOrFail($id);
             foreach ($kategoriSimpanan as $k) {
                 $object = strtolower(str_replace(' ', '_', $k->nama));
-
                 if ($request->$object != null) {
-                    $anggota->kategori_simpanan()->updateExistingPivot($k->id_kategori, [
-                        'nominal' => $request->$object
+                    $updpate = $anggota->kategori_simpanan()->updateExistingPivot($k->id_kategori, [
+                        'nominal' => $request->$object,
                     ]);
+                    if (!$updpate) {
+                        $anggota->kategori_simpanan()->attach($k->id_kategori, [
+                            'nominal' => $request->$object,
+                            'saldo' => 0,
+                        ]);
+                    }
                 }
             }
             DB::commit();
-            return redirect()->back()->with('success', 'Nominal default simpanan berhasil diperbarui');
+            return redirect()->back()->with('success', 'Berhasil memperbarui nominal simpanan');
         } catch (\Throwable $th) {
             DB::rollback();
             return redirect()->back()->withInput()->with('error', $th->getMessage());
         }
     }
-
 }

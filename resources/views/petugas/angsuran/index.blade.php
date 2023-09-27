@@ -18,7 +18,7 @@
         <div class="alert alert-info">
             <h5 class="text-center text-white">
                 <i class="fa fa-info-circle"></i>
-                Silahkan pilih pinjaman anggota untuk melihat angsuran / cicilan
+                Silahkan pilih pinjaman anggota untuk melihat angsuran
         </div>
     </div>
     <div class="col-12">
@@ -52,7 +52,7 @@
  $('#pinjaman').change(function() {
          $('#result').html('');
          var id = $(this).val();
-         var url = "{{route('petugas.cicilan.show', ':id')}}";
+         var url = "{{route('petugas.angsuran.show', ':id')}}";
          url = url.replace(':id', id);
          $.ajax({
              url: url,

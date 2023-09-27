@@ -50,24 +50,22 @@
                             <tr>
                                 <th scope="col">No</th>
                                 <th scope="col">Bulan</th>
-                                @foreach($kategoriSimpanan as $s)
-                                    <th scope="col" class="text-capitalize">{{ ucwords(str_replace('_', ' ', $s->nama)) }}</th>
+                                @foreach($kategoriSimpanan as $item)
+                                    <th scope="col" class="text-capitalize">{{$item->nama}}</th>
                                 @endforeach
                                 <th>Total</th>
                             </tr>
                             </thead>
                             <tbody>
-                               @foreach($simpanan as $s)
-
+                               @foreach($simpanan as $item)
                                     <tr>
                                         <td>{{$loop->iteration }}</td>
-                                        @foreach($s as $key => $ss)
+                                        @foreach($item as $key => $value)
                                             @if($key == 0)
-                                                <td>{{$ss}}</td>
+                                                <td>{{$value}}</td>
                                             @else
-                                                <td class="text-right">Rp {{number_format($ss, 0, ',', '.')}}</td>
+                                                <td class="text-right">{{Helper::numericToRupiah($value, 0, ',', '.')}}</td>
                                             @endif
-
                                         @endforeach
                                     </tr>
                                 @endforeach

@@ -1,5 +1,5 @@
-/* 
-======================================================================== 
+/*
+========================================================================
 
 style.css ( Main Theme CSS file )
 
@@ -8,9 +8,9 @@ Version: 1.0
 Author: Vizz Studio
 Author URI: http://themeforest.net/user/vizzstudio
 If you having trouble in editing js. please send a mail to hq8055@gmail.com
- 
+
 This is the file you need to edit to change the look of the theme.
-======================================================================== 
+========================================================================
 
 - // TABLE OF CONTENTS // -
 
@@ -8312,7 +8312,7 @@ label {
 .login-bg,
 .register-bg {
     height: 100vh;
-    background: url(../images/bg-kgc.PNG) no-repeat;
+    background: url(../images/bg-kgc.png) no-repeat;
     background-size: cover;
     width: 470px;
     float: right;

@@ -47,24 +47,20 @@
 </head>
 <body>
     <h1>Laporan Pembayaran</h1>
-    <h3>Tanggal: {{Helper::dateIndo($tgl)}}</h3>
+    <h3>Periode: {{Helper::dateIndo($tgl_awal)}} s/d {{Helper::dateIndo($tgl_akhir)}}</h3>
     <h3>Diexport oleh: {{Auth::guard('petugas')->user()->nama}}</h3>
     <h3>Tanggal Download: {{Helper::dateTimeIndo(date('Y-m-d H:i:s'))}}</h3>
 
     <table class="table table-bordered">
-        <thead class="bg-primary">
+        <thead >
             <tr>
-                <th>No</th>
-                <th>Nama</th>
-                <th class="bg-gray">Petugas <i  class="fa fa-info-circle"
-                    style="cursor: pointer"
-
-                    data-toggle="tooltip" data-placement="top" title="Petugas yang melakukan pembayaran"></i></th>
+                <th class="no">No</th>
+                <th class="date">Tanggal</th>
                 @foreach ($daftarKategoriSimpanan as $ks)
                 @php
                     $totalPerKategori['nominal_kategori_id_'.$ks->id_kategori] = 0;
                 @endphp
-                    <th class="bg-gray">{{$ks->nama}}</th>
+                    <th class="simpanan">{{$ks->nama}}</th>
                 @endforeach
                 <th class="bg-gray">Jumlah Simpanan <i  class="fa fa-info-circle"
                     style="cursor: pointer"
@@ -77,7 +73,7 @@
                     style="cursor: pointer"
 
                     data-toggle="tooltip" data-placement="top" title="Total Piutang yang telah dibayar"></i></th>
-                    <th>Keterangan</th>
+
                 <th class="bg-gray" colspan="2">Total Terbayar <i  class="fa fa-info-circle"
                     style="cursor: pointer"
 
@@ -92,6 +88,7 @@
                 $totalPokok = 0;
                 $totalJasa = 0;
                 $totalPiutang = 0;
+
             @endphp
             @forelse ($pembayaran as $trx)
             @php
@@ -104,14 +101,13 @@
             @endphp
                 <tr>
                     <td>{{$loop->iteration}}</td>
-                    <td>{{$trx->nama_anggota}}</td>
-                    <td>{{$trx->nama_petugas}}</td>
+                    <td>{{$trx->tanggal}}</td>
                     @foreach ($daftarKategoriSimpanan as $k)
-                        <td class="bg-gray">
+                        <td class="bg-gray simpanan">
                             {{-- nominal_kategori_id_ --}}
                            @php
                             $obj = 'nominal_kategori_id_'.$k->id_kategori;
-                            echo $trx->$obj;
+                             echo  $trx->$obj;
                             $total_simpanan += $trx->$obj;
                             $totalPerKategori['nominal_kategori_id_'.$k->id_kategori] += $trx->$obj;
                             @endphp
@@ -131,13 +127,9 @@
                     <td class="bg-gray">
                         {{$total_piutang}}
                     </td>
-                    <td>
-                        {{$trx->keterangan}}
-                    </td>
                     <td class="bg-gray" colspan="2"  style="background-color: #f5f5f5">
                         {{$total_simpanan + $total_piutang}}
                     </td>
-
 
                 </tr>
             @empty
@@ -150,12 +142,12 @@
         <tfoot>
                 <tr style="background-color: #f5f5f5" class="bg-gray">
 
-                    <td colspan="3" class="text-center">Total</td>
+                    <td colspan="2" class="text-center">Total</td>
 
                     @foreach ($daftarKategoriSimpanan as $k)
                     @php
-                        $totalSimpanan += $totalPerKategori['nominal_kategori_id_'.$k->id_kategori];
 
+                        $totalSimpanan += $totalPerKategori['nominal_kategori_id_'.$k->id_kategori];
                     @endphp
                         <td> {{$totalPerKategori['nominal_kategori_id_'.$k->id_kategori]}}</td>
                     @endforeach

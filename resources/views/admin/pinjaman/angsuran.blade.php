@@ -24,7 +24,7 @@
                          </tr>
                          <tr>
                              <td>Nominal</td>
-                             <td>Rp {{number_format($pinjaman->nominal)}}</td>
+                             <td>{{Helper::numericToRupiah($pinjaman->nominal)}}</td>
                          </tr>
                          <tr>
                              <td>Lama Angsuran</td>
@@ -32,22 +32,22 @@
                          </tr>
                          <tr>
                              <td>Sisa Pokok</td>
-                             <td>Rp {{number_format($pinjaman->sisa_pokok)}}</td>
+                             <td>{{Helper::numericToRupiah($pinjaman->sisa_pokok)}}</td>
                          </tr>
-         
+
                          <tr>
                              <td>Sisa Jasa</td>
-                             <td>Rp {{number_format($pinjaman->sisa_jasa)}}</td>
+                             <td>{{Helper::numericToRupiah($pinjaman->sisa_jasa)}}</td>
                          </tr>
                          <tr>
                              <td>Angsuran Pokok</td>
-                             <td>Rp {{number_format($pinjaman->nominal / $pinjaman->lama_angsuran)}}  / Bulan</td>
+                             <td>{{Helper::numericToRupiah($pinjaman->nominal / $pinjaman->lama_angsuran)}}  / Bulan</td>
                          </tr>
                          <tr>
                              <td>Tanggal Pinjaman</td>
-                             <td>{{$pinjaman->tgl_pinjam}}</td>
+                             <td>{{Helper::dateIndo($pinjaman->tgl_pinjaman)}}</td>
                          </tr>
-         
+
                          <tr>
                              <td>Status</td>
                              <td>{{$pinjaman->status}}</td>
@@ -88,13 +88,13 @@
                             <tbody>
                                 <tbody>
                                     @php
-    
+
                                     $total_bayar_pokok = 0;
                                     $total_bayar_jasa = 0;
-    
+
                                     @endphp
                                 @foreach($angsuran as $item)
-    
+
                                     <tr>
                                         <td>{{$loop->iteration}}</td>
                                         <td>{{$item->tgl_bayar}}</td>
@@ -110,9 +110,6 @@
                                             @if ($loop->iteration != 1)
                                             <p> Tidak ada aksi </p>
                                             @else
-                                            {{-- <a href="#" class="btn btn-inverse-primary edit-button" data-toggle="modal" data-target="#modalEdit{{$loop->iteration}}">
-                                                <i class="fa fa-edit"></i> 
-                                                </a> --}}
                                                 <form action="{{route('admin.pinjaman.destroy-angsuran', [$item->pinjaman->id_pinjaman, $item->tgl_bayar, $item->bayar_pokok, $item->bayar_jasa, $item->setelah_pokok, $item->setelah_jasa])}}" method="POST" class="d-inline">
                                                     @csrf
                                                     @method('delete')
@@ -120,46 +117,6 @@
                                                         <i class="fa fa-trash"></i>
                                                     </button>
                                                 </form>
-                                                {{-- <div class="modal fade" id="modalEdit{{$loop->iteration}}">
-                                                    <div class="modal-dialog modal-dialog-centered" role="document">
-                                                        <form class="modal-content edit" action="{{route('admin.pinjaman.update-angsuran', [$item->pinjaman->id_pinjaman, $item->tgl_bayar, $item->sisa_pokok, $item->sisa_jasa])}}" method="POST">
-                                                            @method('PUT')
-                                                            @csrf
-                                                            <div class="modal-header">
-                                                                <h5 class="modal-title">Ubah Angsuran</h5>
-                                                                <button type="button" class="close" data-dismiss="modal"><span>&times;</span></button>
-                                                            </div>
-                                                            <div class="modal-body">
-                                                                <div class="row">
-                                                                    <div class="col-6">
-                                                                        <label for="edit_nomor_pinjaman">Nomor Pinjaman</label>
-                                                                        <input type="text" value="{{$item->pinjaman->id_pinjaman}}" class="form-control" autocomplete="off" id="edit_nomor_pinjaman" name="nomor_pinjaman" placeholder="Nomor Pinjaman" readonly>
-                                                                    </div>
-                                                                    <div class="col-6">
-                                                                        <label for="edit_tgl_bayar">Tanggal Bayar</label>
-                                                                        <input type="date" value="{{$item->tgl_bayar}}" class="form-control" autocomplete="off" id="edit_tgl_bayar" name="tgl_bayar" placeholder="Tanggal Bayar" required>
-                                                                    </div>
-                                                                    <div class="col-6">
-                                                                        <label for="edit_bayar_pokok">Bayar Pokok</label>
-                                                                        <input type="number" value="{{$item->bayar_pokok}}" class="form-control" autocomplete="off" id="edit_bayar_pokok" name="bayar_pokok" placeholder="Bayar Pokok" required>
-                                                                    </div>
-                                                                    <div class="col-6">
-                                                                        <label for="edit_bayar_jasa">Bayar Jasa</label>
-                                                                        <input type="number" value="{{$item->bayar_jasa}}" class="form-control" autocomplete="off" id="edit_bayar_jasa" name="bayar_jasa" placeholder="Bayar Jasa" required>
-                                                                    </div>
-                                                                    <div class="col-12">
-                                                                        <label for="edit_keterangan">Keterangan</label>
-                                                                        <textarea class="form-control" autocomplete="off" id="edit_keterangan" name="keterangan" placeholder="Keterangan" required>{{$item->keterangan}}</textarea>
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                            <div class="modal-footer">
-                                                                <button type="button" class="btn btn-light" data-dismiss="modal">Tutup</button>
-                                                                <button type="submit" class="btn btn-primary">Simpan Perubahan</button>
-                                                            </div>
-                                                        </form>
-                                                    </div>
-                                                </div> --}}
                                             @endif
                                         </td>
                                     </tr>

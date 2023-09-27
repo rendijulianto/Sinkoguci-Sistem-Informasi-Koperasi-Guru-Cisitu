@@ -50,10 +50,6 @@
             </div>
         </div>
     </div>
-    <div class="col-lg-12">
-            <a href="{{route('admin.pinjaman.index')}}?tanggal_awal={{$tanggal_awal}}&tanggal_akhir={{$tanggal_akhir}}&status={{$status}}&cari={{$cari}}&aksi=download"
-             class="btn btn-success btn-block" target="_blank">Download Excel <i class="fa fa-file-excel"></i></a>
-    </div>
 </form>
 <div class="row">
     <div class="col-12 mt-4">
@@ -90,14 +86,14 @@
                                     <p class="mt-0">
                                         {{$p->anggota->nama}} <br>
                                         <small>{{$p->anggota->alamat}}</small> <br>
-                                        <small>Tgl Lahir: {{$p->anggota->tgl_lahir}}</small><br>
+                                        <small>Tgl Lahir: {{Helper::dateIndo($p->anggota->tgl_lahir)}}</small><br>
                                         <small>Sekolah: {{$p->anggota->sekolah->nama}}</small><br>
-                                        <small>Tergabung sejak {{$p->anggota->created_at->format('d M Y')}}</small> <br>
+                                        <small>Tergabung sejak {{Helper::dateTimeIndo($p->anggota->created_at)}}</small>
                                     </p>
                                 </td>
-                                <td class="text-right">Rp. {{number_format($p->nominal, 0, ',', '.')}}</td>
-                                <td class="text-right">Rp. {{number_format($p->sisa_pokok, 0, ',', '.')}}</td>
-                                <td class="text-right">Rp. {{number_format($p->sisa_jasa, 0, ',', '.')}}</td>
+                                <td class="text-right">{{Helper::numericToRupiah($p->nominal, 0, ',', '.')}}</td>
+                                <td class="text-right">{{Helper::numericToRupiah($p->sisa_pokok, 0, ',', '.')}}</td>
+                                <td class="text-right">{{Helper::numericToRupiah($p->sisa_jasa, 0, ',', '.')}}</td>
 
                                 <td>
                                     @if ($p->sisa_pokok == 0 && $p->sisa_jasa == 0)
@@ -107,7 +103,7 @@
                                     @endif
                                 </td>
                                 <td>{{$p->lama_angsuran}} Bulan</td>
-                                <td>{{$p->tgl_pinjam}}</td>
+                                <td>{{Helper::dateIndo($p->tgl_pinjaman)}}</td>
                                 <td>{{$p->petugas->nama}}</td>
                                 <td>
                                     <div class="d-flex flex-column justify-content-center " style="gap: 5px;">
@@ -118,15 +114,14 @@
                                                 <i class="fa fa-trash"></i> Hapus Pinjaman
                                             </button>
                                         </form>
-                                  
+
                                     <a href="{{route('admin.pinjaman.angsuran', $p->id_pinjaman)}}" class="btn btn-xs btn-info"><i class="fa fa-eye"></i> Edit Cicilan</a>
-                                    <a href="{{route('admin.laporan.pinjaman-cicilan-download', $p->id_pinjaman)}}?aksi=download" class="btn btn-xs btn-success"><i class="fa fa-file-excel"></i> Download</a>
                                     </div>
                                 </td>
                             </tr>
                             @empty
                                 <tr>
-                                    <td colspan="9" class="text-center">Tidak ada data</td>
+                                    <td colspan="10" class="text-center">Tidak ada data</td>
                                 </tr>
                             @endforelse
                             </tbody>

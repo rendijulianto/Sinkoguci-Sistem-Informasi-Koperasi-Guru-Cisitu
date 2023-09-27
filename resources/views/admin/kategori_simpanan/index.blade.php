@@ -13,9 +13,7 @@
 <div class="row">
     <!-- Progress Table start -->
     <div class="col-12">
-        <button type="button" class="btn btn-success" style="float: right;" data-toggle="modal" data-target="#modalUbahJumlahSimpananMasal">
-            <i class="fa fa-edit"></i> Ubah Masal Nominal Simpanan
-        </button>
+
         <button type="button" class="btn btn-primary" style="float: right;" data-toggle="modal" data-target="#modalTambahKategoriSimpanan">
             <i class="fa fa-plus"></i> Tambah Kategori Simpanan
         </button>
@@ -42,6 +40,8 @@
                                     <th scope="col">ID</th>
                                     <th scope="col">Nama Kategori</th>
                                     <th scope="col">Jumlah</th>
+                                    <th scope="col">Terdaftar</th>
+                                    <th scope="col">Diperbaharui</th>
                                     <th scope="col">Aksi</th>
                                 </tr>
                             </thead>
@@ -50,7 +50,9 @@
                                 <tr>
                                     <th scope="row">{{ $item->id_kategori }}</th>
                                     <td>{{ $item->nama }}</td>
-                                    <td>Rp {{ number_format($item->jumlah, 0, ',', '.') }}</td>
+                                    <td>{{ Helper::numericToRupiah($item->jumlah) }}</td>
+                                    <td>{{ Helper::dateTimeIndo($item->created_at) }}</td>
+                                    <td>{{ Helper::dateTimeIndo($item->updated_at) }}</td>
                                     <td>
                                         <ul class="d-flex justify-content-center">
                                             <li class="mr-3">

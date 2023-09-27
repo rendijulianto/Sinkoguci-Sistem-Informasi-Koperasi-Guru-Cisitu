@@ -55,8 +55,9 @@
                                 <th scope="col">Nama Lengkap</th>
                                 <th scope="col">Email</th>
                                 <th scope="col">Level</th>
+                                <th scope="col">Terdaftar</th>
+                                <th scope="col">Diperbaharui</th>
                                 <th scope="col">Aksi</th>
-
                             </tr>
                             </thead>
                             <tbody>
@@ -66,6 +67,8 @@
                                     <td>{{$item->nama}}</td>
                                     <td>{{$item->email}}</td>
                                     <td>{{$item->level}}</td>
+                                    <td>{{Helper::dateTimeIndo($item->created_at)}}</td>
+                                    <td>{{Helper::dateTimeIndo($item->updated_at)}}</td>
                                     <td>
                                         <ul class="d-flex justify-content-center">
                                             <li class="mr-3"><button type="button" class="btn btn-inverse-primary" data-toggle="modal" data-target="#modalEditPetugas{{$item->id_petugas}}"><i class="fa fa-edit"></i></button></li>

@@ -58,24 +58,6 @@
                      </div>
                   </a>
                </div>
-               <div class="col-lg-4 mb-3" style="cursor: pointer;">
-                  <a href="{{route('admin.laporan.simpanan-bulanan')}}">
-                     <div class="card">
-                        <div class="card-body bg-primary d-flex justify-content-between align-items-center rounded">
-                           <i class="fa fa-receipt fa-3x"></i> Laporan Simpanan Bulanan
-                        </div>
-                     </div>
-                  </a>
-               </div>
-               <div class="col-lg-4 mb-3" style="cursor: pointer;">
-                  <a href="{{route('admin.laporan.simpanan-tahunan')}}">
-                     <div class="card">
-                        <div class="card-body bg-danger d-flex justify-content-between align-items-center rounded">
-                           <i class="fa fa-receipt fa-3x"></i> Laporan Simpanan Tahunan
-                        </div>
-                     </div>
-                  </a>
-               </div>
             </div>
          </div>
        </div>

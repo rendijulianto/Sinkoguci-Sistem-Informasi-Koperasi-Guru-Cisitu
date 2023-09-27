@@ -13,8 +13,8 @@
         </div>
     </div>
 </div>
-<form class="row mb-4" method="GET" action="{{route('petugas.laporan.rekap-transaksi')}}">
-    <div class="col-3">
+<form class="row mb-4" method="GET" action="{{route('petugas.laporan.rekap-pembayaran')}}">
+    <div class="col-12 col-lg-3">
         <div class="form-group">
             <label class="col-form-label">Pilih Tanggal Awal</label>
             <br>
@@ -23,7 +23,7 @@
             </div>
         </div>
     </div>
-    <div class="col-3">
+    <div class="col-12 col-lg-3">
         <div class="form-group">
             <label class="col-form-label">Pilih Tanggal Akhir</label>
             <br>
@@ -33,17 +33,22 @@
         </div>
     </div>
     <div class="col-6">
-        <label class="col-form-label">Button </label>
+        <label class="col-form-label">‎ </label>
         <button class="btn btn-primary btn-block" id="btn-cari">Cari Data <i class="fa fa-search"></i></button>
     </div>
-
+    @if(count($pembayaran) > 0)
+    <div class="col-lg-12 mt-3">
+        <a href="{{route('petugas.laporan.rekap-pembayaran')}}?tgl_awal={{$tgl_awal}}&tgl_akhir={{$tgl_akhir}}
+        &aksi=download" class="btn btn-success btn-block" target="_blank">Download Excel <i class="fa fa-file-excel"></i></a>
+    </div>
+    @endif
 </div>
 <div class="row mb-4">
     <div class="col-12 mb-4">
         <div class="card">
             <div class="card-body">
                 <h4 class="card_title">
-                    Rekap Transaksi Tanggal {{$tgl_awal}} s/d {{$tgl_akhir}}
+                    Rekap Transaksi Tanggal {{Helper::dateIndo($tgl_awal)}} s/d {{Helper::dateIndo($tgl_akhir)}}
                 </h4>
                 <div class="signle-table">
                     <div class="table-responsive">
@@ -84,35 +89,9 @@
                                     $totalPokok = 0;
                                     $totalJasa = 0;
                                     $totalPiutang = 0;
-                                    function penyebut($nilai) {
-		$nilai = abs($nilai);
-		$huruf = array("", "satu", "dua", "tiga", "empat", "lima", "enam", "tujuh", "delapan", "sembilan", "sepuluh", "sebelas");
-		$temp = "";
-		if ($nilai < 12) {
-			$temp = " ". $huruf[$nilai];
-		} else if ($nilai <20) {
-			$temp = penyebut($nilai - 10). " belas";
-		} else if ($nilai < 100) {
-			$temp = penyebut($nilai/10)." puluh". penyebut($nilai % 10);
-		} else if ($nilai < 200) {
-			$temp = " seratus" . penyebut($nilai - 100);
-		} else if ($nilai < 1000) {
-			$temp = penyebut($nilai/100) . " ratus" . penyebut($nilai % 100);
-		} else if ($nilai < 2000) {
-			$temp = " seribu" . penyebut($nilai - 1000);
-		} else if ($nilai < 1000000) {
-			$temp = penyebut($nilai/1000) . " ribu" . penyebut($nilai % 1000);
-		} else if ($nilai < 1000000000) {
-			$temp = penyebut($nilai/1000000) . " juta" . penyebut($nilai % 1000000);
-		} else if ($nilai < 1000000000000) {
-			$temp = penyebut($nilai/1000000000) . " milyar" . penyebut(fmod($nilai,1000000000));
-		} else if ($nilai < 1000000000000000) {
-			$temp = penyebut($nilai/1000000000000) . " trilyun" . penyebut(fmod($nilai,1000000000000));
-		}
-		return $temp;
-	}
+
                                 @endphp
-                                @forelse ($transaksi as $trx)
+                                @forelse ($pembayaran as $trx)
                                 @php
                                     $total_simpanan = 0;
                                     $total_piutang = $trx->angsuran_bayar_pokok + $trx->angsuran_bayar_jasa;
@@ -138,19 +117,19 @@
 
                                         @endforeach
                                         <td class="text-right" style="background-color: #f5f5f5">
-                                            Rp {{number_format($total_simpanan, 2, ',', '.')}}
+                                            {{Helper::numericToRupiah($total_simpanan, 2, ',', '.')}}
                                         </td>
                                         <td class="text-right">
-                                            Rp {{number_format($trx->angsuran_bayar_pokok, 2, ',', '.')}}
+                                            {{Helper::numericToRupiah($trx->angsuran_bayar_pokok, 2, ',', '.')}}
                                         </td>
                                         <td>
-                                            Rp {{number_format($trx->angsuran_bayar_jasa, 2, ',', '.')}}
+                                            {{Helper::numericToRupiah($trx->angsuran_bayar_jasa, 2, ',', '.')}}
                                         </td>
                                         <td class="text-right">
-                                            Rp {{number_format($total_piutang, 2, ',', '.')}}
+                                            {{Helper::numericToRupiah($total_piutang, 2, ',', '.')}}
                                         </td>
                                         <td class="text-right" colspan="2"  style="background-color: #f5f5f5">
-                                            Rp {{number_format($total_simpanan + $total_piutang, 2, ',', '.')}}
+                                            {{Helper::numericToRupiah($total_simpanan + $total_piutang, 2, ',', '.')}}
                                         </td>
 
                                     </tr>
@@ -160,7 +139,7 @@
                                     </tr>
                                 @endforelse
                             </tbody>
-                            @if(count($transaksi) > 0)
+                            @if(count($pembayaran) > 0)
                             <tfoot>
                                     <tr style="background-color: #f5f5f5" class="text-right">
 
@@ -171,16 +150,16 @@
 
                                             $totalSimpanan += $totalPerKategori['nominal_kategori_id_'.$k->id_kategori];
                                         @endphp
-                                            <td> Rp {{number_format($totalPerKategori['nominal_kategori_id_'.$k->id_kategori], 2, ',', '.')}}</td>
+                                            <td> {{Helper::numericToRupiah($totalPerKategori['nominal_kategori_id_'.$k->id_kategori], 2, ',', '.')}}</td>
                                         @endforeach
-                                        <td> Rp {{number_format($totalSimpanan, 2, ',', '.')}}</td>
-                                        <td> Rp {{number_format($totalPokok, 2, ',', '.')}}</td>
-                                        <td> Rp {{number_format($totalJasa, 2, ',', '.')}}</td>
-                                        <td> Rp {{number_format($totalPiutang, 2, ',', '.')}}</td>
+                                        <td> {{Helper::numericToRupiah($totalSimpanan, 2, ',', '.')}}</td>
+                                        <td> {{Helper::numericToRupiah($totalPokok, 2, ',', '.')}}</td>
+                                        <td> {{Helper::numericToRupiah($totalJasa, 2, ',', '.')}}</td>
+                                        <td> {{Helper::numericToRupiah($totalPiutang, 2, ',', '.')}}</td>
                                         <td colspan="2">
                                             <h4>
 
-                                                Rp {{number_format($totalSimpanan + $totalPiutang, 2, ',', '.')}}
+                                                {{Helper::numericToRupiah($totalSimpanan + $totalPiutang, 2, ',', '.')}}
                                             </h4>
                                         </td>
 
@@ -189,7 +168,7 @@
                                         <td colspan="3" class="text-center">Terbilang</td>
                                         <td colspan="100%" class="text-center">
                                             <h4>
-                                                {{ucwords(penyebut($totalSimpanan + $totalPiutang))}} Rupiah
+                                                {{ucwords(Helper::terbilangRupiah($totalSimpanan + $totalPiutang))}} Rupiah
                                             </h4>
                                         </td>
                                     </tr>

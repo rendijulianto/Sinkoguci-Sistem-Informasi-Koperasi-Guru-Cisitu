@@ -57,7 +57,7 @@ class Anggota extends Model
 
     public function kategori_simpanan_anggota()
     {
-        return $this->hasMany(KategoriSimpananAnggota::class, 'id_anggota', 'id_anggota');
+        return $this->hasMany(KategoriSimpananAnggota::class, 'id_anggota');
     }
 
     public function kategori_simpanan_default($update = null)
@@ -197,7 +197,7 @@ class Anggota extends Model
         // Inisialisasi array tagihan
         $tagihan = [];
         $total = 0;
-        
+
         $bulanTahunSekarang = Carbon::parse('01-'. date('m-Y'))->timestamp;
         $bulanTahunTagihan = Carbon::parse('01-'. $bulan .'-'. $tahun)->timestamp;
 

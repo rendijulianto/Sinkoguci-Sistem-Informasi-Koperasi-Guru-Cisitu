@@ -32,7 +32,7 @@ if (Auth::guard('petugas')->user()->level == "petugas") {
         [
             'text' => 'Bayar Angsuran',
             'type'=> 'link',
-            'url' => route('petugas.cicilan.index'),
+            'url' => route('petugas.angsuran.index'),
             'icon' => 'fa fa-file-invoice-dollar'
         ],
         [
@@ -77,15 +77,9 @@ if (Auth::guard('petugas')->user()->level == "petugas") {
             'icon' => 'fa fa-receipt'
         ],
         [
-            'text' => 'Laporan Transaksi',
-            'type'=> 'link',
-            'url' => route('petugas.laporan.transaksi'),
-            'icon' => 'fa fa-receipt'
-        ],
-        [
             'text' => 'Laporan Rekap Transaksi',
             'type'=> 'link',
-            'url' => route('petugas.laporan.rekap-transaksi'),
+            'url' => route('petugas.laporan.rekap-pembayaran'),
             'icon' => 'fa fa-receipt'
         ],
     ];
@@ -134,48 +128,6 @@ if (Auth::guard('petugas')->user()->level == "petugas") {
             'type'=> 'link',
             'url' => route('admin.pinjaman.index'),
             'icon' => 'fa fa-credit-card'
-        ],
-        [
-            'text' => 'Laporan',
-            'type' => 'label',
-        ],
-        [
-            'text' => 'Laporan Simpanan',
-            'type'=> 'parent',
-            'icon' => 'fa fa-receipt text-success',
-            'child' => [
-                [
-                    'text' => 'Simpanan Bulanan',
-                    'type'=> 'link',
-                    'url' => route('admin.laporan.simpanan-bulanan'),
-                    'icon' => 'fa fa-receipt'
-                ],
-                [
-                    'text' => 'Simpanan Tahunan',
-                    'type'=> 'link',
-                    'url' => route('admin.laporan.simpanan-tahunan'),
-                    'icon' => 'fa fa-receipt'
-                ]
-            ]
-        ],
-        [
-            'text' => 'Laporan Pembayaran',
-            'type'=> 'parent',
-            'icon' => 'fa fa-receipt text-success',
-            'child' => [
-                [
-                    'text' => 'Pembayaran Bulanan',
-                    'type'=> 'link',
-                    'url' => route('admin.laporan.pembayaran-bulanan'),
-                    'icon' => 'fa fa-receipt'
-                ],
-                [
-                    'text' => 'Pembayaran Tahunan',
-                    'type'=> 'link',
-                    'url' => route('admin.laporan.pembayaran-tahunan'),
-                    'icon' => 'fa fa-receipt'
-                ]
-            ]
         ],
     ];
 }
@@ -281,7 +233,7 @@ if (Auth::guard('petugas')->user()->level == "petugas") {
                    Logo
         *=========================-->
         <div class="header-area-left">
-            <a href="index.html" class="logo">
+            <a href="/" class="logo">
                 <span>
                     <img src="{{asset('assets/images/logo.png')}}"  alt="" height="18">
 
