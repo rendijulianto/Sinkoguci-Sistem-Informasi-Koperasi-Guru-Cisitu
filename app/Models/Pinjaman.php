@@ -53,6 +53,41 @@ class Pinjaman extends Model
         }
     }
 
+    public function scopeFilter($query, $cari,  $status, $tanggal_awal, $tanggal_akhir)
+    {
+        if ($cari) {
+            $query->where(function ($q) use ($cari) {
+                $q->where('tgl_pinjam', 'like', '%' . $cari . '%')
+                    ->orWhere('nominal', 'like', '%' . $cari . '%')
+                    ->orWhere('lama_angsuran', 'like', '%' . $cari . '%')
+                    ->orWhere('sisa_pokok', 'like', '%' . $cari . '%')
+                    ->orWhere('sisa_jasa', 'like', '%' . $cari . '%')
+                    ->orWhereHas('anggota', function ($query) use ($cari) {
+                        $query->where('nama', 'like', '%' . $cari . '%');
+                    })
+                    ->orWhereHas('petugas', function ($query) use ($cari) {
+                        $query->where('nama', 'like', '%' . $cari . '%');
+                    });
+            });
+        }
+        if ($status) {
+            if ($status == 'lunas') {
+                $query->where(function ($query) {
+                    $query->where('sisa_pokok', '=', 0)
+                        ->where('sisa_jasa', '=', 0);
+                });
+            } else {
+                $query->where(function ($query) {
+                    $query->where('sisa_pokok', '>', 0)
+                        ->orWhere('sisa_jasa', '>', 0);
+                });
+            }
+        }
+        if ($tanggal_awal && $tanggal_akhir) {
+            $query->whereBetween('tgl_pinjam', [$tanggal_awal, $tanggal_akhir]);
+        }
+        return $query;
+    }
 
 
 

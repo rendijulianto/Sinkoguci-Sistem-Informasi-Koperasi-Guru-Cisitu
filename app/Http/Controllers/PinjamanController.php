@@ -8,7 +8,7 @@ use Illuminate\Support\Facades\Auth;
 use DB;
 use App\Exports\PinjamanReportExport;
 use Maatwebsite\Excel\Facades\Excel;
-
+use Helper;
 
 class PinjamanController extends Controller
 {
@@ -17,41 +17,8 @@ class PinjamanController extends Controller
         $tanggal_akhir = date('Y-12-31');
         $cari = $request->cari;
         $status = $request->status;
-        $pinjaman = Pinjaman::query();
-
-        if(!empty($request->tanggal_awal) && !empty($request->tanggal_akhir)) {
-            $tanggal_awal = $request->tanggal_awal;
-            $tanggal_akhir = $request->tanggal_akhir;
-            $pinjaman->whereBetween('tgl_pinjam', [$tanggal_awal, $tanggal_akhir]);
-        }
-
-        // status
-        if (!empty($status)) {
-            if ($status == 'lunas') {
-                $pinjaman->whereRaw('sisa_pokok = 0 AND sisa_jasa = 0');
-            } elseif ($status == 'belum_lunas') {
-                $pinjaman->where(function ($query) {
-                    $query->where('sisa_pokok', '>', 0)
-                        ->orWhere('sisa_jasa', '>', 0);
-                });
-            }
-        }
-
-        if (!empty($cari)) {
-            $pinjaman->where(function ($query) use ($cari) {
-                $query->where('id_pinjaman', 'like', '%' . $cari . '%')
-                    ->orWhere('tgl_pinjam', 'like', '%' . $cari . '%')
-                    ->orWhereHas('anggota', function ($query) use ($cari) {
-                        $query->where('nama', 'like', '%' . $cari . '%')->orWhere('id_anggota', 'like', '%' . $cari . '%');
-                    })->orWhereHas('petugas', function ($query) use ($cari) {
-                        $query->where('nama', 'like', '%' . $cari . '%');
-                    });
-            });
-        }
-
-        $pinjaman = $pinjaman->orderBy('id_pinjaman', 'desc')->paginate(10);
+        $pinjaman = Pinjaman::filter($cari, $status, $tanggal_awal, $tanggal_akhir)->with('anggota', 'petugas')->orderBy('tgl_pinjam', 'desc')->paginate(10);
         $title = 'Kelola Pinjaman';
-
         return view('petugas.pinjaman.index', compact('title', 'pinjaman', 'tanggal_awal', 'tanggal_akhir', 'cari', 'status'));
     }
 
@@ -61,46 +28,14 @@ class PinjamanController extends Controller
         $tanggal_akhir = date('Y-12-31');
         $cari = $request->cari;
         $status = $request->status;
-        $pinjaman = Pinjaman::query();
-
-        if(!empty($request->tanggal_awal) && !empty($request->tanggal_akhir)) {
-            $tanggal_awal = $request->tanggal_awal;
-            $tanggal_akhir = $request->tanggal_akhir;
-            $pinjaman->whereBetween('tgl_pinjam', [$tanggal_awal, $tanggal_akhir]);
-        }
-
-        // status
-        if (!empty($status)) {
-            if ($status == 'lunas') {
-                $pinjaman->whereRaw('sisa_pokok = 0 AND sisa_jasa = 0');
-            } elseif ($status == 'belum_lunas') {
-                $pinjaman->where(function ($query) {
-                    $query->where('sisa_pokok', '>', 0)
-                        ->orWhere('sisa_jasa', '>', 0);
-                });
-            }
-        }
-
-        if (!empty($cari)) {
-            $pinjaman->where(function ($query) use ($cari) {
-                $query->where('id_pinjaman', 'like', '%' . $cari . '%')
-                    ->orWhere('tgl_pinjam', 'like', '%' . $cari . '%')
-                    ->orWhereHas('anggota', function ($query) use ($cari) {
-                        $query->where('nama', 'like', '%' . $cari . '%');
-                    })->orWhereHas('petugas', function ($query) use ($cari) {
-                        $query->where('nama', 'like', '%' . $cari . '%');
-                    });
-            });
-        }
-
 
         $title = 'Laporan Pinjaman';
-
+        $pinjaman = Pinjaman::filter($cari, $status, $tanggal_awal, $tanggal_akhir)->with('anggota', 'petugas')->orderBy('tgl_pinjam', 'desc');
         if($request->aksi == "download") {
-            $pinjaman = $pinjaman->orderBy('id_pinjaman', 'desc')->get();
+            $pinjaman = $pinjaman->get();
             return Excel::download(new PinjamanReportExport($pinjaman), 'Laporan Pinjaman ' . $tanggal_awal . ' - ' . $tanggal_akhir . '.xlsx');
         }
-        $pinjaman = $pinjaman->orderBy('id_pinjaman', 'desc')->paginate(10);
+        $pinjaman = $pinjaman->paginate(10);
 
         return view('admin.pinjaman.index', compact('title', 'pinjaman', 'tanggal_awal', 'tanggal_akhir', 'cari', 'status'));
     }
@@ -170,23 +105,6 @@ class PinjamanController extends Controller
         return view('petugas.pinjaman.pengajuan', compact('title', 'anggota', 'id_pinjam'));
     }
 
-    private function convertRupiahToNumber($rupiah)
-    {
-       // Remove non-numeric characters and spaces
-        $numericString = preg_replace("/[^0-9]/", "", $rupiah);
-
-        // Convert the numeric string to an integer or float
-        $numericValue = (int) $numericString; // Use (float) for decimals
-
-        // Output the numeric value
-        if($numericValue == null) {
-            return 0;
-        } else {
-            return $numericValue;
-        }
-  }
-
-
 
     public function store(Request $request) {
 
@@ -208,13 +126,14 @@ class PinjamanController extends Controller
 
 
       try {
+        $nominal = Helper::rupiahToNumeric($request->nominal);
         $pinjaman = Pinjaman::create([
             'id_anggota' => $request->id_anggota,
             'id_petugas' => Auth::guard('petugas')->user()->id_petugas,
-            'nominal' => $this->convertRupiahToNumber($request->nominal),
+            'nominal' => $nominal,
             'tgl_pinjam' => $request->tgl_pinjam,
             'lama_angsuran' => $request->lama_angsuran,
-            'sisa_pokok' => $this->convertRupiahToNumber($request->nominal),
+            'sisa_pokok' => $nominal,
             'sisa_jasa' => 0,
         ]);
 

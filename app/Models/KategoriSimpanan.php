@@ -34,5 +34,16 @@ class KategoriSimpanan extends Model
         return $this->hasMany(KategoriSimpananAnggota::class, 'id_kategori', 'id_kategori');
     }
 
+    public static function scopeFilter($query, $cari)
+    {
+        if ($cari) {
+            $query->where(function($q) use ($cari) {
+                $q->where('nama', 'like', '%'.$cari.'%')
+                ->orWhere('id_kategori', 'like', '%'.$cari.'%');
+            });
+        }
+        return $query;
+    }
+
 
 }
