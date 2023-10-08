@@ -18,22 +18,8 @@ class AnggotaController extends Controller
     {
         $title = 'Kelola Anggota';
         $id_sekolah = $request->get('id_sekolah');
-
         $cari = $request->get('cari');
-
-        $anggota = Anggota::query();
-        if ($id_sekolah) {
-            if ($id_sekolah == 'all') {
-                $anggota = $anggota->where('id_sekolah', '!=', null);
-            } else {
-                $anggota = $anggota->where('id_sekolah', $id_sekolah);
-            }
-        }
-        if ($cari) {
-            $anggota = $anggota->where('nama', 'like', '%' . $cari . '%')->orWhere('id_anggota', 'like', '%' . $cari . '%')->orWhere('alamat', 'like', '%' . $cari . '%');
-        }
-        $anggota = $anggota->orderBy('id_anggota', 'desc')->paginate(10);
-
+        $anggota = Anggota::filter($id_sekolah, $cari)->orderBy('nama', 'asc')->paginate(10);
         $sekolahs = Sekolah::orderBy('nama', 'asc')->get();
         $kategoriSimpanan = KategoriSimpanan::orderBy('id_kategori', 'asc')->get();
         return view('petugas.anggota.index', compact('title', 'anggota', 'sekolahs', 'kategoriSimpanan'));

@@ -60,6 +60,23 @@ class Anggota extends Model
         return $this->hasMany(KategoriSimpananAnggota::class, 'id_anggota');
     }
 
+    public function scopeFilter($query, $id_sekolah, $cari)
+    {
+        if ($cari) {
+            $query->where(function ($q) use ($cari) {
+                $q->where('nama', 'like', '%' . $cari . '%')->orWhere('id_anggota', 'like', '%' . $cari . '%')->orWhere('alamat', 'like', '%' . $cari . '%');
+            });
+        }
+        if ($id_sekolah) {
+            if ($id_sekolah == 'all') {
+                $query->where('id_sekolah', '!=', null);
+            } else {
+                $query->where('id_sekolah', $id_sekolah);
+            }
+        }
+        return $query;
+    }
+
     public function kategori_simpanan_default($update = null)
     {
         $default = [];
