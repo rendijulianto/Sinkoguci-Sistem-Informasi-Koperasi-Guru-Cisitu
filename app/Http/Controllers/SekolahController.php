@@ -13,7 +13,7 @@ class SekolahController extends Controller
     {
         $cari = $request->cari;
         $title = 'Kelola Sekolah';
-        $sekolah = Sekolah::where('nama','like',"%".$cari."%")->orderBy('id_sekolah', 'DESC')->paginate(10);
+        $sekolah = Sekolah::filter($cari)->orderBy('id_sekolah', 'DESC')->paginate(10);
         return view('admin.sekolah.index', compact('title', 'sekolah'));
     }
 

@@ -20,4 +20,21 @@ class Petugas extends Authenticatable
         'password',
         'level',
     ];
+
+
+    public static function scopeFilter($query, $cari, $level)
+    {
+        if ($cari) {
+            $query->where(function($q) use ($cari) {
+                $q->where('nama', 'like', '%'.$cari.'%')
+                ->orWhere('email', 'like', '%'.$cari.'%')
+                ->orWhere('level', 'like', '%'.$cari.'%')
+                ->orWhere('id_petugas', 'like', '%'.$cari.'%');
+            });
+        }
+        if ($level) {
+            $query->where('level', '=', $level);
+        }
+        return $query;
+    }
 }

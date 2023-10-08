@@ -15,15 +15,7 @@ class KategoriSimpananController extends Controller
     {
         $cari = $request->cari;
         $title = 'Kelola Kategori Simpanan';
-
-        $kategoriSimpanan = KategoriSimpanan::query()
-            ->when($cari, function ($query, $cari) {
-                $query->where('nama', 'like', '%' . $cari . '%')
-                    ->orWhere('jumlah', 'like', '%' . $cari . '%')
-                    ->orWhere('id_kategori', $cari);
-            })
-                ->orderBy('id_kategori', 'desc')
-                ->paginate(10);
+        $kategoriSimpanan = KategoriSimpanan::filter($cari)->orderBy('id_kategori', 'DESC')->paginate(10);
         return view('admin.kategori_simpanan.index', compact('title', 'kategoriSimpanan'));
     }
 

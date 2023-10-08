@@ -22,4 +22,16 @@ class Sekolah extends Model
         return $this->hasMany(Anggota::class, 'id_sekolah', 'id_sekolah');
     }
 
+
+    public static function scopeFilter($query, $cari)
+    {
+        if ($cari) {
+            $query->where(function($q) use ($cari) {
+                $q->where('nama', 'like', '%'.$cari.'%')
+                ->orWhere('id_sekolah', 'like', '%'.$cari.'%');
+            });
+        }
+        return $query;
+    }
+
 }

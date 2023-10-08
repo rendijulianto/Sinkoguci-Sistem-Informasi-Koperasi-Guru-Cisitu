@@ -8,6 +8,7 @@ use Maatwebsite\Excel\Facades\Excel;
 use App\Exports\{SimpananExport};
 use DB;
 use Auth;
+use Helper;
 
 class SimpananController extends Controller
 {
@@ -27,41 +28,13 @@ class SimpananController extends Controller
     {
         $title = 'Kelola Simpanan';
         $anggota = Anggota::with('sekolah')->orderBy('nama', 'asc')->get();
-        $kategori = KategoriSimpanan::orderBy('id_kategori', 'asc')->get();
-        $simpanan = Simpanan::query();
+        $kategori = KategoriSimpanan::orderBy('id_kategori', 'asc')->get();;
         $tanggal_awal = date('Y-m-01');
         $tanggal_akhir = date('Y-m-t');
         $kategori_id = $request->kategori_id;
         $anggota_id = $request->anggota_id;
         $cari = $request->cari;
-        if ($cari) {
-            $simpanan->where(function($q) use ($cari) {
-                $q->where('tgl_bayar', 'like', '%'.$cari.'%')
-                ->orWhere('jumlah', 'like', '%'.$cari.'%')
-                ->orWhereHas('anggota', function($query) use ($cari) {
-                    $query->where('nama', 'like', '%'.$cari.'%');
-                })
-                ->orWhereHas('petugas', function($query) use ($cari) {
-                    $query->where('nama', 'like', '%'.$cari.'%');
-                });
-            });
-        }
-        if ($anggota_id) {
-            $simpanan->where('id_anggota', '=', $anggota_id);
-        }
-        if ($kategori_id) {
-            $simpanan->where('id_kategori', '=', $kategori_id);
-        }
-
-        if ($request->tanggal_awal) {
-            $tanggal_awal = $request->tanggal_awal;
-        }
-        if ($request->tanggal_akhir) {
-            $tanggal_akhir = $request->tanggal_akhir;
-        }
-        $simpanan->whereBetween('tgl_bayar', [$tanggal_awal, $tanggal_akhir]);
-        $simpanan = $simpanan->with('anggota','kategori','petugas')->orderBy('tgl_bayar', 'desc')->paginate(10);
-
+        $simpanan = Simpanan::filter($cari, $anggota_id, $kategori_id, $tanggal_awal, $tanggal_akhir)->with('anggota','kategori','petugas')->orderBy('tgl_bayar', 'desc')->paginate(10);
         return view('admin.simpanan.index',  compact('title', 'anggota', 'simpanan', 'tanggal_awal', 'tanggal_akhir', 'cari', 'kategori', 'kategori_id', 'anggota_id'));
 
     }
